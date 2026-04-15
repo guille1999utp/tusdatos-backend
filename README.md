@@ -75,17 +75,7 @@ Cámbialas antes de desplegar en un entorno real.
 - **API (documentación):** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Frontend:** [http://localhost:5173](http://localhost:5173)
 
-## 5. Comandos útiles
-
-| Acción | Comando |
-|--------|---------|
-| Ver logs de todos los servicios | `docker compose logs -f` |
-| Logs solo del backend | `docker compose logs -f backend` |
-| Entrar al contenedor del backend | `docker compose exec backend bash` |
-| Parar contenedores | `docker compose down` |
-| Parar y borrar datos de Postgres | `docker compose down -v` |
-
-## 6. Reconstruir tras cambios en código
+## 5. Reconstruir tras cambios en código
 
 ```bash
 docker compose build backend frontend
@@ -100,7 +90,7 @@ docker compose up -d --force-recreate backend
 
 Si cambias **`VITE_PUBLIC_API_URL`**, debes **reconstruir el frontend** (`docker compose build frontend`).
 
-## 7. Variables de entorno del backend en Docker
+## 6. Variables de entorno del backend en Docker
 
 En `docker-compose.yml` ya se definen valores por defecto:
 
@@ -111,25 +101,6 @@ En `docker-compose.yml` ya se definen valores por defecto:
 
 Para secretos en producción, usa un fichero `docker compose` con `env_file` o variables del host; no subas `.env` con claves reales al repositorio.
 
-## 8. Conflictos de puertos
-
-Si el puerto **5432** u **8000** ya está en uso, edita en `docker-compose.yml` la parte izquierda del mapeo, por ejemplo:
-
-```yaml
-ports:
-  - "5433:5432"
-```
-
-y ajusta `SQLALCHEMY_DATABASE_URL` del backend para usar el puerto publicado que corresponda si accedes desde fuera de la red Docker (dentro del compose, el backend sigue usando `db:5432`).
-
-## 9. Desarrollo local sin Docker
+## 7. Desarrollo local sin Docker
 
 Consulta `backend/README.md` y `frontend/README.md` para instalar dependencias, variables `.env` y ejecutar Uvicorn / Vite en la máquina host.
-
-## 10. Resolución de problemas
-
-- **El backend reinicia en bucle:** revisa `docker compose logs backend` (fallos de migración o de conexión a `db`). Si `db` no está healthy, ejecuta `docker compose ps` y `docker compose logs db`.
-- **`alembic upgrade head` manual → “connection refused”:** el servicio `db` no está arriba o no pasó el healthcheck.
-- **El frontend no llama al API:** revisa que `VITE_PUBLIC_API_URL` en `frontend/.env` sea accesible desde el navegador y que hayas rehecho `docker compose build frontend` tras cambiarla.
-- **Frontend devuelve 404 en rutas como `/login` o `/dashboard`:** reconstruye la imagen del frontend para aplicar la config SPA de Nginx (`docker compose build --no-cache frontend` y luego `docker compose up -d frontend`).
-- **CORS:** la API está configurada con orígenes permisivos en desarrollo; si personalizas CORS, incluye el origen desde el que sirves el frontend (p. ej. `http://localhost:5173`).
