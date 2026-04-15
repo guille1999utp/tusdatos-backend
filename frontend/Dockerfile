@@ -7,10 +7,16 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+# URL base del API en el navegador (Vite la incrusta en el build). Sobrescribible con build-arg en docker-compose.
+ARG VITE_PUBLIC_API_URL=http://localhost:8000/
+ENV VITE_PUBLIC_API_URL=$VITE_PUBLIC_API_URL
+
 RUN npm run build
 
 FROM nginx:1.27-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

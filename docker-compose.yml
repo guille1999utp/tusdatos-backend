@@ -11,6 +11,12 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d miseventos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   backend:
     build:
@@ -23,17 +29,26 @@ services:
       SQLALCHEMY_DATABASE_URL: postgresql://postgres:postgres@db:5432/miseventos
       SECRET_KEY: change-me
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      # Usuario admin inicial (seed_admin.py; idempotente si el email ya existe)
+      SEED_ADMIN_EMAIL: admin@miseventos.com
+      SEED_ADMIN_PASSWORD: Admin123!
+      SEED_ADMIN_NAME: Administrador
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_PUBLIC_API_URL: http://localhost:8000/
     ports:
       - "5173:80"
     depends_on:
       - backend
+    restart: unless-stopped
 
 volumes:
   db_data:

@@ -33,7 +33,7 @@ pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 def main() -> None:
-    email = os.environ.get("SEED_ADMIN_EMAIL", "admin@miseventos.local")
+    email = os.environ.get("SEED_ADMIN_EMAIL", "admin@miseventos.com")
     password = os.environ.get("SEED_ADMIN_PASSWORD", "Admin123!")
     name = os.environ.get("SEED_ADMIN_NAME", "Administrador")
 
