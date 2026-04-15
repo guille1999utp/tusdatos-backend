@@ -48,7 +48,7 @@ uvicorn main:app --reload
 ## Testing
 
 ```bash
-pytest --cov=.
+python -m pytest --cov=.
 ```
 
 ## Documentación de API
