@@ -1,0 +1,1 @@
+export type IRoles = string

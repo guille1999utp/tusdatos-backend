@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "mis-eventos-backend"
+version = "0.1.0"
+description = "API de gestion de eventos con FastAPI"
+authors = ["Mis Eventos <dev@miseventos.local>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.1"
+uvicorn = { extras = ["standard"], version = "^0.30.3" }
+sqlalchemy = "^2.0.31"
+alembic = "^1.13.2"
+pydantic = "^2.8.2"
+pydantic-settings = "^2.9.1"
+python-dotenv = "^1.0.1"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+pyjwt = "^2.10.1"
+psycopg2-binary = "^2.9.10"
+python-multipart = "^0.0.9"
+email-validator = "^2.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+black = "^24.4.0"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
