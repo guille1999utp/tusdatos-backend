@@ -45,9 +45,9 @@ export default class EventsService {
         return handleApiErrors<IEvents>(() => clientHTTP.get<IEvents>(`event/${id}`));
     }
 
-    public static async getMyRegistrations(filters?: IFilters): Promise<IEvents[]> {
-        return handleApiErrors<IEvents[]>(() =>
-            clientHTTP.get<IEvents[]>(
+    public static async getMyRegistrations(filters?: IFilters): Promise<IGetEventsResp> {
+        return handleApiErrors<IGetEventsResp>(() =>
+            clientHTTP.get<IGetEventsResp>(
                 filters ? transformToQueryString("event/my-events-registers", filters) : "event/my-events-registers"
             )
         )

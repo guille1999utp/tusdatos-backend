@@ -5,15 +5,17 @@ import {
   GlobeIcon,
   InputIcon,
 } from "@radix-ui/react-icons";
-import { Calendar, CalendarDays, Users } from "lucide-react";
+import { Calendar, CalendarDays, Ticket, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CardStack } from "@/components/ui/card-stack";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllEvents, getMyEvents } from "@/redux/features/events/events.thunks";
 import { Separator } from "@/components/ui/separator";
+import EventsService from "@/services/app/events/events.service";
+import type { IEvents } from "@/models/app/events/events.model";
 
 export const Highlight = ({
   children,
@@ -119,11 +121,26 @@ export const Dashboard = () => {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const { listEvents, listMyEvents, totalListEvents, totalMyEvents } = useAppSelector((s) => s.events);
+  const [regPreview, setRegPreview] = useState<IEvents[]>([]);
+  const [totalRegistrations, setTotalRegistrations] = useState(0);
 
   useEffect(() => {
     void dispatch(getAllEvents({ filters: { skip: "0", limit: "6" } }));
     void dispatch(getMyEvents({ filters: { skip: "0", limit: "6" } }));
   }, [dispatch]);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const r = await EventsService.getMyRegistrations({ skip: "0", limit: "6" });
+        setRegPreview(r.items);
+        setTotalRegistrations(r.total);
+      } catch {
+        setRegPreview([]);
+        setTotalRegistrations(0);
+      }
+    })();
+  }, []);
 
   return (
     <div className="xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 h-auto bg-background flex flex-col gap-10 mt-20">
@@ -195,6 +212,38 @@ export const Dashboard = () => {
           </Link>
         </section>
       </div>
+
+      <section className="mx-auto w-full max-w-6xl space-y-3">
+        <div className="flex items-center gap-2">
+          <Ticket className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Mis inscripciones</h2>
+          <span className="text-xs text-muted-foreground">({totalRegistrations} en total)</span>
+        </div>
+        <Separator />
+        {regPreview.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Aún no estás inscrito en ningún evento como participante o asistente.
+          </p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {regPreview.map((ev) => (
+              <li
+                key={ev.id}
+                className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-border/60 bg-card/40 px-3 py-2"
+              >
+                <span className="font-medium">{ev.title}</span>
+                <span className="text-muted-foreground">
+                  {ev.date}
+                  {ev.role ? ` · ${ev.role === "asistente" ? "Asistente" : ev.role === "organizador" ? "Organizador" : "Participante"}` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Link to="/my-registrations" className="text-sm font-medium text-primary hover:underline">
+          Ver todos mis eventos inscritos →
+        </Link>
+      </section>
     </div>
   );
 };

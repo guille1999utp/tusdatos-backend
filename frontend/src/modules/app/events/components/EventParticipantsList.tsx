@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import EventsService from "@/services/app/events/events.service";
 import type { IEventParticipant } from "@/models/app/events/event-participants.model";
+import { getFastApiErrorMessage } from "@/services/utilities/handle-api-error.utility";
+import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -85,11 +87,13 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
 
   const setRole = async (userId: number, role: "usuario" | "asistente", successMsg?: string) => {
     try {
-      await EventsService.updateEventRegistrationRole(eventId, userId, role, () => {});
+      await EventsService.updateEventRegistrationRole(eventId, userId, role, (msg) =>
+        toast.error(msg?.trim() || "No se pudo actualizar el rol")
+      );
       toast.success(successMsg ?? "Rol actualizado");
       await emitChanged();
     } catch {
-      toast.error("No se pudo actualizar el rol");
+      // 400/422: `handleApiErrors` ya invocó el callback con `detail` del API.
     }
   };
 
@@ -99,8 +103,12 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
       await EventsService.transferOrganizer(eventId, userId);
       toast.success("Titular del evento actualizado");
       await emitChanged();
-    } catch {
-      toast.error("No se pudo trasladar la organización");
+    } catch (err) {
+      const msg =
+        axios.isAxiosError(err) && err.response?.data
+          ? getFastApiErrorMessage(err.response.data)
+          : "";
+      toast.error(msg || "No se pudo trasladar la organización");
     }
   };
 

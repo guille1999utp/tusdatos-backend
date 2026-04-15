@@ -270,15 +270,30 @@ def get_my_events(db: Session, user: User, skip: int = 0, limit: int = 10, q: Op
     return serialized, total
 
 
-def get_my_events_registration(db: Session, user: User, skip: int = 0, limit: int = 10):
-    registrations = (
-        db.query(EventRegistration)
+def get_my_events_registration(
+    db: Session,
+    user: User,
+    skip: int = 0,
+    limit: int = 10,
+    q: Optional[str] = None,
+) -> Tuple[List[dict], int]:
+    """Eventos en los que el usuario tiene fila en `event_registrations` (participante o asistente)."""
+    query = (
+        db.query(Event)
+        .join(EventRegistration, EventRegistration.event_id == Event.id)
         .filter(EventRegistration.user_id == user.id)
-        .offset(skip)
-        .limit(limit)
-        .all()
     )
-    return [reg.event for reg in registrations]
+    if q:
+        query = query.filter(Event.title.ilike(f"%{q}%"))
+    total = query.count()
+    items = query.order_by(Event.id.desc()).offset(skip).limit(limit).all()
+    totals = _total_inscritos_por_eventos(db, items)
+    serialized = []
+    for e in items:
+        row = _serialize_event_list_item(db, e, viewer=user)
+        row["total_inscritos"] = totals[e.id]
+        serialized.append(row)
+    return serialized, total
 
 
 def create_event(db: Session, event: EventCreate, user: User):

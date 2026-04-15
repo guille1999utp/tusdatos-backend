@@ -16,6 +16,9 @@ const AllEvents = lazy(() => import("./app/all-events/AllEvents").then((mod) => 
 const AssistantEvents = lazy(() =>
   import("./app/assistant-events/AssistantEvents").then((mod) => ({ default: mod.AssistantEvents }))
 );
+const MyRegisteredEvents = lazy(() =>
+  import("./app/my-registrations/MyRegisteredEvents").then((mod) => ({ default: mod.MyRegisteredEvents }))
+);
 const Profile = lazy(() => import("./app/profile/Profile").then((mod) => ({ default: mod.Profile })));
 const AdminDashboard = lazy(() => import("./app/admin/AdminDashboard"));
 const AdminEvents = lazy(() => import("./app/admin/AdminEvents"));
@@ -43,6 +46,7 @@ function App() {
                   <Route path="events" element={<Events />} />
                   <Route path="all-events" element={<AllEvents />} />
                   <Route path="assistant-events" element={<AssistantEvents />} />
+                  <Route path="my-registrations" element={<MyRegisteredEvents />} />
                   <Route path="profile" element={<Profile />} />
                   <Route element={<RoleRoute allowedRoles={["admin"]} />}>
                     <Route path="admin" element={<AdminDashboard />} />

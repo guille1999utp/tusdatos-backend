@@ -152,10 +152,3 @@ export const deleteEvents = createAsyncThunk(
         }
     }
 );
-
-// export const cancelRequestEvents = createAsyncThunk(
-//   'vehicle-programming-scenario/cancel-request',
-//   async () => {
-//     EventsService.cancelRequest();
-//   }
-// );

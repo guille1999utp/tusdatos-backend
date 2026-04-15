@@ -12,6 +12,7 @@ import {
   Users,
   UserCheck,
   PanelsTopLeft,
+  Ticket,
 } from "lucide-react";
 import React, { useContext } from "react";
 import { Dock, DockIcon } from "../magicui/dock";
@@ -47,6 +48,11 @@ export function DockDemo() {
         <DockIcon>
           <Link to="/all-events" className="flex h-full items-center justify-center" title="Explorar eventos">
             <Icons.allevents className="size-6" />
+          </Link>
+        </DockIcon>
+        <DockIcon>
+          <Link to="/my-registrations" className="flex h-full items-center justify-center" title="Mis inscripciones">
+            <Icons.registrations className="size-6" />
           </Link>
         </DockIcon>
         <DockIcon>
@@ -130,6 +136,9 @@ const Icons = {
   ),
   assistant: (props: IconProps) => (
     <UserCheck {...props} />
+  ),
+  registrations: (props: IconProps) => (
+    <Ticket {...props} />
   ),
   profile: (props: IconProps) => (
     <UserCircle {...props} />

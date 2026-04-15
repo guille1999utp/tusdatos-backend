@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import EventsService from "@/services/app/events/events.service";
 import type { IEvents } from "@/models/app/events/events.model";
 import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router-dom";
 
 export const Profile = () => {
   const { user } = useAuth();
@@ -14,8 +15,8 @@ export const Profile = () => {
     const loadEvents = async () => {
       setIsLoading(true);
       try {
-        const response = await EventsService.getMyRegistrations();
-        setEvents(response);
+        const response = await EventsService.getMyRegistrations({ skip: "0", limit: "50" });
+        setEvents(response.items);
       } finally {
         setIsLoading(false);
       }
@@ -37,7 +38,12 @@ export const Profile = () => {
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold">Eventos a los que estoy registrado</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold">Eventos a los que estoy registrado</h2>
+          <Link to="/my-registrations" className="text-sm font-medium text-primary hover:underline">
+            Ver página con búsqueda y paginación →
+          </Link>
+        </div>
         {isLoading && <p>Cargando eventos...</p>}
         {!isLoading && events.length === 0 && <p>No tienes registros todavía.</p>}
         {!isLoading && events.length > 0 && (

@@ -88,14 +88,16 @@ def get_my_assistant_events_endpoint(
     return {"items": items, "total": total}
 
 
-@router.get("/my-events-registers", response_model=List[EventResponse])
+@router.get("/my-events-registers", response_model=PaginatedEvents)
 def get_my_events_registration_endpoint(
     skip: int = 0,
     limit: int = 10,
+    q: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return get_my_events_registration(db, skip=skip, limit=limit, user=current_user)
+    items, total = get_my_events_registration(db, skip=skip, limit=limit, user=current_user, q=q)
+    return {"items": items, "total": total}
 
 
 @router.get("/search/by-title", response_model=List[EventResponse])
