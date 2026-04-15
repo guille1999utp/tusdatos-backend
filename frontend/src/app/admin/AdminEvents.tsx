@@ -14,11 +14,13 @@ import { AdminEventRegistrations } from "@/modules/app/admin/AdminEventRegistrat
 import type { IEvents } from "@/models/app/events/events.model";
 import { toast } from "react-toastify";
 import { useDebounce } from "@/lib/useDebounce";
+import { useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
 export default function AdminEvents() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { listEvents, totalListEvents, isLoadingGetEvents, isLoadingDeleteEvents } = useAppSelector((s) => s.events);
 
   const [page, setPage] = useState(0);
@@ -68,7 +70,11 @@ export default function AdminEvents() {
     },
     (id) => setConfirmDel({ open: true, id }),
     (id, soloParticipantes) => setAssignOpen({ open: true, id, soloParticipantes: !!soloParticipantes }),
-    { globalRole: "admin", onRegistrations: (id) => setRegOpen({ open: true, id }) }
+    {
+      globalRole: "admin",
+      onRegistrations: (id) => setRegOpen({ open: true, id }),
+      onManageSessions: (id) => navigate(`/events/${id}`),
+    }
   );
 
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));

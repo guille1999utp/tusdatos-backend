@@ -12,6 +12,7 @@ const Home = lazy(() => import("./app/home/Home"));
 const SignIn = lazy(() => import("./app/SignIn"));
 const Register = lazy(() => import("./app/Register"));
 const Events = lazy(() => import("./app/events/Events").then((mod) => ({ default: mod.Events })));
+const EventDetail = lazy(() => import("./app/events/EventDetail"));
 const AllEvents = lazy(() => import("./app/all-events/AllEvents").then((mod) => ({ default: mod.AllEvents })));
 const AssistantEvents = lazy(() =>
   import("./app/assistant-events/AssistantEvents").then((mod) => ({ default: mod.AssistantEvents }))
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/register" element={<Register />} />
               </Route>
+              <Route path="/events/:eventId" element={<EventDetail />} />
 
               <Route element={<PrivateRoute />}>
                 <Route element={<AdminPanelLayout />}>

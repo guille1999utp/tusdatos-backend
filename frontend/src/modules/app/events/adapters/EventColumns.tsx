@@ -14,6 +14,8 @@ type EventRowActionsOpts = {
   globalRole: string
   /** Panel admin: abre gestión de inscritos del evento. */
   onRegistrations?: (eventId: number) => void
+  /** Abre detalle/gestión de sesiones del evento. */
+  onManageSessions?: (eventId: number) => void
 }
 
 function rowActionFlags(globalRole: string, eventRole: string | null | undefined) {
@@ -44,6 +46,32 @@ export const columnsEvents = (
     cell: ({ row }: { row: { getValue: (k: string) => unknown } }) => (
       <div className="capitalize">{String(row.getValue("title"))}</div>
     ),
+  },
+  {
+    accessorKey: "role",
+    header: "Mi rol",
+    cell: ({ row }: { row: { original: IEvents } }) => {
+      const role = row.original.role ?? "usuario"
+      if (role === "organizador") {
+        return (
+          <span className="inline-flex rounded-md border border-violet-600/50 bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-900 dark:text-violet-100">
+            Mío (Organizador)
+          </span>
+        )
+      }
+      if (role === "asistente") {
+        return (
+          <span className="inline-flex rounded-md border border-sky-600/50 bg-sky-500/15 px-2 py-0.5 text-xs font-semibold text-sky-900 dark:text-sky-100">
+            Asistente
+          </span>
+        )
+      }
+      return (
+        <span className="inline-flex rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-900 dark:text-emerald-100">
+          Participante
+        </span>
+      )
+    },
   },
   {
     accessorKey: "total_inscritos",
@@ -101,6 +129,11 @@ export const columnsEvents = (
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {opts.onManageSessions ? (
+                <DropdownMenuItem onClick={() => opts.onManageSessions!(Number(row.original.id))}>
+                  {canEdit || opts.globalRole === "admin" ? "Gestionar sesiones" : "Ver sesiones"}
+                </DropdownMenuItem>
+              ) : null}
               {canEdit ? (
                 <DropdownMenuItem onClick={() => handleOpenDialogAndSetCurrentWorkshops(row.original)}>
                   Editar

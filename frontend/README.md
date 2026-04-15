@@ -45,8 +45,29 @@ npm run dev
 - `/register`
 - `/dashboard`
 - `/events` (mis eventos)
+- `/events/:eventId` (detalle de evento + sesiones)
 - `/all-events` (eventos disponibles)
+- `/my-registrations` (eventos en los que estoy inscrito)
 - `/profile` (usuario + eventos registrados)
+
+## Estructura del frontend
+
+Organización principal del código:
+
+- `src/app/*`: pantallas/rutas (login, register, dashboard, eventos, perfil, admin).
+- `src/modules/*`: componentes de dominio por módulo (formularios de eventos, asignaciones, listados).
+- `src/components/*`: componentes reutilizables de UI (botones, inputs, tablas, dialogs, layout).
+- `src/services/*`: capa de acceso HTTP al backend (auth, eventos, roles, usuarios) + utilidades de error.
+- `src/redux/*`: estado global con Redux Toolkit (slices, thunks, store).
+- `src/hooks/*`: hooks reutilizables para tabla, auth y estado de diálogos.
+- `src/models/*`: contratos TypeScript para requests/responses del API.
+
+Flujo general:
+
+1. Las pantallas llaman hooks y/o thunks.
+2. Los thunks usan `services` para consumir el API REST.
+3. Los resultados actualizan Redux o estado local de la vista.
+4. Los errores se procesan en `handleApiErrors` y se muestran con feedback visual (toasts).
 
 ## Lógica actual de roles y permisos
 

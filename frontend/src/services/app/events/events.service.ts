@@ -3,6 +3,7 @@ import type { IDeleteEventsReq, IDeleteEventsResp } from "@/models/app/events/de
 import type { IGetEventsResp } from "@/models/app/events/get-all/get-all-events.model";
 import type { IEvents } from "@/models/app/events/events.model";
 import type { IPaginatedEventParticipants } from "@/models/app/events/event-participants.model";
+import type { IEventSession, IEventSessionCreate } from "@/models/app/events/event-sessions.model";
 import type { IInsertEventsReq, IInsertEventsResp, IUpdateEventsReq } from "@/models/app/events/insert/insert-events.model";
 import { handleApiErrors } from "@/services/utilities/handle-api-error.utility";
 import { transformToQueryString } from "@/services/utilities/transformToQueryString";
@@ -44,6 +45,21 @@ export default class EventsService {
     public static async getById(id: number): Promise<IEvents> {
         return handleApiErrors<IEvents>(() => clientHTTP.get<IEvents>(`event/${id}`));
     }
+
+      public static async getSessions(eventId: number): Promise<IEventSession[]> {
+        return handleApiErrors<IEventSession[]>(() => clientHTTP.get<IEventSession[]>(`event/${eventId}/sessions`));
+      }
+
+      public static async createSession(
+        eventId: number,
+        payload: IEventSessionCreate,
+        errorCallback: (msg: string) => void
+      ): Promise<IEventSession> {
+        return handleApiErrors<IEventSession>(
+          () => clientHTTP.post<IEventSession>(`event/${eventId}/sessions`, payload),
+          errorCallback
+        );
+      }
 
     public static async getMyRegistrations(filters?: IFilters): Promise<IGetEventsResp> {
         return handleApiErrors<IGetEventsResp>(() =>

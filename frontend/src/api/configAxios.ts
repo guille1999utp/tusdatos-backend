@@ -46,7 +46,7 @@ class ClientHTTP {
             async (error: AxiosError) => {
                 if (error.response && error.response.status === 401) {
                     Cookies.remove("token"); // Borrar el token
-                    window.location.href = "/login"; // Redirigir a login (puedes ajustar esto según tu flujo)
+                    window.location.href = "/"; // Redirigir al home público
                 }
 
                 return Promise.reject(error);

@@ -10,6 +10,7 @@ import { useMemo, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/lib/useDebounce"
+import { Link } from "react-router-dom"
 
 const PAGE_SIZE = 9
 
@@ -45,6 +46,9 @@ export const AllEvents = () => {
   const [openModal, setOpenModal] = useState<{ open: boolean; event: IEvents | null }>({ open: false, event: null })
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState("")
+  const [stateFilter, setStateFilter] = useState("")
+  const [minCapacity, setMinCapacity] = useState("")
+  const [maxCapacity, setMaxCapacity] = useState("")
   const debouncedSearch = useDebounce(search, 400)
 
   const filters = useMemo(
@@ -52,8 +56,11 @@ export const AllEvents = () => {
       skip: String(page * PAGE_SIZE),
       limit: String(PAGE_SIZE),
       ...(debouncedSearch.trim() ? { q: debouncedSearch.trim() } : {}),
+      ...(stateFilter ? { state: stateFilter } : {}),
+      ...(minCapacity ? { min_capacity: minCapacity } : {}),
+      ...(maxCapacity ? { max_capacity: maxCapacity } : {}),
     }),
-    [page, debouncedSearch]
+    [page, debouncedSearch, stateFilter, minCapacity, maxCapacity]
   )
 
   const { listEvents, onMounted, totalListEvents, isLoadingGetEvents } = useTableAllListEvents(filters)
@@ -69,16 +76,52 @@ export const AllEvents = () => {
           </h1>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div className="w-full max-w-md space-y-1">
+          <div className="w-full space-y-2">
             <label className="text-sm text-muted-foreground">Buscar eventos</label>
-            <Input
-              placeholder="Título…"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value)
-                setPage(0)
-              }}
-            />
+            <div className="grid gap-2 md:grid-cols-4">
+              <Input
+                placeholder="Título…"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  setPage(0)
+                }}
+              />
+              <select
+                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                value={stateFilter}
+                onChange={(e) => {
+                  setStateFilter(e.target.value)
+                  setPage(0)
+                }}
+              >
+                <option value="">Todos los estados</option>
+                <option value="scheduled">Programado</option>
+                <option value="ongoing">En curso</option>
+                <option value="completed">Completado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+              <Input
+                type="number"
+                min={1}
+                placeholder="Capacidad mín."
+                value={minCapacity}
+                onChange={(e) => {
+                  setMinCapacity(e.target.value)
+                  setPage(0)
+                }}
+              />
+              <Input
+                type="number"
+                min={1}
+                placeholder="Capacidad máx."
+                value={maxCapacity}
+                onChange={(e) => {
+                  setMaxCapacity(e.target.value)
+                  setPage(0)
+                }}
+              />
+            </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button
@@ -168,6 +211,15 @@ export const AllEvents = () => {
                     </div>
                     <div className="text-base !m-0 !p-0 font-normal">
                       <span className="text-slate-500 ">{event.date}</span>
+                    </div>
+                    <div className="pt-2">
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="text-sm font-medium text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Ver detalle y sesiones
+                      </Link>
                     </div>
                     <div
                       className={cn(

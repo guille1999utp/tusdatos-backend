@@ -41,6 +41,8 @@ export const Events = () => {
   } = useTableListEvents()
 
   const totalPages = Math.max(1, Math.ceil(totalMyEvents / pageSize))
+  const mineCount = listMyEvents.filter((e) => e.role === "organizador").length
+  const assistantCount = listMyEvents.filter((e) => e.role === "asistente").length
 
   return (
     <>
@@ -96,6 +98,20 @@ export const Events = () => {
             >
               Siguiente
             </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Eventos listados</p>
+            <p className="text-xl font-semibold">{totalMyEvents}</p>
+          </div>
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Eventos míos</p>
+            <p className="text-xl font-semibold">{mineCount}</p>
+          </div>
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Como asistente</p>
+            <p className="text-xl font-semibold">{assistantCount}</p>
           </div>
         </div>
         <Separator />

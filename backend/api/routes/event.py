@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from datetime import date as date_cls
 from database.main import get_db
 from schemas.main import (
     EventCreate,
@@ -55,10 +56,26 @@ def get_events_endpoint(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional),
 ):
-    items, total = get_events(db, user=current_user, skip=skip, limit=limit, q=q)
+    items, total = get_events(
+        db,
+        user=current_user,
+        skip=skip,
+        limit=limit,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     return {"items": items, "total": total}
 
 
@@ -67,10 +84,26 @@ def get_my_events_endpoint(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    items, total = get_my_events(db, user=current_user, skip=skip, limit=limit, q=q)
+    items, total = get_my_events(
+        db,
+        user=current_user,
+        skip=skip,
+        limit=limit,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     return {"items": items, "total": total}
 
 
@@ -79,11 +112,25 @@ def get_my_assistant_events_endpoint(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     items, total = get_my_assistant_events(
-        db, user=current_user, skip=skip, limit=limit, q=q
+        db,
+        user=current_user,
+        skip=skip,
+        limit=limit,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
     )
     return {"items": items, "total": total}
 
@@ -93,10 +140,26 @@ def get_my_events_registration_endpoint(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    items, total = get_my_events_registration(db, skip=skip, limit=limit, user=current_user, q=q)
+    items, total = get_my_events_registration(
+        db,
+        skip=skip,
+        limit=limit,
+        user=current_user,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     return {"items": items, "total": total}
 
 
@@ -146,7 +209,7 @@ def list_event_registrations_endpoint(
 def list_event_sessions_endpoint(
     event_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     return get_event_sessions(db, event_id)
 

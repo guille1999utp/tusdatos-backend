@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     Cookies.remove('token');
     setUser(null);
-    navigate('/login');
+    navigate('/');
   };
 
   return (

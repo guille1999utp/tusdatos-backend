@@ -6,12 +6,14 @@ import useDialogState from "./useDialogState";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { useDebounce } from "@/lib/useDebounce";
+import { useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
 export const useTableListEvents = () => {
     const dispatch = useAppDispatch();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [regOpen, setRegOpen] = useState<{ open: boolean; id: number }>({ open: false, id: 0 });
 
@@ -72,6 +74,7 @@ export const useTableListEvents = () => {
         handleOpenAssignUser,
         {
             globalRole: user?.role ?? "usuario",
+            onManageSessions: (eventId: number) => navigate(`/events/${eventId}`),
             ...(user?.role === "admin"
                 ? { onRegistrations: (eventId: number) => setRegOpen({ open: true, id: eventId }) }
                 : {}),

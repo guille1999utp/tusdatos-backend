@@ -254,6 +254,15 @@ export default function Home() {
                       <div className="text-base !m-0 !p-0 font-normal">
                         <span className="text-slate-500 ">{event.date}</span>
                       </div>
+                      <div className="pt-2">
+                        <Link
+                          to={`/events/${event.id}`}
+                          className="text-sm font-medium text-primary hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Ver detalle y sesiones
+                        </Link>
+                      </div>
                       <div
                         className={cn(
                           "flex flex-1 w-full rounded-lg mt-4 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500",

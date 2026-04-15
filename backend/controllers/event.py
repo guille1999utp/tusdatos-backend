@@ -3,7 +3,7 @@ from datetime import date as date_cls
 from sqlalchemy import exists, func, or_
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from models.event import Event, EventRegistration, EventSession
+from models.event import Event, EventRegistration, EventSession, EventStateEnum
 from models.roles import EventRegistrationRoleEnum, UserRoleEnum
 from models.user import User
 from schemas.main import (
@@ -26,6 +26,37 @@ from core.permissions import (
     is_event_asistente,
     is_event_creator,
 )
+
+
+def _apply_event_filters(
+    query,
+    q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
+):
+    if q:
+        query = query.filter(Event.title.ilike(f"%{q}%"))
+
+    if state:
+        valid_states = {e.value for e in EventStateEnum}
+        if state not in valid_states:
+            raise HTTPException(status_code=400, detail="Invalid event state filter")
+        query = query.filter(Event.state == EventStateEnum(state))
+
+    if date_from:
+        query = query.filter(Event.date >= date_from)
+    if date_to:
+        query = query.filter(Event.date <= date_to)
+
+    if min_capacity is not None:
+        query = query.filter(Event.capacity >= min_capacity)
+    if max_capacity is not None:
+        query = query.filter(Event.capacity <= max_capacity)
+
+    return query
 
 
 def _attendee_count(event: Event) -> int:
@@ -201,10 +232,22 @@ def get_events(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
 ) -> Tuple[List[dict], int]:
     query = db.query(Event)
-    if q:
-        query = query.filter(Event.title.ilike(f"%{q}%"))
+    query = _apply_event_filters(
+        query,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     total = query.count()
     items = query.order_by(Event.id.desc()).offset(skip).limit(limit).all()
     totals = _total_inscritos_por_eventos(db, items)
@@ -222,6 +265,11 @@ def get_my_assistant_events(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
 ) -> Tuple[List[dict], int]:
     """Eventos donde el usuario es asistente del staff (no incluye solo ser organizador)."""
     query = (
@@ -232,8 +280,15 @@ def get_my_assistant_events(
             EventRegistration.role == EventRegistrationRoleEnum.asistente,
         )
     )
-    if q:
-        query = query.filter(Event.title.ilike(f"%{q}%"))
+    query = _apply_event_filters(
+        query,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     total = query.count()
     items = query.order_by(Event.id.desc()).offset(skip).limit(limit).all()
     totals = _total_inscritos_por_eventos(db, items)
@@ -245,7 +300,18 @@ def get_my_assistant_events(
     return serialized, total
 
 
-def get_my_events(db: Session, user: User, skip: int = 0, limit: int = 10, q: Optional[str] = None):
+def get_my_events(
+    db: Session,
+    user: User,
+    skip: int = 0,
+    limit: int = 10,
+    q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
+):
     """Eventos creados por el usuario o aquellos donde es asistente del staff."""
     assistant_event_ids = (
         db.query(EventRegistration.event_id)
@@ -257,8 +323,15 @@ def get_my_events(db: Session, user: User, skip: int = 0, limit: int = 10, q: Op
     query = db.query(Event).filter(
         or_(Event.created_by == user.id, Event.id.in_(assistant_event_ids))
     )
-    if q:
-        query = query.filter(Event.title.ilike(f"%{q}%"))
+    query = _apply_event_filters(
+        query,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     total = query.count()
     items = query.order_by(Event.id.desc()).offset(skip).limit(limit).all()
     totals = _total_inscritos_por_eventos(db, items)
@@ -276,6 +349,11 @@ def get_my_events_registration(
     skip: int = 0,
     limit: int = 10,
     q: Optional[str] = None,
+    state: Optional[str] = None,
+    date_from: Optional[date_cls] = None,
+    date_to: Optional[date_cls] = None,
+    min_capacity: Optional[int] = None,
+    max_capacity: Optional[int] = None,
 ) -> Tuple[List[dict], int]:
     """Eventos en los que el usuario tiene fila en `event_registrations` (participante o asistente)."""
     query = (
@@ -283,8 +361,15 @@ def get_my_events_registration(
         .join(EventRegistration, EventRegistration.event_id == Event.id)
         .filter(EventRegistration.user_id == user.id)
     )
-    if q:
-        query = query.filter(Event.title.ilike(f"%{q}%"))
+    query = _apply_event_filters(
+        query,
+        q=q,
+        state=state,
+        date_from=date_from,
+        date_to=date_to,
+        min_capacity=min_capacity,
+        max_capacity=max_capacity,
+    )
     total = query.count()
     items = query.order_by(Event.id.desc()).offset(skip).limit(limit).all()
     totals = _total_inscritos_por_eventos(db, items)
@@ -671,7 +756,7 @@ def search_users_for_event(
 ):
     event = db.query(Event).filter(Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail="Evento no encontrado")
 
     if not can_manage_event_staff(db, current_user, event):
         raise HTTPException(status_code=403, detail="No autorizado para buscar usuarios en este evento")
@@ -698,20 +783,20 @@ def search_users_for_event(
 def get_event_sessions(db: Session, event_id: int) -> List[EventSession]:
     event = db.query(Event).filter(Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail="Evento no encontrado")
     return event.sessions
 
 
 def create_event_session(db: Session, event_id: int, session_data: EventSessionCreate, current_user: User) -> EventSession:
     event = db.query(Event).filter(Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail="Evento no encontrado")
 
     if event.created_by != current_user.id and not is_admin(current_user):
-        raise HTTPException(status_code=403, detail="Not authorized to manage sessions for this event")
+        raise HTTPException(status_code=403, detail="No autorizado para gestionar sesiones para este evento")
 
     if session_data.capacity > event.capacity:
-        raise HTTPException(status_code=400, detail="Session capacity cannot exceed event capacity")
+        raise HTTPException(status_code=400, detail="La capacidad de la sesión no puede superar la capacidad del evento")
 
     overlaps = (
         db.query(EventSession)
@@ -723,7 +808,7 @@ def create_event_session(db: Session, event_id: int, session_data: EventSessionC
         .count()
     )
     if overlaps > 0:
-        raise HTTPException(status_code=400, detail="Session schedule overlaps with another session")
+        raise HTTPException(status_code=400, detail="La programación de la sesión se solapa con otra sesión")
 
     db_session = EventSession(event_id=event_id, **session_data.model_dump())
     db.add(db_session)

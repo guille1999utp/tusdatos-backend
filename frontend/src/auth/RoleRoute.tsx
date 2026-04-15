@@ -13,7 +13,7 @@ export function RoleRoute({ allowedRoles }: RoleRouteProps) {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (!allowedRoles.includes(user.role)) {

@@ -11,7 +11,7 @@ export const PrivateRoute = () => {
 
   // Si no hay usuario autenticado, redirigir al login
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Si el usuario está autenticado, mostrar las rutas protegidas

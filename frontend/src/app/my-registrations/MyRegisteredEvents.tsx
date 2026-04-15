@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import EventsService from "@/services/app/events/events.service";
+import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 9;
 
@@ -185,6 +186,15 @@ export const MyRegisteredEvents = () => {
                       </div>
                       <div className="text-base !m-0 !p-0 font-normal">
                         <span className="text-slate-500 ">{event.date}</span>
+                      </div>
+                      <div className="pt-2">
+                        <Link
+                          to={`/events/${event.id}`}
+                          className="text-sm font-medium text-primary hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Ver detalle y sesiones
+                        </Link>
                       </div>
                       <div
                         className={cn(
