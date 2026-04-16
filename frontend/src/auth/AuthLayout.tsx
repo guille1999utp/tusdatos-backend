@@ -1,3 +1,4 @@
+import Grainient from "@/components/ui/grainient";
 import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
@@ -7,8 +8,36 @@ const AuthLayout = () => {
       <div className="hidden xl:block relative h-screen w-1/2  p-6  ">
         <div className="relative h-full w-full">
           {/* Card con texto y fondo, SIN overflow-hidden */}
-          <div className="relative h-full w-full shadow-lg border-2 border-secondary bg-primary dark:border dark:border-white/40 rounded-[3rem]">
-            <p className="text-white md:text-2xl  lg:text-3xl xl:text-4xl 2xl:text-6xl font-bold leading-tight text-center 2xl:mx-20 mt-10">
+          <div className="relative h-full w-full shadow-lg border border-secondary dark:border dark:border-white/40 rounded-[3rem]">
+            {/* Grainient Background */}
+            <div className="absolute inset-0 z-0 pointer-events-none ">
+              <Grainient
+                className=" inset-0 rounded-[3rem]"
+                color1="#583cd6"
+                color2="#313260"
+                color3="#583cd6"
+                timeSpeed={1}
+                colorBalance={0}
+                warpStrength={1}
+                warpFrequency={5.5}
+                warpSpeed={3}
+                warpAmplitude={50}
+                blendAngle={0}
+                blendSoftness={0.05}
+                rotationAmount={500}
+                noiseScale={2}
+                grainAmount={0.1}
+                grainScale={2}
+                grainAnimated={false}
+                contrast={1.1}
+                gamma={1}
+                saturation={1}
+                centerX={0}
+                centerY={0}
+                zoom={0.9}
+              />
+            </div>
+            <p className="text-white md:text-2xl z-10 relative lg:text-3xl xl:text-5xl 2xl:text-7xl font-extrabold leading-tight text-center 2xl:mx-20 mt-24">
               &quot;TUS EVENTOS, EN UN SOLO LUGAR&quot;
             </p>
 
