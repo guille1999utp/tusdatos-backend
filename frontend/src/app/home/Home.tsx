@@ -1,5 +1,4 @@
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { PinContainer } from "@/components/ui/3d-pin";
 import { Separator } from "@/components/ui/separator";
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
@@ -47,7 +46,10 @@ function isUserEnrolledInEvent(role: string | null | undefined) {
 export default function Home() {
   const { user, logout } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [openModal, setOpenModal] = useState<{ open: boolean; event: IEvents | null }>({
+  const [openModal, setOpenModal] = useState<{
+    open: boolean;
+    event: IEvents | null;
+  }>({
     open: false,
     event: null,
   });
@@ -61,10 +63,11 @@ export default function Home() {
       limit: String(PAGE_SIZE),
       ...(debouncedSearch.trim() ? { q: debouncedSearch.trim() } : {}),
     }),
-    [page, debouncedSearch]
+    [page, debouncedSearch],
   );
 
-  const { listEvents, onMounted, totalListEvents, isLoadingGetEvents } = useTableAllListEvents(filters);
+  const { listEvents, onMounted, totalListEvents, isLoadingGetEvents } =
+    useTableAllListEvents(filters);
 
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
@@ -97,12 +100,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="fixed top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
-          <Link to="/" className="text-sm font-semibold tracking-tight text-foreground">
+      <header className="fixed top-0 z-100 w-full max-md:px-2">
+        <div className="mx-auto flex h-16 max-w-xl rounded-full mt-3 bg-secondary/80 backdrop-blur-md shadow-xl items-center justify-between gap-4 px-4">
+          <Link
+            to="/"
+            className="text-base md:text-xl xl:text-3xl font-extrabold uppercase tracking-tight text-tertiary"
+          >
             Tusdatos
           </Link>
-          <nav className="flex items-center gap-2 text-sm">
+          <nav className="flex items-center gap-1 md:gap-2 text-sm">
             {user ? (
               <>
                 <Link
@@ -127,17 +133,23 @@ export default function Home() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="rounded-md px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  Iniciar sesión
+                <Link to="/login">
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full py-5 md:py-6 font-bold bg-white hover:bg-white text-primary ",
+                    )}
+                  >
+                    Iniciar sesión
+                  </Button>
                 </Link>
-                <Link
-                  to="/register"
-                  className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground hover:opacity-90"
-                >
-                  Registrarse
+                <Link to="/register">
+                  <Button
+                    variant={"main"}
+                    className={cn("w-full py-5 md:py-6 font-bold ")}
+                  >
+                    Registrarse
+                  </Button>
                 </Link>
               </>
             )}
@@ -147,17 +159,19 @@ export default function Home() {
 
       <div className="container xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full bg-background flex flex-col mt-20 gap-10">
         <div className="flex w-full flex-col gap-2">
-          <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-slate-100/50">
-            <AuroraText>Eventos disponibles</AuroraText>
+          <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-primary">
+            Eventos disponibles
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl">
-            Explora los eventos abiertos a inscripción. Si inicias sesión, podrás confirmar tu participación desde el
-            mismo panel.
+            Explora los eventos abiertos a inscripción. Si inicias sesión,
+            podrás confirmar tu participación desde el mismo panel.
           </p>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full max-w-md space-y-1">
-            <label className="text-sm text-muted-foreground">Buscar eventos</label>
+            <label className="text-sm text-muted-foreground">
+              Buscar eventos
+            </label>
             <Input
               placeholder="Título…"
               value={search}
@@ -193,12 +207,16 @@ export default function Home() {
         </div>
         <Separator />
 
-        {isLoadingGetEvents ? <p className="text-muted-foreground">Cargando…</p> : null}
+        {isLoadingGetEvents ? (
+          <p className="text-muted-foreground">Cargando…</p>
+        ) : null}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {listEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center w-full h-full col-span-full">
-              <h2 className="text-2xl font-bold text-slate-100/50">No hay eventos disponibles</h2>
+              <h2 className="text-2xl font-bold text-slate-100/50">
+                No hay eventos disponibles
+              </h2>
             </div>
           ) : (
             listEvents.map((event) => {
@@ -209,7 +227,9 @@ export default function Home() {
                 <div
                   className={cn(
                     "my-4 rounded-xl transition-opacity",
-                    bloqueado ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+                    bloqueado
+                      ? "cursor-not-allowed opacity-80"
+                      : "cursor-pointer",
                   )}
                   key={event.id}
                   onClick={() => {
@@ -230,7 +250,9 @@ export default function Home() {
                   >
                     <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">
                       <div className="flex flex-wrap items-center gap-2 max-w-xs !pb-2">
-                        <h3 className="!m-0 font-bold text-base">{event.title}</h3>
+                        <h3 className="!m-0 font-bold text-base">
+                          {event.title}
+                        </h3>
                         {expirado ? (
                           <span className="shrink-0 rounded-md border border-amber-600/50 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
                             Evento expirado
@@ -248,7 +270,9 @@ export default function Home() {
                         ) : null}
                       </div>
                       <div className="text-base !m-0 !p-0 font-normal">
-                        <span className="text-slate-500 ">{event.description}</span>
+                        <span className="text-slate-500 ">
+                          {event.description}
+                        </span>
                       </div>
                       <div className="text-base !m-0 !p-0 font-normal">
                         <span className="text-slate-500 ">{event.date}</span>
@@ -269,7 +293,7 @@ export default function Home() {
                             ? "bg-gradient-to-br from-zinc-600 via-zinc-700 to-zinc-900"
                             : lleno
                               ? "bg-gradient-to-br from-violet-500 via-red-500 to-red-900"
-                              : "bg-gradient-to-br from-blue-500 via-green-600 to-green-900"
+                              : "bg-gradient-to-br from-blue-500 via-green-600 to-green-900",
                         )}
                       />
                     </div>
@@ -286,11 +310,16 @@ export default function Home() {
         setOpenModal={(o) => {
           if (!o) {
             setOpenModal({ open: false, event: null });
-            if (searchParams.get("eventId")) setSearchParams({}, { replace: true });
+            if (searchParams.get("eventId"))
+              setSearchParams({}, { replace: true });
           }
         }}
       >
-        <FormEventsSuscribe event={openModal.event} setOpenModal={setOpenModal} onMounted={onMounted} />
+        <FormEventsSuscribe
+          event={openModal.event}
+          setOpenModal={setOpenModal}
+          onMounted={onMounted}
+        />
       </MainDialog>
     </div>
   );

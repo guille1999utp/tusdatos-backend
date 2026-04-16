@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
+          "bg-secondary text-white transition-all duration-300 hover:bg-white border shadow-xl text-base md:text-lg px-2 hover:bg-secondary active:scale-95",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
@@ -19,7 +19,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        main: "bg-primary text-white transition-all duration-300 hover:bg-primary hover:drop-shadow-custom text-base md:text-lg",
+        main: "bg-primary text-white transition-all duration-300 hover:bg-primary hover:drop-shadow-custom text-base md:text-lg shadow-xl active:scale-95",
       },
       size: {
         default:
