@@ -12,6 +12,7 @@ import { PrivateRoute } from "./auth/PrivateRoute";
 import { RoleRoute } from "./auth/RoleRoute";
 import { ToastContainer } from "react-toastify";
 import AuthLayout from "./auth/AuthLayout";
+import TransitionProvider from "./providers/TransitionProvider";
 
 const Dashboard = lazy(() =>
   import("./app/dashboard/Dashboard").then((mod) => ({
@@ -52,42 +53,44 @@ function App() {
     <>
       <Router>
         <AuthProvider>
-          <Suspense fallback={<div className="p-4">Cargando...</div>}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Navigate to="/" replace />} />
+          <TransitionProvider>
+            <Suspense fallback={<div className="p-4">Cargando...</div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Navigate to="/" replace />} />
 
-              <Route element={<PublicRoute />}>
-                <Route element={<AuthLayout />}>
-                  <Route path="/login" element={<SignIn />} />
-                  <Route path="/register" element={<Register />} />
-                </Route>
-              </Route>
-              <Route path="/events/:eventId" element={<EventDetail />} />
-
-              <Route element={<PrivateRoute />}>
-                <Route element={<AdminPanelLayout />}>
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="events" element={<Events />} />
-                  <Route path="all-events" element={<AllEvents />} />
-                  <Route
-                    path="assistant-events"
-                    element={<AssistantEvents />}
-                  />
-                  <Route
-                    path="my-registrations"
-                    element={<MyRegisteredEvents />}
-                  />
-                  <Route path="profile" element={<Profile />} />
-                  <Route element={<RoleRoute allowedRoles={["admin"]} />}>
-                    <Route path="admin" element={<AdminDashboard />} />
-                    <Route path="admin/events" element={<AdminEvents />} />
-                    <Route path="admin/users" element={<AdminUsers />} />
+                <Route element={<PublicRoute />}>
+                  <Route element={<AuthLayout />}>
+                    <Route path="/login" element={<SignIn />} />
+                    <Route path="/register" element={<Register />} />
                   </Route>
                 </Route>
-              </Route>
-            </Routes>
-          </Suspense>
+                <Route path="/events/:eventId" element={<EventDetail />} />
+
+                <Route element={<PrivateRoute />}>
+                  <Route element={<AdminPanelLayout />}>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="events" element={<Events />} />
+                    <Route path="all-events" element={<AllEvents />} />
+                    <Route
+                      path="assistant-events"
+                      element={<AssistantEvents />}
+                    />
+                    <Route
+                      path="my-registrations"
+                      element={<MyRegisteredEvents />}
+                    />
+                    <Route path="profile" element={<Profile />} />
+                    <Route element={<RoleRoute allowedRoles={["admin"]} />}>
+                      <Route path="admin" element={<AdminDashboard />} />
+                      <Route path="admin/events" element={<AdminEvents />} />
+                      <Route path="admin/users" element={<AdminUsers />} />
+                    </Route>
+                  </Route>
+                </Route>
+              </Routes>
+            </Suspense>
+          </TransitionProvider>
         </AuthProvider>
       </Router>
       <ToastContainer

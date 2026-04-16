@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
+import TransitionLink from "@/providers/TransitionLink";
 
 const PAGE_SIZE = 9;
 
@@ -100,7 +101,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="fixed top-0 z-100 w-full max-md:px-2">
+      <header className="fixed top-0 z-60 w-full max-md:px-2">
         <div className="mx-auto flex h-16 max-w-xl rounded-full mt-3 bg-secondary/80 backdrop-blur-md shadow-xl items-center justify-between gap-4 px-4">
           <Link
             to="/"
@@ -133,7 +134,7 @@ export default function Home() {
               </>
             ) : (
               <>
-                <Link to="/login">
+                <TransitionLink to="/login">
                   <Button
                     variant={"outline"}
                     className={cn(
@@ -142,15 +143,15 @@ export default function Home() {
                   >
                     Iniciar sesión
                   </Button>
-                </Link>
-                <Link to="/register">
+                </TransitionLink>
+                <TransitionLink to="/register">
                   <Button
                     variant={"main"}
                     className={cn("w-full py-5 md:py-6 font-bold ")}
                   >
                     Registrarse
                   </Button>
-                </Link>
+                </TransitionLink>
               </>
             )}
           </nav>

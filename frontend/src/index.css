@@ -83,6 +83,8 @@
 }
 
 :root {
+   --transition-stroke-1: #9e91e4;
+  --transition-stroke-2: #583cd6;
   --radius:
     0.625rem;
    --background: oklch(94.649% 0.00977 87.439);
@@ -144,7 +146,7 @@
     oklch(0.925 0.005 214.3);
   --sidebar-ring:
     oklch(0.723 0.014 214.4);
-    --drop-shadow-custom:  1px 3px 8px #6249d1;
+    --drop-shadow-custom:  1px 3px 8px #594c96;
 }
 
 .dark {
@@ -228,3 +230,26 @@ body {
   overflow-x: hidden;
   font-family: "Manrope", sans-serif;
 }
+
+
+.transition-svg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.5);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.transition-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+.transition-svg path {
+  stroke-dashoffset: 99999;
+  stroke-dasharray: 99999;
+}
+

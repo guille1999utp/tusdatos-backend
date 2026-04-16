@@ -69,7 +69,7 @@ const Login = () => {
   return (
     <section>
       <div className="mb-6 md:mb-10">
-        <h2 className="text-3xl xl:text-5xl text-center font-extrabold text-primary">
+        <h2 className="text-3xl md:text-4xl xl:text-5xl text-center font-extrabold text-primary">
           Bienvenido a Tusdatos.co
         </h2>
       </div>
