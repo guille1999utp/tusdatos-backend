@@ -1,27 +1,32 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { useAuth } from "../hooks/useAuth";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import authService from "@/services/authService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import authService from "@/services/authService";
 
-type LoginFormInputs = {
-  email: string;
-  password: string;
-};
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-const schema = Yup.object({
-  email: Yup.string()
-    .email("Correo inválido")
-    .required("Este campo es requerido"),
-  password: Yup.string()
-    .min(6, "Mínimo 6 caracteres")
-    .required("Este campo es requerido"),
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Mail01Icon, LockPasswordIcon } from "@hugeicons/core-free-icons";
+
+// schema con zod (mejor que yup para shadcn)
+const schema = z.object({
+  email: z.string().email("Correo inválido"),
+  password: z.string().min(6, "Mínimo 6 caracteres"),
 });
+
+type LoginFormInputs = z.infer<typeof schema>;
 
 const Login = () => {
   const { login } = useAuth();
@@ -31,12 +36,12 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const redirectAfterLogin = searchParams.get("redirect");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormInputs>({
-    resolver: yupResolver(schema),
+  const form = useForm<LoginFormInputs>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
@@ -44,111 +49,131 @@ const Login = () => {
     setFormError(null);
 
     try {
-      const resp = await authService.login(data.email, data.password); // Axios login
+      const resp = await authService.login(data.email, data.password);
+
       const dest =
         redirectAfterLogin &&
         redirectAfterLogin.startsWith("/") &&
         !redirectAfterLogin.startsWith("//")
           ? redirectAfterLogin
           : undefined;
+
       login(resp.access_token, dest);
-    } catch (error: unknown) {
-      setFormError(
-        (error as { response?: { data?: { detail?: string } } }).response?.data
-          ?.detail || "Error al iniciar sesión",
-      );
+    } catch (error: any) {
+      setFormError(error?.response?.data?.detail || "Error al iniciar sesión");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="shadow-input mx-auto w-full max-w-md rounded-3xl bg-white p-4 md:p-8 dark:bg-black">
-      <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
-        Bienvenido a Tusdatos.co
-      </h2>
-      <p className="my-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
-        Ingresa tus datos para iniciar sesión y acceder a tu cuenta.
-      </p>
+    <section>
+      <div className="mb-6 md:mb-10">
+        <h2 className="text-3xl xl:text-5xl text-center font-extrabold text-primary">
+          Bienvenido a Tusdatos.co
+        </h2>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">Dirección correo</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="projectmayhem@fc.com"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
-        </LabelInputContainer>
-
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            {...register("password")}
-          />
-          {errors.password && (
-            <p className="text-sm text-red-500">{errors.password.message}</p>
-          )}
-        </LabelInputContainer>
-
-        {formError && (
-          <div className="mb-4 text-sm text-red-600">{formError}</div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className={cn(
-            "group/btn relative block h-10 w-full rounded-md font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]",
-            "bg-gradient-to-br from-black to-neutral-600 dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900",
-            loading && "opacity-60 cursor-not-allowed",
-          )}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-2 md:space-y-4 mt-4"
         >
-          {loading ? "Cargando..." : "Iniciar sesión →"}
-          <BottomGradient />
-        </button>
+          {/* EMAIL */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <HugeiconsIcon
+                      icon={Mail01Icon}
+                      strokeWidth={2}
+                      className={`size-10 ${
+                        field.value
+                          ? "text-primary"
+                          : "text-muted-foreground/70"
+                      } p-2`}
+                    />
+                  </div>
 
-        <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-200 to-transparent dark:via-neutral-700" />
-      </form>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="correo electrónico"
+                      className="pl-14 py-6 rounded-full"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
 
-      <button
-        className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-gray-50 px-4 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-        type="button"
-        onClick={() => navigate("/register")}
-      >
-        <span className="text-sm text-neutral-700 dark:text-neutral-300 w-full justify-center">
-          Registrarse
-        </span>
-        <BottomGradient />
-      </button>
-    </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* PASSWORD */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                    <HugeiconsIcon
+                      icon={LockPasswordIcon}
+                      strokeWidth={2}
+                      className={`size-10 ${
+                        field.value
+                          ? "text-primary"
+                          : "text-muted-foreground/70"
+                      } p-2`}
+                    />
+                  </div>
+
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="contraseña"
+                      className="pl-14 py-6 rounded-full"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* ERROR */}
+          {formError && <div className="text-sm text-red-500">{formError}</div>}
+
+          {/* BUTTON */}
+          <Button
+            type="submit"
+            variant={"main"}
+            disabled={loading}
+            className={cn("w-full py-6 mt-4 font-bold ")}
+          >
+            {loading ? "Cargando..." : "Iniciar sesión"}
+          </Button>
+
+          {/* REGISTER */}
+          <div className="text-center mt-6">
+            <button
+              type="button"
+              onClick={() => navigate("/register")}
+              className="text-sm md:text-base underline cursor-pointer"
+            >
+              ¿No tienes cuenta? Regístrate
+            </button>
+          </div>
+        </form>
+      </Form>
+    </section>
   );
 };
-
-const BottomGradient = () => (
-  <>
-    <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
-    <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
-  </>
-);
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div className={cn("flex w-full flex-col space-y-2", className)}>
-    {children}
-  </div>
-);
 
 export default Login;
