@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { deleteEvents, getAllEvents } from "@/redux/features/events/events.thunks";
+import {
+  deleteEvents,
+  getAllEvents,
+} from "@/redux/features/events/events.thunks";
 import { columnsEvents } from "@/modules/app/events/adapters/EventColumns";
 import { FormEvents } from "@/modules/app/events/components/FormEvents";
 import { FormAssignUser } from "@/modules/app/events/components/FormAssignUser";
@@ -21,7 +24,12 @@ const PAGE_SIZE = 10;
 export default function AdminEvents() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { listEvents, totalListEvents, isLoadingGetEvents, isLoadingDeleteEvents } = useAppSelector((s) => s.events);
+  const {
+    listEvents,
+    totalListEvents,
+    isLoadingGetEvents,
+    isLoadingDeleteEvents,
+  } = useAppSelector((s) => s.events);
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -33,7 +41,7 @@ export default function AdminEvents() {
       limit: String(PAGE_SIZE),
       ...(debouncedSearch.trim() ? { q: debouncedSearch.trim() } : {}),
     }),
-    [page, debouncedSearch]
+    [page, debouncedSearch],
   );
 
   const refresh = useCallback(async () => {
@@ -45,14 +53,26 @@ export default function AdminEvents() {
   }, [refresh]);
 
   const [openEdit, setOpenEdit] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState<IEvents | null | undefined>(undefined);
-  const [confirmDel, setConfirmDel] = useState<{ open: boolean; id: number }>({ open: false, id: 0 });
-  const [assignOpen, setAssignOpen] = useState<{ open: boolean; id: number; soloParticipantes: boolean }>({
+  const [currentEvent, setCurrentEvent] = useState<IEvents | null | undefined>(
+    undefined,
+  );
+  const [confirmDel, setConfirmDel] = useState<{ open: boolean; id: number }>({
+    open: false,
+    id: 0,
+  });
+  const [assignOpen, setAssignOpen] = useState<{
+    open: boolean;
+    id: number;
+    soloParticipantes: boolean;
+  }>({
     open: false,
     id: 0,
     soloParticipantes: false,
   });
-  const [regOpen, setRegOpen] = useState<{ open: boolean; id: number }>({ open: false, id: 0 });
+  const [regOpen, setRegOpen] = useState<{ open: boolean; id: number }>({
+    open: false,
+    id: 0,
+  });
 
   const handleDelete = async (id: number) => {
     const r = await dispatch(deleteEvents({ params: { id } }));
@@ -69,25 +89,27 @@ export default function AdminEvents() {
       setOpenEdit(true);
     },
     (id) => setConfirmDel({ open: true, id }),
-    (id, soloParticipantes) => setAssignOpen({ open: true, id, soloParticipantes: !!soloParticipantes }),
+    (id, soloParticipantes) =>
+      setAssignOpen({ open: true, id, soloParticipantes: !!soloParticipantes }),
     {
       globalRole: "admin",
       onRegistrations: (id) => setRegOpen({ open: true, id }),
       onManageSessions: (id) => navigate(`/events/${id}`),
-    }
+    },
   );
 
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
   return (
-    <div className="container xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full bg-background flex flex-col mt-20 gap-8">
+    <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h1 className="text-4xl font-bold md:text-5xl">
             <AuroraText>Admin · Eventos</AuroraText>
           </h1>
           <p className="text-muted-foreground text-sm max-w-2xl mt-2">
-            Consulta todos los eventos, edítalos, elimínalos o gestiona inscripciones y asistentes.
+            Consulta todos los eventos, edítalos, elimínalos o gestiona
+            inscripciones y asistentes.
           </p>
         </div>
         <Button
@@ -105,7 +127,9 @@ export default function AdminEvents() {
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
-          <label className="text-sm text-muted-foreground">Buscar por título</label>
+          <label className="text-sm text-muted-foreground">
+            Buscar por título
+          </label>
           <Input
             placeholder="Título…"
             value={search}
@@ -116,7 +140,13 @@ export default function AdminEvents() {
           />
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button type="button" variant="outline" size="sm" disabled={page <= 0} onClick={() => setPage((p) => p - 1)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page <= 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
             Anterior
           </Button>
           <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -134,7 +164,9 @@ export default function AdminEvents() {
         </div>
       </div>
       <Separator />
-      {isLoadingGetEvents ? <p className="text-muted-foreground">Cargando…</p> : null}
+      {isLoadingGetEvents ? (
+        <p className="text-muted-foreground">Cargando…</p>
+      ) : null}
       <DataTableDemo columns={columns} data={listEvents} />
 
       <MainDialog
@@ -158,7 +190,11 @@ export default function AdminEvents() {
           if (!open) setConfirmDel({ open: false, id: 0 });
         }}
       >
-        <Button disabled={isLoadingDeleteEvents} variant="destructive" onClick={() => handleDelete(confirmDel.id)}>
+        <Button
+          disabled={isLoadingDeleteEvents}
+          variant="destructive"
+          onClick={() => handleDelete(confirmDel.id)}
+        >
           {isLoadingDeleteEvents ? "Eliminando…" : "Eliminar evento"}
         </Button>
       </MainDialog>
@@ -167,7 +203,8 @@ export default function AdminEvents() {
         title="Asignar usuario"
         open={assignOpen.open}
         setOpenModal={(open) => {
-          if (!open) setAssignOpen({ open: false, id: 0, soloParticipantes: false });
+          if (!open)
+            setAssignOpen({ open: false, id: 0, soloParticipantes: false });
         }}
       >
         {assignOpen.open ? (
@@ -176,7 +213,9 @@ export default function AdminEvents() {
             idEvent={assignOpen.id}
             soloParticipantes={assignOpen.soloParticipantes}
             onMounted={refresh}
-            closeModal={() => setAssignOpen({ open: false, id: 0, soloParticipantes: false })}
+            closeModal={() =>
+              setAssignOpen({ open: false, id: 0, soloParticipantes: false })
+            }
           />
         ) : null}
       </MainDialog>
@@ -188,7 +227,12 @@ export default function AdminEvents() {
           if (!open) setRegOpen({ open: false, id: 0 });
         }}
       >
-        {regOpen.open ? <AdminEventRegistrations eventId={regOpen.id} onEventsListRefresh={refresh} /> : null}
+        {regOpen.open ? (
+          <AdminEventRegistrations
+            eventId={regOpen.id}
+            onEventsListRefresh={refresh}
+          />
+        ) : null}
       </MainDialog>
     </div>
   );

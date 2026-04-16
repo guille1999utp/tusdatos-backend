@@ -1,25 +1,18 @@
 import { Outlet } from "react-router-dom";
-
-// Utilities
-import { cn } from "@/lib/utils";
-import { DockDemo } from "@/components/dock/DockMagic";
-// import type { RootState } from "@/redux/store";
+import { SidebarInset, SidebarProvider } from "../ui/sidebar";
+import { AppSidebar } from "./app-sidebar";
 
 export default function AdminPanelLayout() {
-  // const settings = useSelector((state: RootState) => state.sidebar.settings);
-  // const getOpenState = useSelector(selectSidebarOpenState);
-
   return (
-      <div className="overflow-hidden relative">
-        <DockDemo />
-        <main
-          className={cn(
-            "min-h-[100vh] pb-[22%] lg:pb-0 transition-[margin-left] ease-in-out duration-300"
-          )}
-        >
-          <Outlet />
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <main className="flex-1 md:p-4 xl:p-6 ">
+          <div className="p-4 sm:p-6 md:p-8 xl:p-10 min-h-[calc(100vh-3rem)] bg-white flex flex-col gap-10 md:rounded-4xl">
+            <Outlet />
+          </div>
         </main>
-      </div>
-
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -12,10 +12,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useState } from "react";
-import { getAllEvents, getMyEvents } from "@/redux/features/events/events.thunks";
+import {
+  getAllEvents,
+  getMyEvents,
+} from "@/redux/features/events/events.thunks";
 import { Separator } from "@/components/ui/separator";
 import EventsService from "@/services/app/events/events.service";
 import type { IEvents } from "@/models/app/events/events.model";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Highlight = ({
   children,
@@ -28,7 +32,7 @@ export const Highlight = ({
     <span
       className={cn(
         "font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200 px-1 py-0.5",
-        className
+        className,
       )}
     >
       {children}
@@ -85,7 +89,9 @@ const features = [
     description: "Organizas o apoyas como asistente.",
     href: "/events",
     cta: "Ver",
-    background: <img className="absolute -right-20 -top-20 opacity-60" alt="" />,
+    background: (
+      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
+    ),
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3 ",
   },
   {
@@ -94,7 +100,9 @@ const features = [
     description: "Solo eventos donde eres del staff.",
     href: "/assistant-events",
     cta: "Ver",
-    background: <img className="absolute -right-20 -top-20 opacity-60" alt="" />,
+    background: (
+      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
+    ),
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
   },
   {
@@ -103,7 +111,9 @@ const features = [
     description: "Vista de bienvenida con el catálogo (también sin sesión).",
     href: "/",
     cta: "Ir",
-    background: <img className="absolute -right-20 -top-20 opacity-60" alt="" />,
+    background: (
+      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
+    ),
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
@@ -112,7 +122,9 @@ const features = [
     description: "Tus datos y preferencias de cuenta.",
     href: "/profile",
     cta: "Abrir",
-    background: <img className="absolute -right-20 -top-20 opacity-60" alt="" />,
+    background: (
+      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
+    ),
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
   },
 ];
@@ -120,7 +132,8 @@ const features = [
 export const Dashboard = () => {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
-  const { listEvents, listMyEvents, totalListEvents, totalMyEvents } = useAppSelector((s) => s.events);
+  const { listEvents, listMyEvents, totalListEvents, totalMyEvents } =
+    useAppSelector((s) => s.events);
   const [regPreview, setRegPreview] = useState<IEvents[]>([]);
   const [totalRegistrations, setTotalRegistrations] = useState(0);
 
@@ -132,7 +145,10 @@ export const Dashboard = () => {
   useEffect(() => {
     void (async () => {
       try {
-        const r = await EventsService.getMyRegistrations({ skip: "0", limit: "6" });
+        const r = await EventsService.getMyRegistrations({
+          skip: "0",
+          limit: "6",
+        });
         setRegPreview(r.items);
         setTotalRegistrations(r.total);
       } catch {
@@ -143,30 +159,44 @@ export const Dashboard = () => {
   }, []);
 
   return (
-    <div className="xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 h-auto bg-background flex flex-col gap-10 mt-20">
+    <>
       <div className="max-w-3xl space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Panel</h1>
+        <div className="flex items-center  gap-5">
+          <SidebarTrigger />
+          <Separator
+            orientation="vertical"
+            className="h-8 text-center mx-2 bg-black/50 hidden"
+          />
+          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-6xl text-primary">
+            Panel
+          </h1>
+        </div>
         <p className="text-muted-foreground text-sm">
-          Hola{user?.sub ? `, ${user.sub}` : ""}. Aquí tienes accesos rápidos, novedades del catálogo y tus eventos.
+          Hola{user?.sub ? `, ${user.sub}` : ""}. Aquí tienes accesos rápidos,
+          novedades del catálogo y tus eventos.
         </p>
       </div>
 
-      <BentoGrid className="lg:grid-rows-3 mx-auto w-full max-w-6xl">
+      <BentoGrid className="lg:grid-rows-3 mx-auto w-full ">
         {features.map((feature) => (
           <BentoCard key={feature.name} {...feature} />
         ))}
       </BentoGrid>
 
-      <div className="mx-auto w-full max-w-6xl grid gap-10 lg:grid-cols-2">
+      <div className="mx-auto w-full  grid gap-10 lg:grid-cols-2">
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-muted-foreground" />
             <h2 className="text-lg font-semibold">Últimos en el catálogo</h2>
-            <span className="text-xs text-muted-foreground">({totalListEvents} en total)</span>
+            <span className="text-xs text-muted-foreground">
+              ({totalListEvents} en total)
+            </span>
           </div>
           <Separator />
           {listEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aún no hay eventos publicados.</p>
+            <p className="text-sm text-muted-foreground">
+              Aún no hay eventos publicados.
+            </p>
           ) : (
             <ul className="space-y-2 text-sm">
               {listEvents.slice(0, 6).map((ev) => (
@@ -180,7 +210,10 @@ export const Dashboard = () => {
               ))}
             </ul>
           )}
-          <Link to="/all-events" className="text-sm font-medium text-primary hover:underline">
+          <Link
+            to="/all-events"
+            className="text-sm font-medium text-primary hover:underline"
+          >
             Ver todos los eventos →
           </Link>
         </section>
@@ -189,11 +222,15 @@ export const Dashboard = () => {
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-muted-foreground" />
             <h2 className="text-lg font-semibold">Mis eventos recientes</h2>
-            <span className="text-xs text-muted-foreground">({totalMyEvents} en total)</span>
+            <span className="text-xs text-muted-foreground">
+              ({totalMyEvents} en total)
+            </span>
           </div>
           <Separator />
           {listMyEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No tienes eventos como organizador o asistente todavía.</p>
+            <p className="text-sm text-muted-foreground">
+              No tienes eventos como organizador o asistente todavía.
+            </p>
           ) : (
             <ul className="space-y-2 text-sm">
               {listMyEvents.slice(0, 6).map((ev) => (
@@ -207,22 +244,28 @@ export const Dashboard = () => {
               ))}
             </ul>
           )}
-          <Link to="/events" className="text-sm font-medium text-primary hover:underline">
+          <Link
+            to="/events"
+            className="text-sm font-medium text-primary hover:underline"
+          >
             Ir a mis eventos →
           </Link>
         </section>
       </div>
 
-      <section className="mx-auto w-full max-w-6xl space-y-3">
+      <section className="mx-auto w-full space-y-3">
         <div className="flex items-center gap-2">
           <Ticket className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-lg font-semibold">Mis inscripciones</h2>
-          <span className="text-xs text-muted-foreground">({totalRegistrations} en total)</span>
+          <span className="text-xs text-muted-foreground">
+            ({totalRegistrations} en total)
+          </span>
         </div>
         <Separator />
         {regPreview.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Aún no estás inscrito en ningún evento como participante o asistente.
+            Aún no estás inscrito en ningún evento como participante o
+            asistente.
           </p>
         ) : (
           <ul className="space-y-2 text-sm">
@@ -234,16 +277,21 @@ export const Dashboard = () => {
                 <span className="font-medium">{ev.title}</span>
                 <span className="text-muted-foreground">
                   {ev.date}
-                  {ev.role ? ` · ${ev.role === "asistente" ? "Asistente" : ev.role === "organizador" ? "Organizador" : "Participante"}` : ""}
+                  {ev.role
+                    ? ` · ${ev.role === "asistente" ? "Asistente" : ev.role === "organizador" ? "Organizador" : "Participante"}`
+                    : ""}
                 </span>
               </li>
             ))}
           </ul>
         )}
-        <Link to="/my-registrations" className="text-sm font-medium text-primary hover:underline">
+        <Link
+          to="/my-registrations"
+          className="text-sm font-medium text-primary hover:underline"
+        >
           Ver todos mis eventos inscritos →
         </Link>
       </section>
-    </div>
+    </>
   );
 };

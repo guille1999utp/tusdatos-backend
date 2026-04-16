@@ -1,55 +1,57 @@
-import { MainDialog } from "@/components/common/molecules/dialog/MainDialog"
-import { AuroraText } from "@/components/magicui/aurora-text"
-import { PinContainer } from "@/components/ui/3d-pin"
-import { Separator } from "@/components/ui/separator"
-import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents"
-import { cn } from "@/lib/utils"
-import { FormEventsSuscribe } from "@/modules/app/all-events/components/FormEventsSuscribe"
-import type { IEvents } from "@/models/app/events/events.model"
-import { useMemo, useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useDebounce } from "@/lib/useDebounce"
-import { Link } from "react-router-dom"
+import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
+import { PinContainer } from "@/components/ui/3d-pin";
+import { Separator } from "@/components/ui/separator";
+import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
+import { cn } from "@/lib/utils";
+import { FormEventsSuscribe } from "@/modules/app/all-events/components/FormEventsSuscribe";
+import type { IEvents } from "@/models/app/events/events.model";
+import { useMemo, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useDebounce } from "@/lib/useDebounce";
+import { Link } from "react-router-dom";
 
-const PAGE_SIZE = 9
+const PAGE_SIZE = 9;
 
 /** True si el día del evento (calendario local) es anterior a hoy. */
 function isEventDatePast(dateStr: string): boolean {
-  const raw = String(dateStr).trim()
-  const ymd = raw.slice(0, 10)
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd)
+  const raw = String(dateStr).trim();
+  const ymd = raw.slice(0, 10);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd);
   if (m) {
-    const y = Number(m[1])
-    const mo = Number(m[2]) - 1
-    const d = Number(m[3])
-    const eventDay = new Date(y, mo, d)
-    eventDay.setHours(0, 0, 0, 0)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return eventDay < today
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    const eventDay = new Date(y, mo, d);
+    eventDay.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDay < today;
   }
-  const t = Date.parse(raw)
-  if (Number.isNaN(t)) return false
-  const eventDay = new Date(t)
-  eventDay.setHours(0, 0, 0, 0)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return eventDay < today
+  const t = Date.parse(raw);
+  if (Number.isNaN(t)) return false;
+  const eventDay = new Date(t);
+  eventDay.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return eventDay < today;
 }
 
 function isUserEnrolledInEvent(role: string | null | undefined) {
-  return role === "usuario" || role === "asistente"
+  return role === "usuario" || role === "asistente";
 }
 
 export const AllEvents = () => {
-  const [openModal, setOpenModal] = useState<{ open: boolean; event: IEvents | null }>({ open: false, event: null })
-  const [page, setPage] = useState(0)
-  const [search, setSearch] = useState("")
-  const [stateFilter, setStateFilter] = useState("")
-  const [minCapacity, setMinCapacity] = useState("")
-  const [maxCapacity, setMaxCapacity] = useState("")
-  const debouncedSearch = useDebounce(search, 400)
+  const [openModal, setOpenModal] = useState<{
+    open: boolean;
+    event: IEvents | null;
+  }>({ open: false, event: null });
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+  const [minCapacity, setMinCapacity] = useState("");
+  const [maxCapacity, setMaxCapacity] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
 
   const filters = useMemo(
     () => ({
@@ -60,39 +62,42 @@ export const AllEvents = () => {
       ...(minCapacity ? { min_capacity: minCapacity } : {}),
       ...(maxCapacity ? { max_capacity: maxCapacity } : {}),
     }),
-    [page, debouncedSearch, stateFilter, minCapacity, maxCapacity]
-  )
+    [page, debouncedSearch, stateFilter, minCapacity, maxCapacity],
+  );
 
-  const { listEvents, onMounted, totalListEvents, isLoadingGetEvents } = useTableAllListEvents(filters)
+  const { listEvents, onMounted, totalListEvents, isLoadingGetEvents } =
+    useTableAllListEvents(filters);
 
-  const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
   return (
     <>
-      <div className="container xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full bg-background flex flex-col mt-20 gap-10">
+      <div className=" max-w-full flex flex-col gap-10">
         <div className="flex w-full items-center">
-          <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-slate-100/50">
-            <AuroraText>Eventos</AuroraText>
+          <h1 className="flex text-4xl font-bold md:text-5xl w-full text-primary">
+            Eventos
           </h1>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full space-y-2">
-            <label className="text-sm text-muted-foreground">Buscar eventos</label>
+            <label className="text-sm text-muted-foreground">
+              Buscar eventos
+            </label>
             <div className="grid gap-2 md:grid-cols-4">
               <Input
                 placeholder="Título…"
                 value={search}
                 onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPage(0)
+                  setSearch(e.target.value);
+                  setPage(0);
                 }}
               />
               <select
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm"
                 value={stateFilter}
                 onChange={(e) => {
-                  setStateFilter(e.target.value)
-                  setPage(0)
+                  setStateFilter(e.target.value);
+                  setPage(0);
                 }}
               >
                 <option value="">Todos los estados</option>
@@ -107,8 +112,8 @@ export const AllEvents = () => {
                 placeholder="Capacidad mín."
                 value={minCapacity}
                 onChange={(e) => {
-                  setMinCapacity(e.target.value)
-                  setPage(0)
+                  setMinCapacity(e.target.value);
+                  setPage(0);
                 }}
               />
               <Input
@@ -117,8 +122,8 @@ export const AllEvents = () => {
                 placeholder="Capacidad máx."
                 value={maxCapacity}
                 onChange={(e) => {
-                  setMaxCapacity(e.target.value)
-                  setPage(0)
+                  setMaxCapacity(e.target.value);
+                  setPage(0);
                 }}
               />
             </div>
@@ -156,84 +161,92 @@ export const AllEvents = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {listEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center w-full h-full col-span-full">
-              <h2 className="text-2xl font-bold text-slate-100/50">No hay eventos disponibles</h2>
+              <h2 className="text-2xl font-bold text-slate-100/50">
+                No hay eventos disponibles
+              </h2>
             </div>
           ) : (
             listEvents.map((event) => {
-              const lleno = event.registered_count >= event.capacity
-              const expirado = isEventDatePast(event.date)
-              const bloqueado = lleno || expirado
+              const lleno = event.registered_count >= event.capacity;
+              const expirado = isEventDatePast(event.date);
+              const bloqueado = lleno || expirado;
               return (
-              <div
-                className={cn(
-                  "my-4 rounded-xl transition-opacity",
-                  bloqueado ? "cursor-not-allowed opacity-80" : "cursor-pointer"
-                )}
-                key={event.id}
-                onClick={() => {
-                  if (bloqueado) return
-                  setOpenModal({ open: true, event })
-                }}
-                onKeyDown={(e) => {
-                  if (bloqueado) return
-                  if (e.key === "Enter") setOpenModal({ open: true, event })
-                }}
-                role="button"
-                tabIndex={bloqueado ? -1 : 0}
-                aria-disabled={bloqueado}
-              >
-                <PinContainer
-                  title={`${event.registered_count}/${event.capacity}`}
-                  interactive={!bloqueado}
+                <div
+                  className={cn(
+                    "my-4 rounded-xl transition-opacity",
+                    bloqueado
+                      ? "cursor-not-allowed opacity-80"
+                      : "cursor-pointer",
+                  )}
+                  key={event.id}
+                  onClick={() => {
+                    if (bloqueado) return;
+                    setOpenModal({ open: true, event });
+                  }}
+                  onKeyDown={(e) => {
+                    if (bloqueado) return;
+                    if (e.key === "Enter") setOpenModal({ open: true, event });
+                  }}
+                  role="button"
+                  tabIndex={bloqueado ? -1 : 0}
+                  aria-disabled={bloqueado}
                 >
-                  <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">
-                    <div className="flex flex-wrap items-center gap-2 max-w-xs !pb-2">
-                      <h3 className="!m-0 font-bold text-base">{event.title}</h3>
-                      {expirado ? (
-                        <span className="shrink-0 rounded-md border border-amber-600/50 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
-                          Evento expirado
+                  <PinContainer
+                    title={`${event.registered_count}/${event.capacity}`}
+                    interactive={!bloqueado}
+                  >
+                    <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">
+                      <div className="flex flex-wrap items-center gap-2 max-w-xs !pb-2">
+                        <h3 className="!m-0 font-bold text-base">
+                          {event.title}
+                        </h3>
+                        {expirado ? (
+                          <span className="shrink-0 rounded-md border border-amber-600/50 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
+                            Evento expirado
+                          </span>
+                        ) : null}
+                        {lleno ? (
+                          <span className="shrink-0 rounded-md border border-destructive/60 bg-destructive/15 px-2 py-0.5 text-xs font-semibold text-destructive">
+                            Evento lleno
+                          </span>
+                        ) : null}
+                        {isUserEnrolledInEvent(event.role) ? (
+                          <span className="shrink-0 rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-200">
+                            Ya inscrito
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="text-base !m-0 !p-0 font-normal">
+                        <span className="text-slate-500 ">
+                          {event.description}
                         </span>
-                      ) : null}
-                      {lleno ? (
-                        <span className="shrink-0 rounded-md border border-destructive/60 bg-destructive/15 px-2 py-0.5 text-xs font-semibold text-destructive">
-                          Evento lleno
-                        </span>
-                      ) : null}
-                      {isUserEnrolledInEvent(event.role) ? (
-                        <span className="shrink-0 rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-200">
-                          Ya inscrito
-                        </span>
-                      ) : null}
+                      </div>
+                      <div className="text-base !m-0 !p-0 font-normal">
+                        <span className="text-slate-500 ">{event.date}</span>
+                      </div>
+                      <div className="pt-2">
+                        <Link
+                          to={`/events/${event.id}`}
+                          className="text-sm font-medium text-primary hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Ver detalle y sesiones
+                        </Link>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex flex-1 w-full rounded-lg mt-4 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500",
+                          expirado
+                            ? "bg-gradient-to-br from-zinc-600 via-zinc-700 to-zinc-900"
+                            : lleno
+                              ? "bg-gradient-to-br from-violet-500 via-red-500 to-red-900"
+                              : "bg-gradient-to-br from-blue-500 via-green-600 to-green-900",
+                        )}
+                      />
                     </div>
-                    <div className="text-base !m-0 !p-0 font-normal">
-                      <span className="text-slate-500 ">{event.description}</span>
-                    </div>
-                    <div className="text-base !m-0 !p-0 font-normal">
-                      <span className="text-slate-500 ">{event.date}</span>
-                    </div>
-                    <div className="pt-2">
-                      <Link
-                        to={`/events/${event.id}`}
-                        className="text-sm font-medium text-primary hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Ver detalle y sesiones
-                      </Link>
-                    </div>
-                    <div
-                      className={cn(
-                        "flex flex-1 w-full rounded-lg mt-4 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500",
-                        expirado
-                          ? "bg-gradient-to-br from-zinc-600 via-zinc-700 to-zinc-900"
-                          : lleno
-                            ? "bg-gradient-to-br from-violet-500 via-red-500 to-red-900"
-                            : "bg-gradient-to-br from-blue-500 via-green-600 to-green-900"
-                      )}
-                    />
-                  </div>
-                </PinContainer>
-              </div>
-              )
+                  </PinContainer>
+                </div>
+              );
             })
           )}
         </div>
@@ -245,8 +258,12 @@ export const AllEvents = () => {
           if (!o) setOpenModal({ open: false, event: null });
         }}
       >
-        <FormEventsSuscribe event={openModal.event} setOpenModal={setOpenModal} onMounted={onMounted} />
+        <FormEventsSuscribe
+          event={openModal.event}
+          setOpenModal={setOpenModal}
+          onMounted={onMounted}
+        />
       </MainDialog>
     </>
-  )
-}
+  );
+};

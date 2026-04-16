@@ -228,7 +228,7 @@
 
 body {
   overflow-x: hidden;
-  font-family: "Manrope", sans-serif;
+  /* font-family: "Manrope", sans-serif; */
 }
 
 
@@ -253,3 +253,26 @@ body {
   stroke-dasharray: 99999;
 }
 
+
+
+::-webkit-scrollbar {
+  width: 0.40rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6628c8;
+  border-radius: 0.30rem;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #ecebde;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: #2c2c2c;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-radius: 0.25rem;
+}
