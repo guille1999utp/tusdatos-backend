@@ -161,7 +161,6 @@ export const MyRegisteredEvents = () => {
                 >
                   <PinContainer
                     title={`${event.registered_count ?? 0}/${event.capacity}`}
-                    href="#"
                     interactive
                   >
                     <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">

@@ -163,7 +163,6 @@ export const AssistantEvents = () => {
                 >
                   <PinContainer
                     title={`${event.registered_count}/${event.capacity}`}
-                    href="#"
                     interactive={!bloqueado}
                   >
                     <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">

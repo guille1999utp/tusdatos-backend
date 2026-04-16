@@ -223,3 +223,8 @@
   html {
     @apply font-sans;}
 }
+
+body {
+  overflow-x: hidden;
+  font-family: "Manrope", sans-serif;
+}

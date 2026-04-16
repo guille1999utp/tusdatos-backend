@@ -67,15 +67,17 @@ export const PinContainer = ({
     );
   }
 
+  const Tag = interactive ? (href ? "a" : "div") : "div";
+
   return (
-    <a
+    <Tag
       className={shellClass}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      href={href || "/"}
+      {...(href ? { href } : {})}
     >
       {inner}
-    </a>
+    </Tag>
   );
 };
 
@@ -88,7 +90,7 @@ export const PinPerspective = ({
   href?: string;
   interactive?: boolean;
 }) => {
-  const titleChip = interactive ? (
+  const titleChip = interactive && href ? (
     <a
       href={href}
       target={"_blank"}

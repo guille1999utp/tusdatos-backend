@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import React, { useContext } from "react";
 import { Dock, DockIcon } from "../magicui/dock";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { ModeToggle } from "../mode-toggle";
 import { AuthContext } from "@/auth/AuthContext";
 import { Link } from "react-router-dom";
@@ -107,14 +107,16 @@ export function DockDemo() {
           </button>
         </DockIcon>
         <DockIcon>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <ModeToggle />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Theme</p>
-            </TooltipContent>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <ModeToggle />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Theme</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </DockIcon>
       </Dock>
     </div>
