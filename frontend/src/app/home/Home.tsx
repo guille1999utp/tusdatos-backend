@@ -140,7 +140,7 @@ export default function Home() {
                   <Button
                     variant={"default"}
                     className={cn(
-                      "w-full py-5 px-1 md:py-6 font-bold text-white bg-transparent text-sm md:text-lg ",
+                      "w-full py-5 max-md:px-1 md:py-6 font-bold text-white bg-transparent text-sm md:text-lg ",
                     )}
                   >
                     Iniciar sesión

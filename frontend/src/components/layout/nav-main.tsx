@@ -118,7 +118,7 @@ export function NavMain({ items, user, onNavigate }: any) {
                       icon={ArrowRight01Icon}
                       strokeWidth={2}
                       className={`ml-auto mr-4 text-black size-5 transition-transform duration-300 ${
-                        isOpen ? "rotate-90" : ""
+                        isOpen ? "rotate-90 text-white" : ""
                       }`}
                     />
                   )}
