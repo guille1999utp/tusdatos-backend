@@ -198,20 +198,20 @@ export default function EventCard({
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none " />
 
-      <div className="relative h-full w-full p-5 sm:p-6 lg:p-8 flex flex-col justify-between z-20">
+      <div className="relative h-full w-full p-5 sm:p-6 2xl:p-8 flex flex-col justify-between z-20">
         {/* Header Badges */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase">
             <HugeiconsIcon
               icon={Calendar01Icon}
-              className="mr-1 lg:mr-2 inline size-5 md:size-7"
+              className="mr-1 2xl:mr-2 inline size-5 md:size-7"
             />
             {event.date}
           </div>
-          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-2xl xl:text-3xl shadow-sm">
+          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-xl 2xl:text-3xl shadow-sm">
             <HugeiconsIcon
               icon={UserGroupIcon}
-              className="shrink-0 size-6 sm:size-8 text-black"
+              className="shrink-0 size-6  2xl:size-8 text-black"
             />
             {event.registered_count} / {event.capacity}
           </div>
@@ -266,7 +266,7 @@ export default function EventCard({
                 e.stopPropagation();
                 onClick();
               }}
-              className={`group/btn flex items-center justify-center gap-4 border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl ${
+              className={`group/btn flex items-center justify-center gap-4 border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl xl:text-xl 2xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl ${
                 isEnrolled
                   ? "bg-red-500/80 hover:bg-red-600 text-white"
                   : "bg-primary text-white"
