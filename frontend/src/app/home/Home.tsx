@@ -1,21 +1,19 @@
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
-import { cn } from "@/lib/utils";
 import type { IEvents } from "@/models/app/events/events.model";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
-import TransitionLink from "@/providers/TransitionLink";
 import EventCard from "./_components/EventCard";
+import SiteMarketingHeader from "@/components/layout/SiteMarketingHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, X } from "lucide-react";
 import Grainient from "@/components/ui/Grainient";
 import { suscribeEvents } from "@/redux/features/events/events.thunks";
 import { useAppDispatch } from "@/redux/hooks";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 const PAGE_SIZE = 9;
 
@@ -51,7 +49,7 @@ function isOrganizer(role: string | null | undefined) {
 }
 
 export default function Home() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
@@ -106,66 +104,7 @@ export default function Home() {
   return (
     <>
       <div className="min-h-screen bg-background">
-        {/* ── Header ── */}
-        <header className="fixed top-0 z-60 w-full max-md:px-2">
-          <div className="mx-auto flex h-16 max-w-xl rounded-full border-2 border-white mt-3 bg-tertiary backdrop-blur-md shadow-xl items-center justify-between gap-4 px-4">
-            <Link
-              to="/"
-              className="text-base md:text-xl xl:text-3xl font-extrabold uppercase tracking-tight text-black"
-            >
-              MISEVENTOS
-            </Link>
-            <nav className="flex items-center gap-1 text-sm">
-              {user ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-base md:text-lg font-semibold"
-                  >
-                    Panel
-                  </Link>
-                  <Link
-                    to="/all-events"
-                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-base md:text-lg font-semibold"
-                  >
-                    Explorar
-                  </Link>
-                  <Button
-                    type="button"
-                    variant={"main"}
-                    className="shadow-xl border border-white hover:shadow-none font-semibold"
-                    onClick={() => logout()}
-                  >
-                    Salir
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <TransitionLink to="/login">
-                    <Button
-                      variant={"default"}
-                      className={cn(
-                        "w-full py-5 max-md:px-1 md:py-6 font-bold text-black hover:bg-black/10 bg-transparent text-sm md:text-lg",
-                      )}
-                    >
-                      Iniciar sesión
-                    </Button>
-                  </TransitionLink>
-                  <TransitionLink to="/register">
-                    <Button
-                      variant={"main"}
-                      className={cn(
-                        "w-full py-5 md:py-6 font-bold border border-white text-sm md:text-base",
-                      )}
-                    >
-                      Registrarse
-                    </Button>
-                  </TransitionLink>
-                </>
-              )}
-            </nav>
-          </div>
-        </header>
+        <SiteMarketingHeader />
 
         {/* ── Hero ── */}
         <section className="relative min-h-[60dvh] md:min-h-[70dvh] flex flex-col items-center justify-center overflow-hidden">

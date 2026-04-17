@@ -33,10 +33,18 @@ const defaultSessionForm: IEventSessionCreate = {
   capacity: 1,
 };
 
-export default function EventDetail() {
+export type EventDetailVariant = "panel" | "public";
+
+export type EventDetailProps = {
+  /** `panel`: dentro del layout logueado. `public`: vista con cabecera de marketing. */
+  variant?: EventDetailVariant;
+};
+
+export default function EventDetail({ variant = "panel" }: EventDetailProps) {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isPublic = variant === "public";
 
   const [event, setEvent] = useState<IEvents | null>(null);
   const [sessions, setSessions] = useState<IEventSession[]>([]);
@@ -48,14 +56,23 @@ export default function EventDetail() {
   const parsedId = Number(eventId);
 
   const canManageSessions = useMemo(
-    () => user?.role === "admin" || event?.role === "organizador",
-    [user?.role, event?.role],
+    () =>
+      Boolean(user) &&
+      (user?.role === "admin" || event?.role === "organizador"),
+    [user, event?.role],
   );
 
+  const backPath = isPublic ? "/" : "/all-events";
+  const postLoginReturnPath = isPublic
+    ? `/evento/${parsedId}`
+    : `/events/${parsedId}`;
+
   const loadEventData = useCallback(async () => {
+    const exitPath = variant === "public" ? "/" : "/all-events";
+
     if (!Number.isFinite(parsedId) || parsedId <= 0) {
       toast.error("ID de evento inválido");
-      navigate("/all-events");
+      navigate(exitPath);
       return;
     }
 
@@ -74,11 +91,11 @@ export default function EventDetail() {
       );
     } catch {
       toast.error("No se pudo cargar el detalle del evento");
-      navigate("/all-events");
+      navigate(exitPath);
     } finally {
       setLoading(false);
     }
-  }, [navigate, parsedId]);
+  }, [navigate, parsedId, variant]);
 
   useEffect(() => {
     void loadEventData();
@@ -165,7 +182,7 @@ export default function EventDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center  gap-3">
-        <Link to="/all-events">
+        <Link to={backPath}>
           <Button
             type="button"
             variant="main"
@@ -197,16 +214,27 @@ export default function EventDetail() {
           {event.total_inscritos ?? event.registered_count}
         </p>
         <p>
-          <strong>Tu rol:</strong> {event.role ?? "sin rol en este evento"}
+          <strong>Tu rol:</strong>{" "}
+          {user
+            ? (event.role ?? "sin rol en este evento")
+            : "Inicia sesión para ver tu rol o inscribirte"}
         </p>
 
         {!isOrganizer && !enrolled && !isAtCapacity ? (
           <button
             type="button"
             className="mt-2 h-10 md:h-12 rounded-full border-2 border-white active:scale-95 transition-all cursor-pointer bg-green-600 px-4 text-white hover:bg-green-700"
-            onClick={handleSubscribe}
+            onClick={() => {
+              if (!user) {
+                navigate(
+                  `/login?redirect=${encodeURIComponent(postLoginReturnPath)}`,
+                );
+                return;
+              }
+              void handleSubscribe();
+            }}
           >
-            Inscribirme al evento
+            {user ? "Inscribirme al evento" : "Iniciar sesión para inscribirme"}
           </button>
         ) : null}
 

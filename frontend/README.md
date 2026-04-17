@@ -45,7 +45,8 @@ npm run dev
 - `/register`
 - `/dashboard`
 - `/events` (mis eventos)
-- `/events/:eventId` (detalle de evento + sesiones)
+- `/evento/:eventId` (detalle + sesiones, **público**, con cabecera de marketing)
+- `/events/:eventId` (detalle + sesiones dentro del **panel** logueado)
 - `/all-events` (eventos disponibles)
 - `/my-registrations` (eventos en los que estoy inscrito)
 - `/profile` (usuario + eventos registrados)

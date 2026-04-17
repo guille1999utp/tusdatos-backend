@@ -189,7 +189,7 @@ export default function EventCard({
 
   const color = STROKE_COLORS[index % STROKE_COLORS.length];
 
-  const detailPath = `/events/${event.id}`;
+  const detailPath = `/evento/${event.id}`;
 
   const handleCardNavigate = (e: { target: EventTarget | null }) => {
     const el = e.target as HTMLElement;

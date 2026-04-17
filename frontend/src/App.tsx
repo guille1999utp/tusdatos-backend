@@ -27,6 +27,9 @@ const Events = lazy(() =>
   import("./app/events/Events").then((mod) => ({ default: mod.Events })),
 );
 const EventDetail = lazy(() => import("./app/events/EventDetail"));
+const PublicEventDetailPage = lazy(() =>
+  import("./app/events/PublicEventDetailPage"),
+);
 const AllEvents = lazy(() =>
   import("./app/all-events/AllEvents").then((mod) => ({
     default: mod.AllEvents,
@@ -80,6 +83,10 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Navigate to="/" replace />} />
+                <Route
+                  path="/evento/:eventId"
+                  element={<PublicEventDetailPage />}
+                />
 
                 <Route element={<PublicRoute />}>
                   <Route element={<AuthLayout />}>
@@ -90,7 +97,10 @@ function App() {
 
                 <Route element={<PrivateRoute />}>
                   <Route element={<AdminPanelLayout />}>
-                    <Route path="/events/:eventId" element={<EventDetail />} />
+                    <Route
+                      path="/events/:eventId"
+                      element={<EventDetail />}
+                    />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="events" element={<Events />} />
                     <Route path="all-events" element={<AllEvents />} />
