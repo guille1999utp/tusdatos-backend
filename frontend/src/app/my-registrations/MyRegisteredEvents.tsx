@@ -104,7 +104,6 @@ export const MyRegisteredEvents = () => {
 
       {/* ── Search bar ── */}
       <div className="rounded-4xl backdrop-blur-xl flex flex-col gap-4">
-        <p className="text-sm md:text-base  font-semibold text-black">Buscar</p>
         <div className="relative flex items-center max-w-md">
           <Search
             className="absolute left-3 text-muted-foreground pointer-events-none"

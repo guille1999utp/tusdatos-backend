@@ -10,7 +10,6 @@ import { AuthProvider } from "./auth/AuthContext";
 import { PublicRoute } from "./auth/PublicRoute";
 import { PrivateRoute } from "./auth/PrivateRoute";
 import { RoleRoute } from "./auth/RoleRoute";
-import { ToastContainer } from "react-toastify";
 import AuthLayout from "./auth/AuthLayout";
 import TransitionProvider from "./providers/TransitionProvider";
 import { Loader2 } from "lucide-react";
@@ -116,18 +115,6 @@ function App() {
           </TransitionProvider>
         </AuthProvider>
       </Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
     </>
   );
 }

@@ -5,13 +5,7 @@ import type { IEvents } from "@/models/app/events/events.model";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  Mail,
-  ShieldCheck,
-  Ticket,
-  CalendarDays,
-  ArrowUpRight,
-} from "lucide-react";
+import { Mail, Ticket, CalendarDays, ArrowUpRight } from "lucide-react";
 
 function getInitials(email: string) {
   return email.slice(0, 2).toUpperCase();
@@ -96,21 +90,15 @@ export const Profile = () => {
               <div className="flex-1 min-w-0 space-y-2 md:block hidden">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full ${getRoleColors(role)}`}
+                    className={`text-xs md:text-sm xl:text-base font-bold px-3 py-1 rounded-full ${getRoleColors(role)}`}
                   >
                     {getRoleLabel(role)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm md:text-base xl:text-lg text-muted-foreground">
                   <Mail className="w-4 h-4 shrink-0" />
                   <span className="truncate font-medium text-black/80">
                     {email || "No disponible"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span className="font-medium text-black/80">
-                    {getRoleLabel(role)}
                   </span>
                 </div>
               </div>
@@ -128,12 +116,6 @@ export const Profile = () => {
                 <Mail className="w-4 h-4 shrink-0" />
                 <span className="truncate font-medium text-black/80">
                   {email || "No disponible"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <ShieldCheck className="w-4 h-4 shrink-0" />
-                <span className="font-medium text-black/80">
-                  {getRoleLabel(role)}
                 </span>
               </div>
             </div>
