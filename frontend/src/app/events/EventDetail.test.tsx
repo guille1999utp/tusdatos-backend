@@ -28,8 +28,8 @@ vi.mock("@/services/app/events/events.service", () => ({
   },
 }));
 
-vi.mock("react-toastify", () => ({
-  toast: {
+vi.mock("react-hot-toast", () => ({
+  default: {
     success: vi.fn(),
     error: vi.fn(),
   },

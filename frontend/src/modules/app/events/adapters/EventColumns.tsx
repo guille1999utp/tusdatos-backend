@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { IEvents } from "@/models/app/events/events.model";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, CalendarDays, MoreHorizontal } from "lucide-react";
 
 type EventRowActionsOpts = {
   globalRole: string;
@@ -128,6 +128,36 @@ export const columnsEvents = (
         {String(row.getValue("date"))}
       </div>
     ),
+  },
+  {
+    id: "sessions",
+    header: () => (
+      <div className="text-center whitespace-nowrap">Sesiones</div>
+    ),
+    enableSorting: false,
+    cell: ({ row }: { row: { original: IEvents } }) => {
+      if (!opts.onManageSessions) {
+        return (
+          <div className="text-center text-xs text-muted-foreground">—</div>
+        );
+      }
+      const { canEdit } = rowActionFlags(opts.globalRole, row.original.role);
+      const canManage = canEdit || opts.globalRole === "admin";
+      return (
+        <div className="flex justify-center">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-1.5 shrink-0"
+            onClick={() => opts.onManageSessions!(Number(row.original.id))}
+          >
+            <CalendarDays className="h-4 w-4" aria-hidden />
+            {canManage ? "Gestionar" : "Ver"}
+          </Button>
+        </div>
+      );
+    },
   },
   {
     id: "actions",
