@@ -1,4 +1,11 @@
+import os
 from collections.abc import Generator
+
+# Settings se carga al importar `main`; en CI/tests debe existir SECRET_KEY.
+os.environ.setdefault(
+    "SECRET_KEY",
+    "pytest-only-secret-key-do-not-use-in-production-32chars",
+)
 
 import pytest
 from fastapi.testclient import TestClient

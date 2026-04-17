@@ -27,9 +27,8 @@ services:
     environment:
       ENVIRONMENT: development
       SQLALCHEMY_DATABASE_URL: postgresql://postgres:postgres@db:5432/miseventos
-      SECRET_KEY: change-me
+      SECRET_KEY: dev-docker-compose-secret-min-32-chars-required
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
-      # Usuario admin inicial (seed_admin.py; idempotente si el email ya existe)
       SEED_ADMIN_EMAIL: admin@miseventos.com
       SEED_ADMIN_PASSWORD: Admin123!
       SEED_ADMIN_NAME: Administrador
