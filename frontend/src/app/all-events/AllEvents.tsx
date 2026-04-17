@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
 import type { IEvents } from "@/models/app/events/events.model";
 import { useMemo, useState } from "react";
@@ -14,7 +13,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import {
   Select,
   SelectContent,
@@ -139,7 +138,6 @@ export const AllEvents = () => {
       {/* ── Page header ── */}
       <div className="flex items-center gap-4">
         <SidebarTrigger />
-        <Separator orientation="vertical" className="h-7 bg-black/20" />
         <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
           Eventos
         </h1>

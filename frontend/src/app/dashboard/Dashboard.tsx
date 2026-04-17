@@ -127,7 +127,7 @@ export const Dashboard = () => {
             Panel
           </h1>
         </div>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           Hola{user?.sub ? `, ${user.sub}` : ""}. Aquí tienes accesos rápidos,
           novedades del catálogo y tus eventos.
         </p>
@@ -143,7 +143,7 @@ export const Dashboard = () => {
             <Link
               key={href}
               to={href}
-              className={`group flex flex-col items-center gap-3 shrink-0 rounded-4xl border-2 border-black/2 bg-black/5 p-4 py-7 md:py-9 w-[140px] transition-all duration-200 hover:bg-primary hover:shadow-lg`}
+              className={`group flex flex-col items-center gap-3 shrink-0 rounded-4xl border-2 border-black/2 bg-black/5 p-2 md:p-4 py-6 md:py-9 w-[120px] md:w-[160px] transition-all duration-200 hover:bg-primary hover:shadow-lg`}
             >
               <div className="size-11 md:size-14 lg:size-15 rounded-full bg-white/60 hover:bg-secondary flex items-center justify-center shadow-sm">
                 <Icon
@@ -151,7 +151,7 @@ export const Dashboard = () => {
                   strokeWidth={2}
                 />
               </div>
-              <span className="text-sm: md:text-base font-semibold text-center leading-tight text-black group-hover:text-white transition-colors">
+              <span className="text-sm md:text-base font-semibold text-center leading-tight text-black group-hover:text-white transition-colors">
                 {label}
               </span>
             </Link>
@@ -162,14 +162,14 @@ export const Dashboard = () => {
       {/* ── Event lists ── */}
       <div className="w-full grid gap-6 lg:grid-cols-2">
         {/* Últimos en el catálogo */}
-        <section className="rounded-2xl border border-border overflow-hidden">
+        <section className="rounded-4xl border border-border overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
             <div className="flex items-center gap-2.5">
               <div className="size-9 md:size-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Calendar className="size-4 md:size-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-base md:text-lg font-bold leading-none">
+                <h2 className="text-base md:text-lg font-bold leading-none text-primary">
                   Últimos en el catálogo
                 </h2>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -208,14 +208,14 @@ export const Dashboard = () => {
         </section>
 
         {/* Mis eventos recientes */}
-        <section className="rounded-2xl border border-border overflow-hidden">
+        <section className="rounded-4xl border border-border overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
             <div className="flex items-center gap-2.5">
-              <div className="size-9 md:size-10 rounded-lg bg-tertiary/50 flex items-center justify-center">
+              <div className="size-9 md:size-10 rounded-lg bg-tertiary flex items-center justify-center">
                 <Users className="size-4 md:size-5 text-black" />
               </div>
               <div>
-                <h2 className="text-base md:text-lg font-bold leading-none">
+                <h2 className="text-base md:text-lg font-bold leading-none text-black">
                   Mis eventos recientes
                 </h2>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -255,14 +255,14 @@ export const Dashboard = () => {
       </div>
 
       {/* ── Mis inscripciones ── */}
-      <section className="w-full rounded-2xl border border-border overflow-hidden">
+      <section className="w-full rounded-4xl border border-border overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 md:size-10 rounded-lg bg-secondary/20 flex items-center justify-center">
-              <Ticket className="size-4 md:size-5 text-secondary-foreground" />
+            <div className="size-9 md:size-10 rounded-lg bg-secondary/30 flex items-center justify-center">
+              <Ticket className="size-4 md:size-5 text-primary" />
             </div>
             <div>
-              <h2 className="text-base md:text-lg font-bold leading-none">
+              <h2 className="text-base md:text-lg font-bold leading-none text-primary">
                 Mis inscripciones
               </h2>
               <p className="text-[11px] text-muted-foreground mt-0.5">

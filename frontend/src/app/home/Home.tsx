@@ -15,7 +15,7 @@ import { Search, X } from "lucide-react";
 import Grainient from "@/components/ui/Grainient";
 import { suscribeEvents } from "@/redux/features/events/events.thunks";
 import { useAppDispatch } from "@/redux/hooks";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const PAGE_SIZE = 9;
 
@@ -74,7 +74,9 @@ export default function Home() {
 
   const handleSubscribe = async (event: IEvents) => {
     if (!user) {
-      navigate(`/login?redirect=${encodeURIComponent(`/?eventId=${event.id}`)}`);
+      navigate(
+        `/login?redirect=${encodeURIComponent(`/?eventId=${event.id}`)}`,
+      );
       return;
     }
     const result = await dispatch(

@@ -14,10 +14,10 @@ import { FormEvents } from "@/modules/app/events/components/FormEvents";
 import { FormAssignUser } from "@/modules/app/events/components/FormAssignUser";
 import { AdminEventRegistrations } from "@/modules/app/admin/AdminEventRegistrations";
 import type { IEvents } from "@/models/app/events/events.model";
-import { toast } from "react-toastify";
 import { useDebounce } from "@/lib/useDebounce";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import toast from "react-hot-toast";
 
 const PAGE_SIZE = 10;
 
@@ -101,7 +101,7 @@ export default function AdminEvents() {
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="max-w-3xl space-y-2 mb-6">
           <div className="flex items-center gap-5">
@@ -121,8 +121,8 @@ export default function AdminEvents() {
         </div>
         <Button
           type="button"
-          variant="outline"
-          className="shrink-0"
+          variant="main"
+          className="shrink-0 h-12 md:text-lg"
           onClick={() => {
             setCurrentEvent(null);
             setOpenEdit(true);
@@ -134,47 +134,50 @@ export default function AdminEvents() {
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
-          <label className="text-sm text-muted-foreground">
-            Buscar por título
-          </label>
           <Input
-            placeholder="Título…"
+            placeholder="Busca por título..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(0);
             }}
+            className="shadow-none"
           />
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={page <= 0}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Anterior
-          </Button>
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Página {page + 1} / {totalPages} · {totalListEvents}
-          </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Siguiente
-          </Button>
-        </div>
       </div>
-      <Separator />
       {isLoadingGetEvents ? (
         <p className="text-muted-foreground">Cargando…</p>
       ) : null}
-      <DataTableDemo columns={columns} data={listEvents} />
+      <DataTableDemo
+        columns={columns}
+        data={listEvents}
+        hideSearchbar
+        hidePagination
+      />
+
+      <div className="flex items-center justify-end gap-2 shrink-0">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={page <= 0}
+          onClick={() => setPage((p) => p - 1)}
+        >
+          Anterior
+        </Button>
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
+          Página {page + 1} / {totalPages} · {totalListEvents}
+        </span>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Siguiente
+        </Button>
+      </div>
 
       <MainDialog
         title="Editar evento"
@@ -229,11 +232,12 @@ export default function AdminEvents() {
       </MainDialog>
 
       <MainDialog
-        title="Inscripciones"
+        title="Personas en este evento"
         open={regOpen.open}
         setOpenModal={(open) => {
           if (!open) setRegOpen({ open: false, id: 0 });
         }}
+        customMaxWidth="sm:max-w-xl"
       >
         {regOpen.open ? (
           <AdminEventRegistrations

@@ -9,7 +9,7 @@ import {
   insertEvents,
   updateEvents,
 } from "@/redux/features/events/events.thunks";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import type { IEvents } from "@/models/app/events/events.model";
 import type { IUpdateEventsReq } from "@/models/app/events/insert/insert-events.model";
 import { Button } from "@/components/ui/button";

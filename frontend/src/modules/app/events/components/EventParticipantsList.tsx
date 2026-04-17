@@ -6,7 +6,6 @@ import EventsService from "@/services/app/events/events.service";
 import type { IEventParticipant } from "@/models/app/events/event-participants.model";
 import { getFastApiErrorMessage } from "@/services/utilities/handle-api-error.utility";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Select,
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import toast from "react-hot-toast";
 
 const PAGE = 8;
 
@@ -156,9 +156,6 @@ export function EventParticipantsList({
 
   return (
     <div className="flex flex-col gap-3 w-full">
-      <h4 className="text-sm md:text-base lg:text-lg font-semibold text-black">
-        Personas en este evento
-      </h4>
       <p className="text-xs text-muted-foreground">
         Orden: organizador, asistentes y participantes. El rol «Organizador» es
         la titularidad del evento; puedes trasladarla a otra persona desde el

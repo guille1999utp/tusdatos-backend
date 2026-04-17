@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import AuthLayout from "./auth/AuthLayout";
 import TransitionProvider from "./providers/TransitionProvider";
 import { Loader2 } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 const Dashboard = lazy(() =>
   import("./app/dashboard/Dashboard").then((mod) => ({
@@ -54,6 +55,18 @@ function App() {
     <>
       <Router>
         <AuthProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                border: "2px solid #ffffff",
+                borderRadius: "22px",
+                fontSize: "17px",
+                fontWeight: "bold",
+                background: "#defd99",
+              },
+            }}
+          />
           <TransitionProvider>
             <Suspense
               fallback={

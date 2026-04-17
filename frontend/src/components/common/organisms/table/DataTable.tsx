@@ -33,9 +33,13 @@ import { Input } from "@/components/ui/input";
 export function DataTableDemo({
   data,
   columns,
+  hideSearchbar = false,
+  hidePagination = false,
 }: {
   data: any;
   columns: ColumnDef<any>[];
+  hideSearchbar?: boolean;
+  hidePagination?: boolean;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -68,16 +72,18 @@ export function DataTableDemo({
   return (
     <div className="w-full">
       <div className="flex items-center py-4 gap-2">
-        <Input
-          placeholder="Buscar por título..."
-          onChange={(e) => {
-            const v = e.target.value;
-            setFilterTitle(v);
-            table.getColumn("title")?.setFilterValue(v || undefined);
-          }}
-          value={filterTitle}
-          className="max-w-sm shadow-none h-10 md:h-12 placeholder:text-sm md:placeholder:text-base"
-        />
+        {!hideSearchbar && (
+          <Input
+            placeholder="Buscar por título..."
+            onChange={(e) => {
+              const v = e.target.value;
+              setFilterTitle(v);
+              table.getColumn("title")?.setFilterValue(v || undefined);
+            }}
+            value={filterTitle}
+            className="max-w-sm shadow-none h-10 md:h-12 placeholder:text-sm md:placeholder:text-base"
+          />
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="main" className="ml-auto h-10 md:h-12">
@@ -155,30 +161,32 @@ export function DataTableDemo({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+      {!hidePagination && (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} de{" "}
+            {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Siguiente
+            </Button>
+          </div>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

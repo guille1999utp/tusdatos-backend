@@ -13,9 +13,18 @@ import {
 import { useDebounce } from "@/lib/useDebounce";
 import UsersService from "@/services/app/users/users.service";
 import type { IUsers } from "@/models/app/users/users.model";
-import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import toast from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const PAGE = 10;
 const ROLES = ["admin", "usuario"] as const;
@@ -72,7 +81,7 @@ export default function AdminUsers() {
       });
       toast.success("Rol actualizado");
       if (resp.logout_required) {
-        toast.info(
+        toast.error(
           "Cerrando sesión: tu cuenta ya no tiene rol de administrador.",
         );
         logout();
@@ -126,43 +135,19 @@ export default function AdminUsers() {
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
-          <label className="text-sm text-muted-foreground">Buscador</label>
           <Input
-            placeholder="Nombre o email…"
+            placeholder="Buscar po nombre o email…"
             value={q}
             onChange={(e) => {
               setQ(e.target.value);
             }}
+            className="shadow-none"
           />
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={page <= 0}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Anterior
-          </Button>
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Página {page + 1} / {totalPages} · {total}
-          </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={(page + 1) * PAGE >= total}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Siguiente
-          </Button>
-        </div>
       </div>
-      <Separator />
       {loading ? <p className="text-muted-foreground">Cargando…</p> : null}
 
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-3xl border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -180,22 +165,29 @@ export default function AdminUsers() {
                   {u.email}
                 </TableCell>
                 <TableCell>
-                  <select
-                    className="flex h-9 w-[180px] rounded-md border border-input bg-background px-2 text-sm"
+                  <Select
                     value={draftRoles[u.id] ?? u.role}
-                    onChange={(e) =>
+                    onValueChange={(val) =>
                       setDraftRoles((prev) => ({
                         ...prev,
-                        [u.id]: e.target.value,
+                        [u.id]: val,
                       }))
                     }
                   >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={draftRoles[u.id] ?? u.role} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel className="text-black">Rol</SelectLabel>
+                        {ROLES.map((r) => (
+                          <SelectItem key={r} value={r}>
+                            <span className="capitalize">{r}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
@@ -203,6 +195,7 @@ export default function AdminUsers() {
                       type="button"
                       size="sm"
                       variant="outline"
+                      className="text-base!"
                       onClick={() => saveRole(u.id)}
                       disabled={(draftRoles[u.id] ?? u.role) === u.role}
                     >
@@ -222,6 +215,29 @@ export default function AdminUsers() {
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center gap-2 shrink-0 justify-end">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={page <= 0}
+          onClick={() => setPage((p) => p - 1)}
+        >
+          Anterior
+        </Button>
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
+          Página {page + 1} / {totalPages} · {total}
+        </span>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={(page + 1) * PAGE >= total}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Siguiente
+        </Button>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import EventDetail from "./EventDetail";
 import EventsService from "@/services/app/events/events.service";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const navigateMock = vi.fn();
 
@@ -108,19 +108,26 @@ describe("EventDetail", () => {
 
   it("permite suscribirse al evento", async () => {
     render(<EventDetail />);
-    const subscribeBtn = await screen.findByRole("button", { name: "Inscribirme al evento" });
+    const subscribeBtn = await screen.findByRole("button", {
+      name: "Inscribirme al evento",
+    });
 
     fireEvent.click(subscribeBtn);
 
     await waitFor(() => {
-      expect(EventsService.subscribe).toHaveBeenCalledWith({ id: 1 }, expect.any(Function));
+      expect(EventsService.subscribe).toHaveBeenCalledWith(
+        { id: 1 },
+        expect.any(Function),
+      );
       expect(toast.success).toHaveBeenCalledWith("Inscripción completada");
     });
   });
 
   it("permite crear sesión cuando tiene permisos de gestión", async () => {
     render(<EventDetail />);
-    expect(await screen.findByRole("heading", { name: "Crear sesión" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Crear sesión" }),
+    ).toBeInTheDocument();
 
     fireEvent.change(screen.getByPlaceholderText("Ej. Taller de React"), {
       target: { value: "Charla de testing" },
@@ -128,7 +135,9 @@ describe("EventDetail", () => {
     fireEvent.change(screen.getByPlaceholderText("Nombre del expositor"), {
       target: { value: "QA Lead" },
     });
-    const [startInput, endInput] = document.querySelectorAll('input[type="datetime-local"]');
+    const [startInput, endInput] = document.querySelectorAll(
+      'input[type="datetime-local"]',
+    );
     fireEvent.change(startInput as Element, {
       target: { value: "2026-04-20T09:00" },
     });
@@ -151,7 +160,7 @@ describe("EventDetail", () => {
           end_time: "2026-04-20T10:00",
           capacity: 25,
         },
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(toast.success).toHaveBeenCalledWith("Sesión creada");
     });

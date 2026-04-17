@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 import { useAuth } from "@/hooks/useAuth";
 import type { IEvents } from "@/models/app/events/events.model";
@@ -191,13 +191,14 @@ export default function EventDetail() {
         ) : null}
 
         {enrolled ? (
-          <button
+          <Button
             type="button"
-            className="mt-2 h-9 rounded-md border border-destructive/60 px-4 text-destructive hover:bg-destructive/10"
+            variant="main"
+            className="mt-2 bg-destructive h-10 md:h-12 text-white hover:bg-destructive/10"
             onClick={handleLeave}
           >
             Dejar evento
-          </button>
+          </Button>
         ) : null}
       </div>
 

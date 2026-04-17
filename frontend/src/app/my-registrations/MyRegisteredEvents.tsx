@@ -1,16 +1,14 @@
-import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
-import { PinContainer } from "@/components/ui/3d-pin";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { FormEventsSuscribe } from "@/modules/app/all-events/components/FormEventsSuscribe";
 import type { IEvents } from "@/models/app/events/events.model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import EventsService from "@/services/app/events/events.service";
-import { Link } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import SimpleEventCard from "@/app/home/_components/SimpleEventCard";
+import toast from "react-hot-toast";
 
 const PAGE_SIZE = 9;
 
@@ -37,36 +35,10 @@ function isEventDatePast(dateStr: string): boolean {
   return eventDay < today;
 }
 
-function roleBadge(role: string | null | undefined) {
-  if (role === "organizador")
-    return {
-      label: "Organizador",
-      className:
-        "border-violet-600/50 bg-violet-500/15 text-violet-900 dark:text-violet-100",
-    };
-  if (role === "asistente")
-    return {
-      label: "Asistente",
-      className:
-        "border-sky-600/50 bg-sky-500/15 text-sky-900 dark:text-sky-100",
-    };
-  return {
-    label: "Participante",
-    className:
-      "border-emerald-600/50 bg-emerald-500/15 text-emerald-900 dark:text-emerald-100",
-  };
-}
-
 export const MyRegisteredEvents = () => {
-  const [openModal, setOpenModal] = useState<{
-    open: boolean;
-    event: IEvents | null;
-  }>({
-    open: false,
-    event: null,
-  });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [leavingId, setLeavingId] = useState<number | null>(null);
   const debouncedSearch = useDebounce(search, 400);
   const [listEvents, setListEvents] = useState<IEvents[]>([]);
   const [totalListEvents, setTotalListEvents] = useState(0);
@@ -101,164 +73,150 @@ export const MyRegisteredEvents = () => {
 
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
+  const handleLeave = async (event: IEvents) => {
+    setLeavingId(event.id);
+    try {
+      await EventsService.leaveEventSelf(event.id);
+      toast.success("Has abandonado el evento");
+      await onMounted();
+    } catch {
+      toast.error("No se pudo abandonar el evento");
+    } finally {
+      setLeavingId(null);
+    }
+  };
+
   return (
-    <>
-      <div className="">
-        <div className="max-w-3xl space-y-2 mb-6">
-          <div className="flex items-center gap-5">
-            <SidebarTrigger />
-            <Separator
-              orientation="vertical"
-              className="h-8 text-center mx-2 bg-black/50 hidden"
-            />
-            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
-              Mis inscripciones
-            </h1>
-          </div>
-          <p className="text-muted-foreground text-sm">
-            Eventos en los que figuras con inscripción (como participante o
-            asistente). Si además eres el organizador del evento, también
-            aparece aquí con ese rol.
+    <div className="max-w-full flex flex-col gap-8 pb-10">
+      {/* ── Page header ── */}
+      <div className="flex items-center gap-4">
+        <SidebarTrigger />
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+            Mis inscripciones
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Eventos en los que figuras como participante, asistente u
+            organizador.
           </p>
         </div>
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div className="w-full max-w-md space-y-1">
-            <label className="text-sm text-muted-foreground">
-              Buscar por título
-            </label>
-            <Input
-              placeholder="Título…"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
+      </div>
+
+      {/* ── Search bar ── */}
+      <div className="rounded-4xl backdrop-blur-xl flex flex-col gap-4">
+        <p className="text-sm md:text-base  font-semibold text-black">Buscar</p>
+        <div className="relative flex items-center max-w-md">
+          <Search
+            className="absolute left-3 text-muted-foreground pointer-events-none"
+            size={16}
+          />
+          <Input
+            placeholder="Buscar por título…"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
+            className="pl-9 pr-9 shadow-none"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
                 setPage(0);
               }}
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
             >
-              Anterior
-            </Button>
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Página {page + 1} / {totalPages} · {totalListEvents} eventos
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Siguiente
-            </Button>
-          </div>
-        </div>
-        <Separator />
-
-        {isLoadingGetEvents ? (
-          <p className="text-muted-foreground">Cargando…</p>
-        ) : null}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {listEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-12">
-              <h2 className="text-2xl font-bold text-slate-100/50">
-                No tienes inscripciones
-              </h2>
-              <p className="text-sm text-muted-foreground mt-2 max-w-md text-center">
-                Explora el catálogo e inscríbete en un evento para verlo aquí.
-              </p>
-            </div>
-          ) : (
-            listEvents.map((event) => {
-              const badge = roleBadge(event.role);
-              const expirado = isEventDatePast(event.date);
-              return (
-                <div
-                  className="my-4 rounded-xl cursor-pointer transition-opacity"
-                  key={event.id}
-                  onClick={() => setOpenModal({ open: true, event })}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") setOpenModal({ open: true, event });
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <PinContainer
-                    title={`${event.registered_count ?? 0}/${event.capacity}`}
-                    interactive
-                  >
-                    <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">
-                      <div className="flex flex-wrap items-center gap-2 max-w-xs !pb-2">
-                        <h3 className="!m-0 font-bold text-base">
-                          {event.title}
-                        </h3>
-                        <span
-                          className={cn(
-                            "shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold",
-                            badge.className,
-                          )}
-                        >
-                          {badge.label}
-                        </span>
-                        {expirado ? (
-                          <span className="shrink-0 rounded-md border border-amber-600/50 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
-                            Fecha pasada
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="text-base !m-0 !p-0 font-normal">
-                        <span className="text-slate-500 ">
-                          {event.description}
-                        </span>
-                      </div>
-                      <div className="text-base !m-0 !p-0 font-normal">
-                        <span className="text-slate-500 ">{event.date}</span>
-                      </div>
-                      <div className="pt-2">
-                        <Link
-                          to={`/events/${event.id}`}
-                          className="text-sm font-medium text-primary hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Ver detalle y sesiones
-                        </Link>
-                      </div>
-                      <div
-                        className={cn(
-                          "flex flex-1 w-full rounded-lg mt-4 bg-gradient-to-br",
-                          expirado
-                            ? "from-zinc-600 via-zinc-700 to-zinc-900"
-                            : "from-violet-500 via-purple-500 to-blue-500",
-                        )}
-                      />
-                    </div>
-                  </PinContainer>
-                </div>
-              );
-            })
+              <X size={14} />
+            </button>
           )}
         </div>
+        <span className="text-xs text-muted-foreground">
+          {isLoadingGetEvents
+            ? "Cargando…"
+            : `${totalListEvents} eventos como asistente`}
+        </span>
       </div>
-      <MainDialog
-        title="Mi inscripción"
-        open={openModal.open}
-        setOpenModal={(o) => {
-          if (!o) setOpenModal({ open: false, event: null });
-        }}
-      >
-        <FormEventsSuscribe
-          event={openModal.event}
-          setOpenModal={setOpenModal}
-          onMounted={onMounted}
-        />
-      </MainDialog>
-    </>
+
+      {/* ── Events grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8">
+        {isLoadingGetEvents ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="aspect-square rounded-[3rem] md:rounded-[4rem] bg-black/5 animate-pulse flex flex-col justify-between p-8"
+            >
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-10 w-44 rounded-full bg-black/10" />
+                <Skeleton className="h-6 w-24 rounded-md bg-black/10" />
+              </div>
+              <div className="space-y-4">
+                <Skeleton className="h-10 w-32 rounded-md bg-black/10" />
+                <Skeleton className="h-16 w-full rounded-xl bg-black/10" />
+                <Skeleton className="h-12 w-full rounded-[2rem] bg-black/10" />
+              </div>
+            </div>
+          ))
+        ) : listEvents.length === 0 ? (
+          <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-20">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary/50">
+              No tienes inscripciones
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 max-w-md text-center">
+              Explora el catálogo e inscríbete en un evento para verlo aquí.
+            </p>
+          </div>
+        ) : (
+          listEvents.map((event, index) => {
+            const expirado = isEventDatePast(event.date);
+            const lleno = (event.registered_count ?? 0) >= event.capacity;
+            const canLeave = event.role !== "organizador";
+
+            return (
+              <SimpleEventCard
+                key={event.id}
+                event={event}
+                index={index}
+                isExpired={expirado}
+                isFull={lleno}
+                canLeave={canLeave}
+                onLeave={() => void handleLeave(event)}
+                isLeaving={leavingId === event.id}
+              />
+            );
+          })
+        )}
+      </div>
+
+      {/* ── Pagination ── */}
+      {!isLoadingGetEvents && totalListEvents > 0 && (
+        <div className="flex items-center justify-end gap-2 mt-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page <= 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            className="rounded-xl gap-1"
+          >
+            <ChevronLeft size={15} /> Anterior
+          </Button>
+          <span className="text-sm font-medium text-foreground tabular-nums whitespace-nowrap">
+            {page + 1} / {totalPages}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
+            onClick={() => setPage((p) => p + 1)}
+            className="rounded-xl gap-1"
+          >
+            Siguiente <ChevronRight size={15} />
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };

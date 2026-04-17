@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { suscribeEvents } from "@/redux/features/events/events.thunks";
 import { useAppDispatch } from "@/redux/hooks";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import type { IEvents } from "@/models/app/events/events.model";
 import EventsService from "@/services/app/events/events.service";
@@ -50,7 +50,7 @@ export const FormEventsSuscribe = ({
         errorCallback: (msg) => {
           setFeedback(msg);
         },
-      })
+      }),
     );
     if (respDispatch.meta.requestStatus === "fulfilled") {
       toast.success("Te has registrado en el evento");
@@ -91,7 +91,10 @@ export const FormEventsSuscribe = ({
         </p>
       ) : null}
       {organizer ? (
-        <p className="text-sm text-muted-foreground">Eres el organizador de este evento; no necesitas inscribirte como participante.</p>
+        <p className="text-sm text-muted-foreground">
+          Eres el organizador de este evento; no necesitas inscribirte como
+          participante.
+        </p>
       ) : enrolled ? (
         <Button
           type="button"
@@ -103,7 +106,10 @@ export const FormEventsSuscribe = ({
           {leaving ? "Procesando…" : "Dejar evento"}
         </Button>
       ) : (
-        <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => void handleSubscribe()}>
+        <Button
+          className="bg-green-600 hover:bg-green-700 text-white"
+          onClick={() => void handleSubscribe()}
+        >
           Inscribirme
         </Button>
       )}

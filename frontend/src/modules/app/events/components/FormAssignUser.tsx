@@ -4,7 +4,7 @@ import * as Yup from "yup";
 
 import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/redux/hooks";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useDebounce } from "@/lib/useDebounce";
 import { useEffect, useState, useCallback, useMemo } from "react";
 

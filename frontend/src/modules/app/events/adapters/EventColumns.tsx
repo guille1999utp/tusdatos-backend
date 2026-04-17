@@ -64,13 +64,13 @@ export const columnsEvents = (
       }
       if (role === "asistente") {
         return (
-          <span className="inline-flex rounded-md border border-sky-600/50 bg-sky-500/15 px-2 py-0.5 text-xs font-semibold text-sky-900 dark:text-sky-100">
+          <span className="inline-flex rounded-full border-2 p-2! border-white bg-secondary px-2 py-0.5 text-xs font-semibold text-white">
             Asistente
           </span>
         );
       }
       return (
-        <span className="inline-flex rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-900 dark:text-emerald-100">
+        <span className="inline-flex rounded-full border-2 p-2! border-white bg-tertiary px-2 py-0.5 text-xs font-semibold text-black">
           Participante
         </span>
       );

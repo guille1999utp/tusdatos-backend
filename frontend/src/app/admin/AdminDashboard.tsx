@@ -24,25 +24,37 @@ export default function AdminDashboard() {
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-border/80 bg-card/30 p-5 flex flex-col gap-3">
-          <CalendarDays className="h-8 w-8 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Todos los eventos</h2>
+        <div className="rounded-4xl border border-border/80 bg-card/30 p-5 flex flex-col gap-3">
+          <div className="bg-tertiary p-3 rounded-2xl w-fit">
+            <CalendarDays className="h-8 w-8 text-black" />
+          </div>
+          <h2 className="text-lg md:text-xl font-semibold">
+            Todos los eventos
+          </h2>
           <p className="text-sm text-muted-foreground flex-1">
             Listado global con búsqueda, edición, borrado, asignación de
             usuarios y panel de inscripciones por evento.
           </p>
-          <Button asChild variant="default" className="w-fit">
+          <Button
+            asChild
+            variant="default"
+            className="w-fit md:h-12 md:text-lg"
+          >
             <Link to="/admin/events">Ir a eventos</Link>
           </Button>
         </div>
-        <div className="rounded-xl border border-border/80 bg-card/30 p-5 flex flex-col gap-3">
-          <Users className="h-8 w-8 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Usuarios del sistema</h2>
+        <div className="rounded-4xl border border-border/80 bg-card/30 p-5 flex flex-col gap-3">
+          <div className="bg-tertiary p-3 rounded-2xl w-fit">
+            <Users className="h-8 w-8 text-black" />
+          </div>
+          <h2 className="text-lg md:text-xl font-semibold">
+            Usuarios del sistema
+          </h2>
           <p className="text-sm text-muted-foreground flex-1">
             Buscar por nombre o correo, cambiar rol global (admin / usuario) o
             eliminar cuentas.
           </p>
-          <Button asChild variant="outline" className="w-fit">
+          <Button asChild variant="main" className="w-fit md:h-12 md:text-lg">
             <Link to="/admin/users">Ir a usuarios</Link>
           </Button>
         </div>
