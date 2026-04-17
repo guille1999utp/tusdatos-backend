@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
 import { DataTableDemo } from "@/components/common/organisms/table/DataTable";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,7 @@ import type { IEvents } from "@/models/app/events/events.model";
 import { toast } from "react-toastify";
 import { useDebounce } from "@/lib/useDebounce";
 import { useNavigate } from "react-router-dom";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const PAGE_SIZE = 10;
 
@@ -103,11 +103,18 @@ export default function AdminEvents() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
-          <h1 className="text-4xl font-bold md:text-5xl">
-            <AuroraText>Admin · Eventos</AuroraText>
-          </h1>
-          <p className="text-muted-foreground text-sm max-w-2xl mt-2">
+        <div className="max-w-3xl space-y-2 mb-6">
+          <div className="flex items-center gap-5">
+            <SidebarTrigger />
+            <Separator
+              orientation="vertical"
+              className="h-8 text-center mx-2 bg-black/50 hidden"
+            />
+            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+              Eventos
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-sm">
             Consulta todos los eventos, edítalos, elimínalos o gestiona
             inscripciones y asistentes.
           </p>

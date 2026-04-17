@@ -26,7 +26,7 @@ export function NavMain({ items, user, onNavigate }: any) {
               key={item.to}
               to={item.to}
               onClick={onNavigate}
-              className={`flex w-[calc(100%-1rem)] items-center mx-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-xl h-12 transition-all
+              className={`flex w-[calc(100%-1rem)] items-center mx-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-xl h-12 transition-all active:scale-95
     ${
       isActive
         ? "bg-primary text-white border-2 shadow-lg"
@@ -98,7 +98,7 @@ export function NavMain({ items, user, onNavigate }: any) {
                       key={sub.to}
                       to={sub.to}
                       onClick={onNavigate}
-                      className={`p-2 rounded-xl font-medium pl-3 mr-2 text-base md:text-lg transition-all duration-200
+                      className={`p-2 rounded-xl font-medium pl-3 mr-2 text-base md:text-lg transition-all duration-200 active:scale-95
               ${
                 isSubActive
                   ? "bg-primary text-white border-2 border-white "

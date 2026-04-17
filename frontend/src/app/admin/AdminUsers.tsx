@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -16,6 +15,7 @@ import UsersService from "@/services/app/users/users.service";
 import type { IUsers } from "@/models/app/users/users.model";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const PAGE = 10;
 const ROLES = ["admin", "usuario"] as const;
@@ -107,14 +107,22 @@ export default function AdminUsers() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-bold md:text-5xl">
-        <AuroraText>Admin · Usuarios</AuroraText>
-      </h1>
-      <p className="text-muted-foreground text-sm max-w-2xl">
-        Busca usuarios por nombre o correo y asigna el rol global (admin o
-        usuario). Debe existir siempre al menos un administrador. Si dejas de
-        ser admin, la sesión se cerrará automáticamente.
-      </p>
+      <div className="max-w-3xl space-y-2 md:mb-6">
+        <div className="flex items-center gap-5">
+          <SidebarTrigger />
+          <Separator
+            orientation="vertical"
+            className="h-8 text-center mx-2 bg-black/50 hidden"
+          />
+          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+            Admin Usuarios
+          </h1>
+        </div>
+        <p className="text-muted-foreground text-sm">
+          Busca usuarios por nombre o correo y asigna el rol global (admin o
+          usuario). Debe existir siempre al menos un administrador.
+        </p>
+      </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">

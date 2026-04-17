@@ -1,5 +1,4 @@
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { PinContainer } from "@/components/ui/3d-pin";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -11,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import EventsService from "@/services/app/events/events.service";
 import { Link } from "react-router-dom";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const PAGE_SIZE = 9;
 
@@ -104,11 +104,18 @@ export const MyRegisteredEvents = () => {
   return (
     <>
       <div className="">
-        <div className="flex w-full flex-col gap-2">
-          <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-slate-100/50">
-            <AuroraText>Mis inscripciones</AuroraText>
-          </h1>
-          <p className="text-sm text-muted-foreground max-w-2xl">
+        <div className="max-w-3xl space-y-2 mb-6">
+          <div className="flex items-center gap-5">
+            <SidebarTrigger />
+            <Separator
+              orientation="vertical"
+              className="h-8 text-center mx-2 bg-black/50 hidden"
+            />
+            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+              Mis inscripciones
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-sm">
             Eventos en los que figuras con inscripción (como participante o
             asistente). Si además eres el organizador del evento, también
             aparece aquí con ese rol.

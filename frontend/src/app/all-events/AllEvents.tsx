@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import { Link } from "react-router-dom";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const PAGE_SIZE = 9;
 
@@ -73,10 +74,17 @@ export const AllEvents = () => {
   return (
     <>
       <div className=" max-w-full flex flex-col gap-10">
-        <div className="flex w-full items-center">
-          <h1 className="flex text-4xl font-bold md:text-5xl w-full text-primary">
-            Eventos
-          </h1>
+        <div className="max-w-3xl space-y-2">
+          <div className="flex items-center  gap-5">
+            <SidebarTrigger />
+            <Separator
+              orientation="vertical"
+              className="h-8 text-center mx-2 bg-black/50 hidden"
+            />
+            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+              Eventos
+            </h1>
+          </div>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full space-y-2">

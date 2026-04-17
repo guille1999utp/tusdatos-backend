@@ -167,7 +167,7 @@ export const Dashboard = () => {
             orientation="vertical"
             className="h-8 text-center mx-2 bg-black/50 hidden"
           />
-          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-6xl text-primary">
+          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
             Panel
           </h1>
         </div>

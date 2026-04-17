@@ -25,7 +25,7 @@ import { AuthContext } from "@/auth/AuthContext";
 export function AppSidebar() {
   const { setOpen } = useSidebar();
 
-  const { user } = useContext(AuthContext)!;
+  const { user, logout } = useContext(AuthContext)!;
 
   const handleCloseSidebar = () => {
     if (window.innerWidth < 768) {
@@ -105,8 +105,8 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-2 md:pb-6 bg-background">
         <button
-          onClick={handleCloseSidebar}
-          className="flex items-center cursor-pointer mx-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-xl h-12 hover:bg-black/10"
+          onClick={() => logout()}
+          className="flex items-center cursor-pointer mx-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-2xl h-12 hover:bg-tertiary bg-tertiary text-black active:scale-95 transition-all duration-200 border-2 border-white"
         >
           <LogOut size={18} /> Cerrar Sesión
         </button>

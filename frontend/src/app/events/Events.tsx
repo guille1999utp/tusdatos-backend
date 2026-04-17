@@ -1,7 +1,5 @@
-// import { PinContainer } from "@/components/ui/3d-pin"
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
 import { DataTableDemo } from "@/components/common/organisms/table/DataTable";
-import { AuroraText } from "@/components/magicui/aurora-text";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -10,6 +8,7 @@ import { FormAssignUser } from "@/modules/app/events/components/FormAssignUser";
 import { FormEvents } from "@/modules/app/events/components/FormEvents";
 import { useAuth } from "@/hooks/useAuth";
 import { AdminEventRegistrations } from "@/modules/app/admin/AdminEventRegistrations";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Events = () => {
   const { user } = useAuth();
@@ -50,9 +49,18 @@ export const Events = () => {
     <>
       <div className=" max-w-full  flex flex-col gap-10">
         <div className="flex w-full flex-col gap-4 md:flex-row md:items-center">
-          <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-slate-100/50">
-            <AuroraText>Mis Eventos</AuroraText>
-          </h1>
+          <div className="max-w-3xl space-y-2">
+            <div className="flex items-center  gap-5">
+              <SidebarTrigger />
+              <Separator
+                orientation="vertical"
+                className="h-8 text-center mx-2 bg-black/50 hidden"
+              />
+              <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
+                Mis Eventos
+              </h1>
+            </div>
+          </div>
           {canCreate ? (
             <Button
               className="md:ml-auto cursor-pointer shrink-0"
