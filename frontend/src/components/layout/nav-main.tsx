@@ -117,9 +117,9 @@ export function NavMain({ items, user, onNavigate }: any) {
                     <HugeiconsIcon
                       icon={ArrowRight01Icon}
                       strokeWidth={2}
-                      className={`ml-auto mr-4 text-black size-5 transition-transform duration-300 ${
-                        isOpen ? "rotate-90 text-white" : ""
-                      }`}
+                      className={`ml-auto mr-4 size-5 transition-all duration-300 ${
+                        isOpen ? "rotate-90" : ""
+                      } ${isActive ? "text-white" : "text-black"}`}
                     />
                   )}
                 </button>

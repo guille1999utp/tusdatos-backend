@@ -137,7 +137,7 @@ export const Events = () => {
         <DataTableDemo columns={columns} data={listMyEvents} />
       </div>
       <MainDialog
-        title="Eventos"
+        title={currentEventsState ? "Actualizar evento" : "Crear evento"}
         open={openDialogEvents}
         setOpenModal={(o) => {
           if (!o) handleCloseEventsDialog();
@@ -151,14 +151,13 @@ export const Events = () => {
       </MainDialog>
 
       <MainDialog
-        title="Eventos"
+        title="Eliminar evento"
         open={dialogConfirmDelete.open}
         setOpenModal={(o) => {
           if (!o) setDialogConfirmDelete({ open: false, id: 0 });
         }}
       >
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-semibold">Eliminar evento</h3>
           <p className="text-sm text-muted-foreground">
             ¿Estás seguro de que quieres eliminar este evento?
           </p>
@@ -167,7 +166,7 @@ export const Events = () => {
           variant={"destructive"}
           onClick={() => handleDelete(dialogConfirmDelete.id)}
           disabled={isLoadingDeleteEvents}
-          className="h-12 bg-destructive hover:bg-destructive/80 text-white"
+          className="h-12 bg-destructive hover:bg-destructive/80 text-white md:text-lg"
         >
           <>{isLoadingDeleteEvents ? "cargando..." : "Eliminar evento"}</>
         </Button>

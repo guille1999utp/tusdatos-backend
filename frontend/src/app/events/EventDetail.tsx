@@ -11,6 +11,8 @@ import type {
 import EventsService from "@/services/app/events/events.service";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 function formatDateTime(value: string): string {
   const date = new Date(value);
@@ -143,20 +145,19 @@ export default function EventDetail() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center md:justify-between gap-3">
-        <h1 className="text-2xl order-2 md:order-1 sm:text-3xl md:text-4xl font-bold text-primary">
-          {event.title}
-        </h1>
+      <div className="flex items-center  gap-3">
         <Link to="/all-events">
           <Button
             type="button"
             variant="main"
-            className="h-10 md:h-12 order-1 md:order-2"
+            className="h-10 md:h-12 hover:drop-shadow-none"
           >
             <ChevronLeft size={15} className="size-5 md:size-7" />{" "}
-            <span className="hidden md:block">Volver al listado</span>
           </Button>
         </Link>
+        <h1 className="text-2xl order-1 md:order-2 sm:text-3xl md:text-4xl font-bold text-primary">
+          {event.title}
+        </h1>
       </div>
 
       <div className="rounded-4xl bg-tertiary border p-4 space-y-2 text-sm md:text-base ">
@@ -234,14 +235,12 @@ export default function EventDetail() {
 
       {canManageSessions ? (
         <section className="space-y-3 rounded-4xl border p-4">
-          <h3 className="text-lg font-semibold">Crear sesión</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Crear sesión</h3>
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">
-                Título de la sesión
-              </label>
-              <input
-                className="h-9 w-full rounded-md border px-3"
+              <Label className="text-xs text-black">Título de la sesión</Label>
+              <Input
+                className="h-11 shadow-none"
                 placeholder="Ej. Taller de React"
                 value={sessionForm.title}
                 onChange={(e) =>
@@ -250,9 +249,9 @@ export default function EventDetail() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Ponente</label>
-              <input
-                className="h-9 w-full rounded-md border px-3"
+              <Label className="text-xs text-black">Ponente</Label>
+              <Input
+                className="h-11 shadow-none"
                 placeholder="Nombre del expositor"
                 value={sessionForm.speaker}
                 onChange={(e) =>
@@ -264,11 +263,11 @@ export default function EventDetail() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">
+              <Label className="text-xs text-black">
                 Fecha y hora de inicio
-              </label>
-              <input
-                className="h-9 w-full rounded-md border px-3"
+              </Label>
+              <Input
+                className="h-11 shadow-none"
                 type="datetime-local"
                 value={sessionForm.start_time}
                 onChange={(e) =>
@@ -280,11 +279,9 @@ export default function EventDetail() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">
-                Fecha y hora de fin
-              </label>
-              <input
-                className="h-9 w-full rounded-md border px-3"
+              <Label className="text-xs text-black">Fecha y hora de fin</Label>
+              <Input
+                className="h-11 shadow-none"
                 type="datetime-local"
                 value={sessionForm.end_time}
                 onChange={(e) =>
@@ -296,11 +293,11 @@ export default function EventDetail() {
               />
             </div>
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs text-muted-foreground">
+              <Label className="text-xs text-black">
                 Capacidad de la sesión
-              </label>
-              <input
-                className="h-9 w-full rounded-md border px-3"
+              </Label>
+              <Input
+                className="h-11 shadow-none"
                 type="number"
                 min={1}
                 value={sessionForm.capacity}

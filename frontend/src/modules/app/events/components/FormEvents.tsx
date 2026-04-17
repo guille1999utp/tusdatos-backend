@@ -120,10 +120,6 @@ export const FormEvents = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 w-full h-full tracking-tight "
     >
-      <h3 className="md:text-xl font-semibold">
-        {currentEventsState ? "Actualizar evento" : "Crear evento"}
-      </h3>
-
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Título</Label>
         <Input id="title" {...register("title")} className="shadow-none" />

@@ -120,13 +120,13 @@ export default function Home() {
                 <>
                   <Link
                     to="/dashboard"
-                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-lg font-semibold"
+                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-base md:text-lg font-semibold"
                   >
                     Panel
                   </Link>
                   <Link
                     to="/all-events"
-                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-lg font-semibold"
+                    className="rounded-full px-1 hover:bg-black/5 md:px-3 py-1.5 text-black text-base md:text-lg font-semibold"
                   >
                     Explorar
                   </Link>

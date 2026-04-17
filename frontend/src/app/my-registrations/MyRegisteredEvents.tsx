@@ -159,7 +159,7 @@ export const MyRegisteredEvents = () => {
           ))
         ) : listEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-20">
-            <h2 className="text-2xl md:text-3xl font-bold text-primary/50">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary">
               No tienes inscripciones
             </h2>
             <p className="text-sm text-muted-foreground mt-2 max-w-md text-center">
