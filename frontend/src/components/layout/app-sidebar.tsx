@@ -91,7 +91,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 md:pt-12 pb-4 md:pb-6 text-center bg-background">
+      <SidebarHeader
+        className={
+          !isCollapsed
+            ? "p-4 md:pt-12 pb-4 md:pb-6 text-center bg-background"
+            : "p-0"
+        }
+      >
         {!isCollapsed ? (
           <Link
             to="/"
@@ -106,7 +112,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent
-        className={` ${isCollapsed ? "p-4" : "p-2"} bg-background`}
+        className={` ${isCollapsed ? "p-5 pt-16" : "p-2"} bg-background`}
       >
         <NavMain
           items={menuItems}
@@ -116,7 +122,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter
-        className={` ${isCollapsed ? "p-4 " : "p-2 md:pb-6"} bg-background`}
+        className={` ${isCollapsed ? "p-5" : "p-2 pb-6"} bg-background`}
       >
         <Tooltip>
           <TooltipTrigger asChild>

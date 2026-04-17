@@ -55,7 +55,7 @@ export function NavMain({ items, user, onNavigate }: any) {
                 >
                   {item.icon && (
                     <item.icon
-                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all`}
+                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all fill-black/10`}
                     />
                   )}
 
@@ -102,7 +102,7 @@ export function NavMain({ items, user, onNavigate }: any) {
                 >
                   {item.icon && (
                     <item.icon
-                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all`}
+                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all fill-black/10`}
                     />
                   )}
 
