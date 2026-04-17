@@ -1,5 +1,5 @@
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
-import { PinContainer } from "@/components/ui/3d-pin";
+
 import { Separator } from "@/components/ui/separator";
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
 import TransitionLink from "@/providers/TransitionLink";
-import Cards from "./_components/EventCard";
+import EventCard from "./_components/EventCard";
 
 const PAGE_SIZE = 9;
 
@@ -41,9 +41,9 @@ function isEventDatePast(dateStr: string): boolean {
   return eventDay < today;
 }
 
-function isUserEnrolledInEvent(role: string | null | undefined) {
-  return role === "usuario" || role === "asistente";
-}
+// function isUserEnrolledInEvent(role: string | null | undefined) {
+//   return role === "usuario" || role === "asistente";
+// }
 
 export default function Home() {
   const { user, logout } = useAuth();
@@ -162,7 +162,6 @@ export default function Home() {
         </div>
       </header>
 
-      <Cards />
       {/* <SvgFollowScroll /> */}
 
       <div className="container relative xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full flex flex-col mt-20 gap-10">
@@ -189,29 +188,6 @@ export default function Home() {
               }}
             />
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-            >
-              Anterior
-            </Button>
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Página {page + 1} / {totalPages} · {totalListEvents} eventos
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Siguiente
-            </Button>
-          </div>
         </div>
         <Separator />
 
@@ -219,97 +195,54 @@ export default function Home() {
           <p className="text-muted-foreground">Cargando…</p>
         ) : null}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {listEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center w-full h-full col-span-full">
+            <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-20">
               <h2 className="text-2xl font-bold text-slate-100/50">
                 No hay eventos disponibles
               </h2>
             </div>
           ) : (
-            listEvents.map((event) => {
-              const lleno = event.registered_count >= event.capacity;
-              const expirado = isEventDatePast(event.date);
-              const bloqueado = lleno || expirado;
+            listEvents.map((event, index) => {
+              const pieno = event.registered_count >= event.capacity;
+              const scaduto = isEventDatePast(event.date);
+
               return (
-                <div
-                  className={cn(
-                    "my-4 rounded-xl transition-opacity",
-                    bloqueado
-                      ? "cursor-not-allowed opacity-80"
-                      : "cursor-pointer",
-                  )}
+                <EventCard
                   key={event.id}
-                  onClick={() => {
-                    if (bloqueado) return;
-                    setOpenModal({ open: true, event });
-                  }}
-                  onKeyDown={(e) => {
-                    if (bloqueado) return;
-                    if (e.key === "Enter") setOpenModal({ open: true, event });
-                  }}
-                  role="button"
-                  tabIndex={bloqueado ? -1 : 0}
-                  aria-disabled={bloqueado}
-                >
-                  <PinContainer
-                    title={`${event.registered_count}/${event.capacity}`}
-                    interactive={!bloqueado}
-                  >
-                    <div className="flex basis-full flex-col p-4 tracking-tight sm:basis-1/2 w-[20rem] h-[20rem] ">
-                      <div className="flex flex-wrap items-center gap-2 max-w-xs !pb-2">
-                        <h3 className="!m-0 font-bold text-base">
-                          {event.title}
-                        </h3>
-                        {expirado ? (
-                          <span className="shrink-0 rounded-md border border-amber-600/50 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
-                            Evento expirado
-                          </span>
-                        ) : null}
-                        {lleno ? (
-                          <span className="shrink-0 rounded-md border border-destructive/60 bg-destructive/15 px-2 py-0.5 text-xs font-semibold text-destructive">
-                            Evento lleno
-                          </span>
-                        ) : null}
-                        {isUserEnrolledInEvent(event.role) ? (
-                          <span className="shrink-0 rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-200">
-                            Ya inscrito
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="text-base !m-0 !p-0 font-normal">
-                        <span className="text-slate-500 ">
-                          {event.description}
-                        </span>
-                      </div>
-                      <div className="text-base !m-0 !p-0 font-normal">
-                        <span className="text-slate-500 ">{event.date}</span>
-                      </div>
-                      <div className="pt-2">
-                        <Link
-                          to={`/events/${event.id}`}
-                          className="text-sm font-medium text-primary hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Ver detalle y sesiones
-                        </Link>
-                      </div>
-                      <div
-                        className={cn(
-                          "flex flex-1 w-full rounded-lg mt-4 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-500",
-                          expirado
-                            ? "bg-gradient-to-br from-zinc-600 via-zinc-700 to-zinc-900"
-                            : lleno
-                              ? "bg-gradient-to-br from-violet-500 via-red-500 to-red-900"
-                              : "bg-gradient-to-br from-blue-500 via-green-600 to-green-900",
-                        )}
-                      />
-                    </div>
-                  </PinContainer>
-                </div>
+                  event={event}
+                  index={index}
+                  isFull={pieno}
+                  isExpired={scaduto}
+                  onClick={() => setOpenModal({ open: true, event })}
+                />
               );
             })
           )}
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 justify-end mt-3">
+          <Button
+            type="button"
+            variant="main"
+            size="sm"
+            disabled={page <= 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+          >
+            Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
+            Página {page + 1} / {totalPages} · {totalListEvents} eventos
+          </span>
+          <Button
+            type="button"
+            variant="main"
+            size="sm"
+            disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Siguiente
+          </Button>
         </div>
       </div>
       <MainDialog
