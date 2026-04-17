@@ -40,27 +40,35 @@ export function NavMain({ items, user, onNavigate }: any) {
                 <Link
                   to={item.to}
                   onClick={onNavigate}
-                  className={`flex w-[calc(100%-1rem)] items-center mx-2 text-lg font-semibold gap-2 p-2 rounded-xl h-12 transition-all active:scale-95
-                  ${isCollapsed ? "justify-center px-0" : "pl-4"}
+                  className={`flex items-center transition-all duration-300 active:scale-95
+                  ${
+                    isCollapsed
+                      ? "size-12 mx-auto justify-center rounded-lg mb-2"
+                      : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-xl mb-1 gap-3"
+                  }
                   ${
                     isActive
-                      ? "bg-primary text-white border-2 shadow-lg"
-                      : "hover:bg-black/10"
+                      ? "bg-primary text-white shadow-xl border-2 border-white scale-105"
+                      : "text-black/70 hover:bg-black/5 "
                   }
                 `}
                 >
                   {item.icon && (
                     <item.icon
-                      className={`${isCollapsed ? "size-6" : "size-5"}`}
+                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all`}
                     />
                   )}
 
-                  {!isCollapsed && item.label}
+                  {!isCollapsed && (
+                    <span className="text-lg font-semibold">{item.label}</span>
+                  )}
                 </Link>
               </TooltipTrigger>
 
               {isCollapsed && (
-                <TooltipContent side="right">{item.label}</TooltipContent>
+                <TooltipContent side="right" sideOffset={12}>
+                  {item.label}
+                </TooltipContent>
               )}
             </Tooltip>
           );
@@ -79,18 +87,28 @@ export function NavMain({ items, user, onNavigate }: any) {
                   onClick={() =>
                     !isCollapsed && setOpenGroup(isOpen ? null : item.label)
                   }
-                  className={`flex w-[calc(100%-1rem)] cursor-pointer items-center mx-2 text-lg font-semibold gap-2 rounded-xl h-12 transition-all
-                  ${isCollapsed ? "justify-center px-0" : "pl-4"}
+                  className={`flex items-center cursor-pointer transition-all duration-300
+                  ${
+                    isCollapsed
+                      ? "size-11 mx-auto justify-center rounded-2xl mb-2"
+                      : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-xl mb-1 gap-3"
+                  }
                   ${
                     isActive
-                      ? "bg-primary text-white border-2 shadow-lg"
-                      : "hover:bg-black/10"
+                      ? "bg-primary text-white shadow-xl border-2 border-white scale-105"
+                      : "text-black/70 hover:bg-black/5"
                   }
                 `}
                 >
-                  {item.icon && <item.icon className="size-5" />}
+                  {item.icon && (
+                    <item.icon
+                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all`}
+                    />
+                  )}
 
-                  {!isCollapsed && item.label}
+                  {!isCollapsed && (
+                    <span className="text-lg font-semibold">{item.label}</span>
+                  )}
 
                   {!isCollapsed && (
                     <ChevronRight
@@ -103,7 +121,9 @@ export function NavMain({ items, user, onNavigate }: any) {
               </TooltipTrigger>
 
               {isCollapsed && (
-                <TooltipContent side="right">{item.label}</TooltipContent>
+                <TooltipContent side="right" sideOffset={12}>
+                  {item.label}
+                </TooltipContent>
               )}
             </Tooltip>
 
@@ -146,8 +166,8 @@ export function NavMain({ items, user, onNavigate }: any) {
                         className={`p-2 rounded-xl font-medium pl-3 mr-2 text-base md:text-lg transition-all duration-200 active:scale-95
                         ${
                           isSubActive
-                            ? "bg-primary text-white border-2 border-white"
-                            : "hover:bg-black/10"
+                            ? "bg-primary text-white border-2 border-white shadow-md"
+                            : "hover:bg-black/5"
                         }
                       `}
                       >

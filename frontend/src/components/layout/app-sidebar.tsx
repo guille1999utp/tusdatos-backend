@@ -5,7 +5,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
@@ -106,7 +105,9 @@ export function AppSidebar() {
         )}
       </SidebarHeader>
 
-      <SidebarContent className="p-2 bg-background">
+      <SidebarContent
+        className={` ${isCollapsed ? "p-4" : "p-2"} bg-background`}
+      >
         <NavMain
           items={menuItems}
           user={user}
@@ -114,26 +115,36 @@ export function AppSidebar() {
         />
       </SidebarContent>
 
-      <SidebarFooter className="p-2 md:pb-6 bg-background">
+      <SidebarFooter
+        className={` ${isCollapsed ? "p-4 " : "p-2 md:pb-6"} bg-background`}
+      >
         <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={() => logout()}
-              className={`flex items-center mx-2 font-semibold rounded-2xl h-12 transition-all duration-200 border-2 border-white
-        ${isCollapsed ? "justify-center px-0" : "gap-2 pl-4"}
-        bg-tertiary text-black hover:bg-tertiary/80 active:scale-95`}
+              className={`flex cursor-pointer items-center transition-all duration-300 border-2 border-white active:scale-95
+        ${
+          isCollapsed
+            ? "size-11 mx-auto justify-center rounded-2xl"
+            : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-xl gap-2"
+        }
+        bg-tertiary text-black hover:bg-tertiary/80 shadow-md`}
             >
-              <LogOut className="size-5" />
-              {!isCollapsed && "Cerrar Sesión"}
+              <LogOut className={`${isCollapsed ? "size-7" : "size-5"}`} />
+              {!isCollapsed && (
+                <span className="font-semibold text-lg">Cerrar Sesión</span>
+              )}
             </button>
           </TooltipTrigger>
 
           {isCollapsed && (
-            <TooltipContent side="right">Cerrar sesión</TooltipContent>
+            <TooltipContent side="right" sideOffset={12}>
+              Cerrar sesión
+            </TooltipContent>
           )}
         </Tooltip>
       </SidebarFooter>
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }
