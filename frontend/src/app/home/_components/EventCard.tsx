@@ -191,8 +191,8 @@ export default function EventCard({
     <div
       ref={cardRef}
       id={`card-${event.id}`}
-      className={`group relative min-h-[320px] md:aspect-square 2xl:aspect-5/4 border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
-        isBlocked && !isEnrolled ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      className={`group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
+        isBlocked && !isEnrolled ? "cursor-not-allowed" : "cursor-pointer"
       }`}
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
@@ -224,28 +224,28 @@ export default function EventCard({
               {isExpired && (
                 <Badge
                   variant="destructive"
-                  className="bg-red-500/20 py-4 px-5 font-bold text-red-600 border-red-500/40 backdrop-blur-md uppercase"
+                  className="bg-red-500/20 py-3 2xl:py-4 px-5 font-bold text-red-600 border-red-500/40 backdrop-blur-md uppercase text-xs"
                 >
                   Expirado
                 </Badge>
               )}
               {isFull && (
-                <Badge className="bg-orange-500/20 font-bold py-4 px-5 text-orange-600 border-orange-500/40 backdrop-blur-md uppercase">
+                <Badge className="bg-orange-500/20 font-bold py-3 2xl:py-4 px-5 text-orange-600 border-orange-500/40 backdrop-blur-md uppercase text-xs">
                   Cupo Lleno
                 </Badge>
               )}
               {isEnrolled && (
-                <Badge className="bg-emerald-500/20 font-bold py-4 px-5 text-emerald-600 border-emerald-500/40 backdrop-blur-md uppercase">
+                <Badge className="bg-emerald-500/20 font-bold py-3 2xl:py-4 px-5 text-emerald-600 border-emerald-500/40 backdrop-blur-md uppercase text-xs">
                   Ya inscrito
                 </Badge>
               )}
               {isOrganizer && (
-                <Badge className="bg-primary/20 font-bold py-4 px-5 text-primary border-primary/40 backdrop-blur-md uppercase">
+                <Badge className="bg-primary/20 font-bold py-3 2xl:py-4 px-5 text-primary border-primary/40 backdrop-blur-md uppercase text-xs">
                   Organizador
                 </Badge>
               )}
             </div>
-            <h3 className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[0.8] tracking-tighter">
+            <h3 className="text-2xl md:text-3xl xl:text-4xl 2xl:text-6xl min-[1920px]:text-7xl font-black leading-[0.8] tracking-tighter">
               {event.title}
             </h3>
           </div>
