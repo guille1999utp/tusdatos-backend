@@ -83,14 +83,6 @@
 }
 
 :root {
-    --card-1-stroke: #e67339;
-  --card-2-stroke: #a66363;
-  --card-3-stroke: #eb3828;
-  --card-4-stroke: #a6a09d;
-  --card-5-stroke: #99938a;
-  --card-6-stroke: #5f7c98;
-  --card-base-stroke: #e0e0e0;
-  --card-copy: #000;
    --transition-stroke-1: #9e91e4;
   --transition-stroke-2: #583cd6;
   --radius:
