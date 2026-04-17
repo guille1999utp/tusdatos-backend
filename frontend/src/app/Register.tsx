@@ -78,10 +78,10 @@ const Register = () => {
     <section>
       {/* TITLE */}
       <div className="mb-6 md:mb-10 text-center flex flex-col gap-2">
-        <h2 className="text-3xl md:text-4xl text-center font-extrabold text-secondary">
+        <h2 className="text-3xl md:text-4xl text-center font-extrabold text-primary">
           Regístrate en{" "}
         </h2>
-        <span className="text-white border border-secondary text-3xl py-2 md:text-4xl xl:text-5xl text-center font-extrabold  rounded-full bg-primary">
+        <span className="text-black border-2 border-white text-3xl py-2 md:text-4xl xl:text-5xl text-center font-extrabold  rounded-full bg-tertiary">
           TUSDATOS.CO
         </span>
       </div>

@@ -44,7 +44,7 @@ export default function EventCard({
     const actionBtn = cardContainer.querySelector(".action-btn");
     const infoContainer = cardContainer.querySelector(".info-container");
 
-    if (!cardTitle || !actionBtn || !infoContainer) return;
+    if (!cardTitle || !infoContainer) return;
 
     const split = SplitText.create(cardTitle, {
       type: "words",
@@ -53,8 +53,12 @@ export default function EventCard({
     });
 
     gsap.set(split.words, { yPercent: 0 });
-    gsap.set(actionBtn, { opacity: 0, y: 20 });
-    gsap.set(cardTitle, { color: "#5d3fd3" }); // Direct primary color for initialization
+    gsap.set(cardTitle, { color: "#5d3fd3" });
+
+    // Button starts hidden below the card (clipped by overflow-hidden)
+    if (actionBtn) {
+      gsap.set(actionBtn, { opacity: 0, y: 150 });
+    }
 
     cardPaths.forEach((path) => {
       const length = path.getTotalLength();
@@ -75,7 +79,7 @@ export default function EventCard({
           {
             strokeDashoffset: 0,
             attr: { "stroke-width": 750 },
-            duration: 1.3,
+            duration: 1.5,
             ease: "power2.out",
           },
           0,
@@ -83,18 +87,18 @@ export default function EventCard({
       });
 
       if (!isBlocked) {
-        // Displacement up
+        // Info container and button move simultaneously — button pushes content up
         tl.to(
           infoContainer,
           {
-            y: -100,
+            y: -90,
             duration: 0.7,
             ease: "power3.out",
           },
           0.1,
         );
 
-        // Color transition at 50%
+        // Color transition
         tl.to(
           cardTitle,
           {
@@ -104,17 +108,19 @@ export default function EventCard({
           0.3,
         );
 
-        // Show Button
-        tl.to(
-          actionBtn,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "back.out(1.7)",
-          },
-          0.3,
-        );
+        // Button rises from below in sync with content — same start time, same ease
+        if (actionBtn) {
+          tl.to(
+            actionBtn,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+            },
+            0.1,
+          );
+        }
       }
     };
 
@@ -136,7 +142,20 @@ export default function EventCard({
         );
       });
 
-      // Restore displacement
+      // Button drops down first, then content follows back
+      if (actionBtn) {
+        tl.to(
+          actionBtn,
+          {
+            opacity: 0,
+            y: 150,
+            duration: 0.5,
+            ease: "power3.in",
+          },
+          0,
+        );
+      }
+
       tl.to(
         infoContainer,
         {
@@ -144,10 +163,9 @@ export default function EventCard({
           duration: 0.6,
           ease: "power3.inOut",
         },
-        0,
+        0.1,
       );
 
-      // Restore color
       tl.to(
         cardTitle,
         {
@@ -155,16 +173,6 @@ export default function EventCard({
           duration: 0.4,
         },
         0.2,
-      );
-
-      tl.to(
-        actionBtn,
-        {
-          opacity: 0,
-          y: 50,
-          duration: 0.4,
-        },
-        0,
       );
     };
 
@@ -184,75 +192,79 @@ export default function EventCard({
     <div
       ref={cardRef}
       id={`card-${event.id}`}
-      onClick={() => !isBlocked && onClick()}
-      className={`group relative aspect-square border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
+      onClick={() => !isBlocked}
+      className={`group relative min-h-[320px] md:aspect-square 2xl:aspect-5/4 border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
         isBlocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
       }`}
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none " />
 
-      <div className="relative h-full w-full p-6 sm:p-8 flex flex-col justify-between z-20">
+      <div className="relative h-full w-full p-5 sm:p-6 lg:p-8 flex flex-col justify-between z-20">
         {/* Header Badges */}
         <div className="flex justify-between items-center">
-          <Badge className="bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-5 md:py-6 rounded-full font-bold tracking-tight text-2xl md:text-3xl shadow-sm">
-            <HugeiconsIcon
-              icon={UserGroupIcon}
-              className="mr-3 size-12 inline-block text-black"
-            />
-            {event.registered_count} / {event.capacity}
-          </Badge>
-          <div className="flex items-center gap-2 text-black text-base md:text-lg font-bold tracking-widest uppercase">
+          <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase">
             <HugeiconsIcon
               icon={Calendar01Icon}
-              className="mr-1 sm:mr-2 inline size-5"
+              className="mr-1 lg:mr-2 inline size-5 md:size-7"
             />
             {event.date}
+          </div>
+          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-2xl xl:text-3xl shadow-sm">
+            <HugeiconsIcon
+              icon={UserGroupIcon}
+              className="shrink-0 size-6 sm:size-8 text-black"
+            />
+            {event.registered_count} / {event.capacity}
           </div>
         </div>
 
         {/* Info Container moved to bottom */}
-        <div className="info-container space-y-4 absolute bottom-10 left-8 right-8">
+        <div className="info-container space-y-4 absolute  bottom-7 sm:bottom-10 left-8 right-8">
           <div className="event-details space-y-1">
             <div className="flex flex-wrap gap-2 mb-3">
               {isExpired && (
                 <Badge
                   variant="destructive"
-                  className="bg-red-500/20 py-3 px-5 font-bold text-red-600 border-red-500/40"
+                  className="bg-red-500/20 py-4 px-5 font-bold text-red-600 border-red-500/40 backdrop-blur-md uppercase"
                 >
                   Expirado
                 </Badge>
               )}
               {isFull && (
-                <Badge className="bg-orange-500/20 font-bold py-3 px-5 text-orange-600 border-orange-500/40">
+                <Badge className="bg-orange-500/20 font-bold py-4 px-5 text-orange-600 border-orange-500/40 backdrop-blur-md uppercase">
                   Cupo Lleno
                 </Badge>
               )}
             </div>
-            <h3 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.8] tracking-tighter">
+            <h3 className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[0.8] tracking-tighter">
               {event.title}
             </h3>
           </div>
 
-          <p className="text-base text-black/80 line-clamp-2 leading-tight font-semibold ">
-            "{event.description}"
+          <p className="text-sm sm:text-base text-black line-clamp-2 leading-tight font-semibold ">
+            {event.description}
           </p>
-
-          {!isBlocked && (
-            <div className="pt-6">
-              <Button
-                variant="main"
-                className="action-btn group/btn flex items-center justify-center gap-4 bg-primary text-white border-4 border-white w-full h-24 rounded-[2.5rem] font-black text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl"
-              >
-                Inscribirme ahora
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  className="transition-transform duration-500 size-8 group-hover/btn:translate-x-3"
-                />
-              </Button>
-            </div>
-          )}
         </div>
+
+        {!isBlocked && (
+          <div
+            className="action-btn absolute bottom-8 left-8 right-8"
+            style={{ opacity: 0, transform: "translateY(150px)" }}
+          >
+            <Button
+              variant="main"
+              onClick={() => !isBlocked && onClick()}
+              className="group/btn flex items-center justify-center gap-4 bg-primary text-white border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl  xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl"
+            >
+              Inscribirme ahora
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className="transition-transform duration-500 size-7 group-hover/btn:translate-x-3"
+              />
+            </Button>
+          </div>
+        )}
       </div>
 
       {!isBlocked && (

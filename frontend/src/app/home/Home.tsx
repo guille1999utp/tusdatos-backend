@@ -140,7 +140,7 @@ export default function Home() {
                   <Button
                     variant={"default"}
                     className={cn(
-                      "w-full py-5 md:py-6 font-bold text-white bg-transparent text-base md:text-lg ",
+                      "w-full py-5 px-1 md:py-6 font-bold text-white bg-transparent text-sm md:text-lg ",
                     )}
                   >
                     Iniciar sesión
@@ -150,7 +150,7 @@ export default function Home() {
                   <Button
                     variant={"main"}
                     className={cn(
-                      "w-full py-5 md:py-6 font-bold border border-white ",
+                      "w-full py-5 md:py-6 font-bold border border-white text-sm md:text-base ",
                     )}
                   >
                     Registrarse
@@ -164,7 +164,7 @@ export default function Home() {
 
       {/* <SvgFollowScroll /> */}
 
-      <div className="container relative xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full flex flex-col mt-20 gap-10">
+      <div className="container relative xl:py-8 md:pt-4 pt-5 pb-8 px-5 lg:px-14 max-w-full flex flex-col mt-20 gap-10">
         <div className="flex w-full flex-col gap-2">
           <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-primary">
             Eventos disponibles
@@ -190,7 +190,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8">
           {isLoadingGetEvents ? (
             Array.from({ length: 6 }).map((_, i) => (
               <div
@@ -233,29 +233,31 @@ export default function Home() {
           )}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 justify-end mt-3">
-          <Button
-            type="button"
-            variant="main"
-            size="sm"
-            disabled={page <= 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-          >
-            Anterior
-          </Button>
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Página {page + 1} / {totalPages} · {totalListEvents} eventos
-          </span>
-          <Button
-            type="button"
-            variant="main"
-            size="sm"
-            disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Siguiente
-          </Button>
-        </div>
+        {listEvents.length === 0 && listEvents.length > 0 && (
+          <div className="flex items-center gap-2 shrink-0 justify-end mt-3">
+            <Button
+              type="button"
+              variant="main"
+              size="sm"
+              disabled={page <= 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+            >
+              Anterior
+            </Button>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              Página {page + 1} / {totalPages} · {totalListEvents} eventos
+            </span>
+            <Button
+              type="button"
+              variant="main"
+              size="sm"
+              disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Siguiente
+            </Button>
+          </div>
+        )}
       </div>
       <MainDialog
         title="Eventos"
