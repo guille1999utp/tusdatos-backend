@@ -195,7 +195,7 @@ export default function EventDetail() {
           <Button
             type="button"
             variant="main"
-            className="mt-2 bg-destructive h-10 md:h-12 text-white hover:bg-destructive/10"
+            className="mt-2 bg-destructive h-10 md:h-12 text-white hover:bg-destructive hover:drop-shadow-none"
             onClick={handleLeave}
           >
             Dejar evento

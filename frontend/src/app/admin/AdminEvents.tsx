@@ -237,7 +237,7 @@ export default function AdminEvents() {
         setOpenModal={(open) => {
           if (!open) setRegOpen({ open: false, id: 0 });
         }}
-        customMaxWidth="sm:max-w-xl"
+        customMaxWidth="sm:max-w-2xl"
       >
         {regOpen.open ? (
           <AdminEventRegistrations

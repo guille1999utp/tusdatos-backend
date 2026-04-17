@@ -191,27 +191,27 @@ export default function EventCard({
     <div
       ref={cardRef}
       id={`card-${event.id}`}
-      className={`group relative min-h-[320px] md:aspect-square 2xl:aspect-5/4 border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
-        isBlocked && !isEnrolled ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+      className={`group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
+        isBlocked && !isEnrolled ? "cursor-not-allowed" : "cursor-pointer"
       }`}
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none " />
 
-      <div className="relative h-full w-full p-5 sm:p-6 lg:p-8 flex flex-col justify-between z-20">
+      <div className="relative h-full w-full p-5 sm:p-6 2xl:p-8 flex flex-col justify-between z-20">
         {/* Header Badges */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase">
             <HugeiconsIcon
               icon={Calendar01Icon}
-              className="mr-1 lg:mr-2 inline size-5 md:size-7"
+              className="mr-1 2xl:mr-2 inline size-5 md:size-7"
             />
             {event.date}
           </div>
-          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-2xl xl:text-3xl shadow-sm">
+          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-xl 2xl:text-3xl shadow-sm">
             <HugeiconsIcon
               icon={UserGroupIcon}
-              className="shrink-0 size-6 sm:size-8 text-black"
+              className="shrink-0 size-6  2xl:size-8 text-black"
             />
             {event.registered_count} / {event.capacity}
           </div>
@@ -224,28 +224,28 @@ export default function EventCard({
               {isExpired && (
                 <Badge
                   variant="destructive"
-                  className="bg-red-500/20 py-4 px-5 font-bold text-red-600 border-red-500/40 backdrop-blur-md uppercase"
+                  className="bg-red-500/20 py-3 2xl:py-4 px-5 font-bold text-red-600 border-red-500/40 backdrop-blur-md uppercase text-xs"
                 >
                   Expirado
                 </Badge>
               )}
               {isFull && (
-                <Badge className="bg-orange-500/20 font-bold py-4 px-5 text-orange-600 border-orange-500/40 backdrop-blur-md uppercase">
+                <Badge className="bg-orange-500/20 font-bold py-3 2xl:py-4 px-5 text-orange-600 border-orange-500/40 backdrop-blur-md uppercase text-xs">
                   Cupo Lleno
                 </Badge>
               )}
               {isEnrolled && (
-                <Badge className="bg-emerald-500/20 font-bold py-4 px-5 text-emerald-600 border-emerald-500/40 backdrop-blur-md uppercase">
+                <Badge className="bg-emerald-500/20 font-bold py-3 2xl:py-4 px-5 text-emerald-600 border-emerald-500/40 backdrop-blur-md uppercase text-xs">
                   Ya inscrito
                 </Badge>
               )}
               {isOrganizer && (
-                <Badge className="bg-primary/20 font-bold py-4 px-5 text-primary border-primary/40 backdrop-blur-md uppercase">
+                <Badge className="bg-primary/20 font-bold py-3 2xl:py-4 px-5 text-primary border-primary/40 backdrop-blur-md uppercase text-xs">
                   Organizador
                 </Badge>
               )}
             </div>
-            <h3 className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[0.8] tracking-tighter">
+            <h3 className="text-2xl md:text-3xl xl:text-4xl 2xl:text-6xl min-[1920px]:text-7xl font-black leading-[0.8] tracking-tighter">
               {event.title}
             </h3>
           </div>
@@ -266,7 +266,7 @@ export default function EventCard({
                 e.stopPropagation();
                 onClick();
               }}
-              className={`group/btn flex items-center justify-center gap-4 border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl ${
+              className={`group/btn flex items-center justify-center gap-4 border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl xl:text-xl 2xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl ${
                 isEnrolled
                   ? "bg-red-500/80 hover:bg-red-600 text-white"
                   : "bg-primary text-white"
