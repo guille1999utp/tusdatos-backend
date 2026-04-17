@@ -5,6 +5,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
@@ -21,9 +22,11 @@ import {
 import { NavMain } from "./nav-main";
 import { useContext } from "react";
 import { AuthContext } from "@/auth/AuthContext";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function AppSidebar() {
-  const { setOpen } = useSidebar();
+  const { setOpen, open } = useSidebar();
+  const isCollapsed = !open;
 
   const { user, logout } = useContext(AuthContext)!;
 
@@ -88,11 +91,19 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4 font-extrabold md:pt-12 pb-4 md:pb-6 text-primary text-center bg-background text-3xl">
-        <Link to="/" onClick={handleCloseSidebar}>
-          TUSDATOS.CO
-        </Link>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="p-4 md:pt-12 pb-4 md:pb-6 text-center bg-background">
+        {!isCollapsed ? (
+          <Link
+            to="/"
+            onClick={handleCloseSidebar}
+            className="text-3xl font-extrabold text-primary"
+          >
+            TUSDATOS.CO
+          </Link>
+        ) : (
+          <></>
+        )}
       </SidebarHeader>
 
       <SidebarContent className="p-2 bg-background">
@@ -104,13 +115,25 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-2 md:pb-6 bg-background">
-        <button
-          onClick={() => logout()}
-          className="flex items-center cursor-pointer mx-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-2xl h-12 hover:bg-tertiary bg-tertiary text-black active:scale-95 transition-all duration-200 border-2 border-white"
-        >
-          <LogOut size={18} /> Cerrar Sesión
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => logout()}
+              className={`flex items-center mx-2 font-semibold rounded-2xl h-12 transition-all duration-200 border-2 border-white
+        ${isCollapsed ? "justify-center px-0" : "gap-2 pl-4"}
+        bg-tertiary text-black hover:bg-tertiary/80 active:scale-95`}
+            >
+              <LogOut className="size-5" />
+              {!isCollapsed && "Cerrar Sesión"}
+            </button>
+          </TooltipTrigger>
+
+          {isCollapsed && (
+            <TooltipContent side="right">Cerrar sesión</TooltipContent>
+          )}
+        </Tooltip>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }
