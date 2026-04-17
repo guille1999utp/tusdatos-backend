@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "@/components/ui/sidebar";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import {
   Tooltip,
   TooltipContent,
@@ -49,13 +50,14 @@ export function NavMain({ items, user, onNavigate }: any) {
                   ${
                     isActive
                       ? "bg-primary text-white shadow-xl border-2 border-white scale-105"
-                      : "text-black/70 hover:bg-black/5 "
+                      : "text-black hover:bg-black/10"
                   }
                 `}
                 >
                   {item.icon && (
-                    <item.icon
-                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all fill-black/10`}
+                    <HugeiconsIcon
+                      icon={item.icon}
+                      className={`${isCollapsed ? "size-8" : "size-7"} transition-all fill-black/10`}
                     />
                   )}
 
@@ -96,13 +98,14 @@ export function NavMain({ items, user, onNavigate }: any) {
                   ${
                     isActive
                       ? "bg-primary text-white shadow-xl border-2 border-white scale-105"
-                      : "text-black/70 hover:bg-black/5"
+                      : "text-black hover:bg-black/10"
                   }
                 `}
                 >
                   {item.icon && (
-                    <item.icon
-                      className={`${isCollapsed ? "size-7" : "size-6"} transition-all fill-black/10`}
+                    <HugeiconsIcon
+                      icon={item.icon}
+                      className={`${isCollapsed ? "size-8" : "size-7"} transition-all fill-black/10`}
                     />
                   )}
 
@@ -111,8 +114,10 @@ export function NavMain({ items, user, onNavigate }: any) {
                   )}
 
                   {!isCollapsed && (
-                    <ChevronRight
-                      className={`ml-auto mr-4 transition-transform duration-300 ${
+                    <HugeiconsIcon
+                      icon={ArrowRight01Icon}
+                      strokeWidth={2}
+                      className={`ml-auto mr-4 text-black size-5 transition-transform duration-300 ${
                         isOpen ? "rotate-90" : ""
                       }`}
                     />

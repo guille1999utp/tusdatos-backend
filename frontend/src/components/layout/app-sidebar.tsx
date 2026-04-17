@@ -8,16 +8,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  LayoutDashboard,
-  CalendarCog,
-  CalendarSearch,
-  UserCheck,
-  Ticket,
-  UserCircle,
-  LogOut,
-  PanelsTopLeft,
-} from "lucide-react";
+  DashboardSquare01Icon,
+  UserCheck01Icon,
+  Ticket01Icon,
+  UserCircleIcon,
+  Logout01Icon,
+  Calendar03Icon,
+  PropertySearchIcon,
+  ShieldUserIcon,
+} from "@hugeicons/core-free-icons";
 import { NavMain } from "./nav-main";
 import { useContext } from "react";
 import { AuthContext } from "@/auth/AuthContext";
@@ -39,38 +40,38 @@ export function AppSidebar() {
     {
       label: "Panel",
       to: "/dashboard",
-      icon: LayoutDashboard,
+      icon: DashboardSquare01Icon,
     },
     {
       label: "Eventos",
       to: "/events",
-      icon: CalendarCog,
+      icon: Calendar03Icon,
     },
     {
       label: "Explorar",
       to: "/all-events",
-      icon: CalendarSearch,
+      icon: PropertySearchIcon,
     },
     {
       label: "Inscripciones",
       to: "/my-registrations",
-      icon: Ticket,
+      icon: Ticket01Icon,
     },
     {
       label: "Asistente",
       to: "/assistant-events",
-      icon: UserCheck,
+      icon: UserCheck01Icon,
     },
     {
       label: "Perfil",
       to: "/profile",
-      icon: UserCircle,
+      icon: UserCircleIcon,
     },
 
     // 🔥 ADMIN GROUP
     {
       label: "Admin",
-      icon: PanelsTopLeft,
+      icon: ShieldUserIcon,
       roles: ["admin"],
       children: [
         {
@@ -136,7 +137,10 @@ export function AppSidebar() {
         }
         bg-tertiary text-black hover:bg-tertiary/80 shadow-md`}
             >
-              <LogOut className={`${isCollapsed ? "size-7" : "size-5"}`} />
+              <HugeiconsIcon
+                icon={Logout01Icon}
+                className={`${isCollapsed ? "size-7" : "size-5"}`}
+              />
               {!isCollapsed && (
                 <span className="font-semibold text-lg">Cerrar Sesión</span>
               )}
