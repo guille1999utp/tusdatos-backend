@@ -11,6 +11,7 @@ import {
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(SplitText);
 
@@ -202,7 +203,14 @@ export default function EventCard({
       ref={cardRef}
       id={`card-${event.id}`}
       onClick={handleCardNavigate}
-      className="group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 cursor-pointer"
+      className={cn(
+        "group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] overflow-hidden rounded-[3rem] border-2 border-white shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 cursor-pointer md:rounded-[4rem]",
+        isExpired &&
+          "ring-4 ring-red-500/70 ring-offset-2 ring-offset-background border-red-400/90",
+        isFull &&
+          !isExpired &&
+          "ring-4 ring-amber-400/80 ring-offset-2 ring-offset-background border-amber-300/90",
+      )}
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none " />

@@ -25,6 +25,30 @@ function isEnrolled(role: string | null | undefined): boolean {
   return role === "usuario" || role === "asistente";
 }
 
+/** Misma regla que en el listado de eventos (fecha del evento ya pasó). */
+function isEventDatePast(dateStr: string): boolean {
+  const raw = String(dateStr).trim();
+  const ymd = raw.slice(0, 10);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    const eventDay = new Date(y, mo, d);
+    eventDay.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDay < today;
+  }
+  const t = Date.parse(raw);
+  if (Number.isNaN(t)) return false;
+  const eventDay = new Date(t);
+  eventDay.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return eventDay < today;
+}
+
 const defaultSessionForm: IEventSessionCreate = {
   title: "",
   speaker: "",
@@ -178,6 +202,7 @@ export default function EventDetail({ variant = "panel" }: EventDetailProps) {
     Number.isFinite(capacity) &&
     capacity > 0 &&
     registeredCount >= capacity;
+  const expired = isEventDatePast(event.date);
 
   return (
     <div className="space-y-6">
@@ -220,7 +245,14 @@ export default function EventDetail({ variant = "panel" }: EventDetailProps) {
             : "Inicia sesión para ver tu rol o inscribirte"}
         </p>
 
-        {!isOrganizer && !enrolled && !isAtCapacity ? (
+        {!isOrganizer && !enrolled && expired ? (
+          <p className="mt-2 rounded-xl border-2 border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 md:text-base">
+            Evento expirado: la fecha del evento ya pasó. No es posible
+            inscribirse, con o sin sesión iniciada.
+          </p>
+        ) : null}
+
+        {!isOrganizer && !enrolled && !expired && !isAtCapacity ? (
           <button
             type="button"
             className="mt-2 h-10 md:h-12 rounded-full border-2 border-white active:scale-95 transition-all cursor-pointer bg-green-600 px-4 text-white hover:bg-green-700"
@@ -238,7 +270,7 @@ export default function EventDetail({ variant = "panel" }: EventDetailProps) {
           </button>
         ) : null}
 
-        {!isOrganizer && !enrolled && isAtCapacity ? (
+        {!isOrganizer && !enrolled && !expired && isAtCapacity ? (
           <p className="mt-2 text-sm font-semibold text-muted-foreground">
             Cupo completo: no quedan plazas para inscribirse en este evento.
           </p>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Calendar01Icon, UserGroupIcon } from "@hugeicons/core-free-icons";
 import { Link, useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 type RoleBadge = {
   label: string;
@@ -64,9 +65,15 @@ export default function SimpleEventCard({
   return (
     <div
       onClick={handleCardNavigate}
-      className={`group relative min-h-[280px] md:min-h-[320px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 cursor-pointer ${
-        isExpired ? "opacity-75" : ""
-      }`}
+      className={cn(
+        "group relative min-h-[280px] cursor-pointer overflow-hidden rounded-[3rem] border-2 border-white shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 md:min-h-[320px] md:rounded-[4rem]",
+        isExpired && "opacity-75",
+        isExpired &&
+          "ring-4 ring-red-500/70 ring-offset-2 ring-offset-background border-red-400/90",
+        isFull &&
+          !isExpired &&
+          "ring-4 ring-amber-400/80 ring-offset-2 ring-offset-background border-amber-300/90",
+      )}
     >
       {/* Background */}
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-105 bg-background" />
@@ -109,7 +116,6 @@ export default function SimpleEventCard({
 
         {/* Body */}
         <div className="flex flex-col gap-3 mt-4">
-          {/* Badges */}
           <div className="flex flex-wrap gap-2">
             {roleBadge && (
               <Badge className={roleBadge.className}>{roleBadge.label}</Badge>

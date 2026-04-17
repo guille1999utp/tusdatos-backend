@@ -123,6 +123,33 @@ describe("EventDetail", () => {
     });
   });
 
+  it("no muestra inscripción si el evento ya expiró", async () => {
+    vi.mocked(EventsService.getById).mockResolvedValue({
+      id: 1,
+      title: "Evento pasado",
+      description: "x",
+      capacity: 50,
+      date: "2020-01-10",
+      state: "scheduled",
+      registered_count: 1,
+      role: null,
+      total_inscritos: 1,
+    });
+
+    render(<EventDetail />);
+
+    expect(await screen.findByText("Evento pasado")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Inscribirme al evento" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Iniciar sesión para inscribirme" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Evento expirado/i, { exact: false }),
+    ).toBeInTheDocument();
+  });
+
   it("no muestra inscripción si el aforo ya está completo", async () => {
     vi.mocked(EventsService.getById).mockResolvedValue({
       id: 1,
