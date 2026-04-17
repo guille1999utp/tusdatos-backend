@@ -78,8 +78,17 @@ export function NavMain({ items, user, onNavigate }: any) {
 
                     if (path === sub.to) return true;
 
-                    // solo coincide si es subruta REAL (no colisión)
-                    if (path.startsWith(sub.to + "/")) return true;
+                    // Evitamos que items genéricos (ej. /admin) se activen si un hermano más específico (ej. /admin/users) coincide mejor
+                    const hasBetterSiblingMatch = item.children.some(
+                      (sibling: any) =>
+                        sibling !== sub &&
+                        (path === sibling.to ||
+                          path.startsWith(sibling.to + "/")) &&
+                        sibling.to.length > sub.to.length,
+                    );
+
+                    if (!hasBetterSiblingMatch && path.startsWith(sub.to + "/"))
+                      return true;
 
                     return false;
                   })();
