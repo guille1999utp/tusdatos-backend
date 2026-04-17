@@ -77,10 +77,13 @@ const Register = () => {
   return (
     <section>
       {/* TITLE */}
-      <div className="mb-6 md:mb-10 text-center">
-        <h2 className="text-3xl md:text-4xl xl:text-5xl font-extrabold text-primary">
-          Regístrate en Tusdatos.co
+      <div className="mb-6 md:mb-10 text-center flex flex-col gap-2">
+        <h2 className="text-3xl md:text-4xl text-center font-extrabold text-secondary">
+          Regístrate en{" "}
         </h2>
+        <span className="text-white border border-secondary text-3xl py-2 md:text-4xl xl:text-5xl text-center font-extrabold  rounded-full bg-primary">
+          TUSDATOS.CO
+        </span>
       </div>
 
       <Form {...form}>
@@ -223,7 +226,7 @@ const Register = () => {
             type="submit"
             variant="main"
             disabled={loading}
-            className={cn("w-full py-6 mt-4 font-bold")}
+            className={cn("w-full py-6 mt-4 font-bold text-lg")}
           >
             {loading ? "Cargando..." : "Registrarse"}
           </Button>

@@ -109,36 +109,37 @@ export default function Home() {
           >
             Tusdatos
           </Link>
-          <nav className="flex items-center gap-1 md:gap-2 text-sm">
+          <nav className="flex items-center gap-1 text-sm">
             {user ? (
               <>
                 <Link
                   to="/dashboard"
-                  className="rounded-md px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="rounded-md px-1.5 py-1.5 text-white text-lg font-semibold"
                 >
                   Panel
                 </Link>
                 <Link
                   to="/all-events"
-                  className="rounded-md px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="rounded-md px-1.5 py-1.5 text-white text-lg font-semibold"
                 >
                   Explorar
                 </Link>
-                <button
+                <Button
                   type="button"
-                  className="rounded-md px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  variant={"main"}
+                  className="shadow-xl border border-white hover:shadow-none"
                   onClick={() => logout()}
                 >
                   Salir
-                </button>
+                </Button>
               </>
             ) : (
               <>
                 <TransitionLink to="/login">
                   <Button
-                    variant={"outline"}
+                    variant={"default"}
                     className={cn(
-                      "w-full py-5 md:py-6 font-bold bg-white hover:bg-white text-primary ",
+                      "w-full py-5 md:py-6 font-bold text-white bg-transparent text-base md:text-lg ",
                     )}
                   >
                     Iniciar sesión
@@ -147,7 +148,9 @@ export default function Home() {
                 <TransitionLink to="/register">
                   <Button
                     variant={"main"}
-                    className={cn("w-full py-5 md:py-6 font-bold ")}
+                    className={cn(
+                      "w-full py-5 md:py-6 font-bold border border-white ",
+                    )}
                   >
                     Registrarse
                   </Button>

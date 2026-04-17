@@ -1,4 +1,4 @@
-import Grainient from "@/components/ui/grainient";
+import Grainient from "@/components/ui/Grainient";
 import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
@@ -39,6 +39,9 @@ const AuthLayout = () => {
             </div>
             <p className="text-white md:text-2xl z-10 relative lg:text-3xl xl:text-5xl 2xl:text-7xl font-extrabold leading-tight text-center 2xl:mx-20 mt-24">
               &quot;TUS EVENTOS, EN UN SOLO LUGAR&quot;
+            </p>
+            <p className="absolute bottom-5 right-7 text-white md:text-2xl z-10 lg:text-3xl  font-extrabold leading-tight text-center">
+              TUSDATOS.CO
             </p>
 
             {/* Capa que SOLO controla los círculos con overflow-hidden */}

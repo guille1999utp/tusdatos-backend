@@ -7,8 +7,7 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
   CalendarCog,
@@ -17,11 +16,16 @@ import {
   Ticket,
   UserCircle,
   LogOut,
+  PanelsTopLeft,
 } from "lucide-react";
+import { NavMain } from "./nav-main";
+import { useContext } from "react";
+import { AuthContext } from "@/auth/AuthContext";
 
 export function AppSidebar() {
-  const location = useLocation();
   const { setOpen } = useSidebar();
+
+  const { user } = useContext(AuthContext)!;
 
   const handleCloseSidebar = () => {
     if (window.innerWidth < 768) {
@@ -30,12 +34,57 @@ export function AppSidebar() {
   };
 
   const menuItems = [
-    { label: "Panel", to: "/dashboard", icon: LayoutDashboard },
-    { label: "Eventos", to: "/events", icon: CalendarCog },
-    { label: "Explorar", to: "/all-events", icon: CalendarSearch },
-    { label: "Inscripciones", to: "/my-registrations", icon: Ticket },
-    { label: "Asistente", to: "/assistant-events", icon: UserCheck },
-    { label: "Perfil", to: "/profile", icon: UserCircle },
+    {
+      label: "Panel",
+      to: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Eventos",
+      to: "/events",
+      icon: CalendarCog,
+    },
+    {
+      label: "Explorar",
+      to: "/all-events",
+      icon: CalendarSearch,
+    },
+    {
+      label: "Inscripciones",
+      to: "/my-registrations",
+      icon: Ticket,
+    },
+    {
+      label: "Asistente",
+      to: "/assistant-events",
+      icon: UserCheck,
+    },
+    {
+      label: "Perfil",
+      to: "/profile",
+      icon: UserCircle,
+    },
+
+    // 🔥 ADMIN GROUP
+    {
+      label: "Admin",
+      icon: PanelsTopLeft,
+      roles: ["admin"],
+      children: [
+        {
+          label: "Dashboard",
+          to: "/admin",
+        },
+        {
+          label: "Eventos",
+          to: "/admin/events",
+        },
+        {
+          label: "Usuarios",
+          to: "/admin/users",
+        },
+      ],
+    },
   ];
 
   return (
@@ -46,28 +95,12 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="p-2 space-y-0 bg-background">
-        {menuItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.to);
-
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              onClick={handleCloseSidebar}
-              className={`flex items-center ml-2 text-lg font-semibold gap-2 p-2 pl-4 rounded-xl h-13 transition-all
-                ${
-                  isActive
-                    ? "bg-primary text-white border-2 shadow-lg"
-                    : "hover:bg-black/10"
-                }
-              `}
-            >
-              <item.icon className="size-6 mr-1" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <SidebarContent className="p-2 bg-background">
+        <NavMain
+          items={menuItems}
+          user={user}
+          onNavigate={handleCloseSidebar}
+        />
       </SidebarContent>
 
       <SidebarFooter className="p-2 md:pb-6 bg-background">

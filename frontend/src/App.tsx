@@ -13,6 +13,7 @@ import { RoleRoute } from "./auth/RoleRoute";
 import { ToastContainer } from "react-toastify";
 import AuthLayout from "./auth/AuthLayout";
 import TransitionProvider from "./providers/TransitionProvider";
+import { Loader2 } from "lucide-react";
 
 const Dashboard = lazy(() =>
   import("./app/dashboard/Dashboard").then((mod) => ({
@@ -54,7 +55,16 @@ function App() {
       <Router>
         <AuthProvider>
           <TransitionProvider>
-            <Suspense fallback={<div className="p-4">Cargando...</div>}>
+            <Suspense
+              fallback={
+                <div className="flex flex-col items-center justify-center min-h-[90vh] gap-4">
+                  <Loader2 className="size-10 md:size-13 animate-spin text-primary" />
+                  <p className="text-lg md:text-xl xl:text-2xl font-semibold text-white  px-3 rounded-full bg-primary p-2">
+                    Cargando...
+                  </p>
+                </div>
+              }
+            >
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Navigate to="/" replace />} />

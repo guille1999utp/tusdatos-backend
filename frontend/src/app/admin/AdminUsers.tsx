@@ -36,7 +36,7 @@ export default function AdminUsers() {
       limit: String(PAGE),
       ...(debounced.trim() ? { q: debounced.trim() } : {}),
     }),
-    [page, debounced]
+    [page, debounced],
   );
 
   const load = useCallback(async () => {
@@ -72,7 +72,9 @@ export default function AdminUsers() {
       });
       toast.success("Rol actualizado");
       if (resp.logout_required) {
-        toast.info("Cerrando sesión: tu cuenta ya no tiene rol de administrador.");
+        toast.info(
+          "Cerrando sesión: tu cuenta ya no tiene rol de administrador.",
+        );
         logout();
         return;
       }
@@ -83,7 +85,11 @@ export default function AdminUsers() {
   };
 
   const removeUser = async (userId: number, label: string) => {
-    if (!window.confirm(`¿Eliminar por completo al usuario «${label}»? Se borrarán sus eventos e inscripciones.`)) {
+    if (
+      !window.confirm(
+        `¿Eliminar por completo al usuario «${label}»? Se borrarán sus eventos e inscripciones.`,
+      )
+    ) {
       return;
     }
     try {
@@ -100,13 +106,14 @@ export default function AdminUsers() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE));
 
   return (
-    <div className="container xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full bg-background flex flex-col mt-20 gap-8">
+    <div className="flex flex-col gap-8">
       <h1 className="text-4xl font-bold md:text-5xl">
         <AuroraText>Admin · Usuarios</AuroraText>
       </h1>
       <p className="text-muted-foreground text-sm max-w-2xl">
-        Busca usuarios por nombre o correo y asigna el rol global (admin o usuario). Debe existir siempre al menos un
-        administrador. Si dejas de ser admin, la sesión se cerrará automáticamente.
+        Busca usuarios por nombre o correo y asigna el rol global (admin o
+        usuario). Debe existir siempre al menos un administrador. Si dejas de
+        ser admin, la sesión se cerrará automáticamente.
       </p>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -121,7 +128,13 @@ export default function AdminUsers() {
           />
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button type="button" variant="outline" size="sm" disabled={page <= 0} onClick={() => setPage((p) => p - 1)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page <= 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
             Anterior
           </Button>
           <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -155,12 +168,19 @@ export default function AdminUsers() {
             {items.map((u) => (
               <TableRow key={u.id}>
                 <TableCell className="font-medium">{u.name}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">{u.email}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">
+                  {u.email}
+                </TableCell>
                 <TableCell>
                   <select
                     className="flex h-9 w-[180px] rounded-md border border-input bg-background px-2 text-sm"
                     value={draftRoles[u.id] ?? u.role}
-                    onChange={(e) => setDraftRoles((prev) => ({ ...prev, [u.id]: e.target.value }))}
+                    onChange={(e) =>
+                      setDraftRoles((prev) => ({
+                        ...prev,
+                        [u.id]: e.target.value,
+                      }))
+                    }
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>

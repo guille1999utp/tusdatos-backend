@@ -4,7 +4,10 @@ import { toast } from "react-toastify";
 
 import { useAuth } from "@/hooks/useAuth";
 import type { IEvents } from "@/models/app/events/events.model";
-import type { IEventSessionCreate, IEventSession } from "@/models/app/events/event-sessions.model";
+import type {
+  IEventSessionCreate,
+  IEventSession,
+} from "@/models/app/events/event-sessions.model";
 import EventsService from "@/services/app/events/events.service";
 
 function formatDateTime(value: string): string {
@@ -34,13 +37,14 @@ export default function EventDetail() {
   const [sessions, setSessions] = useState<IEventSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingSession, setSavingSession] = useState(false);
-  const [sessionForm, setSessionForm] = useState<IEventSessionCreate>(defaultSessionForm);
+  const [sessionForm, setSessionForm] =
+    useState<IEventSessionCreate>(defaultSessionForm);
 
   const parsedId = Number(eventId);
 
   const canManageSessions = useMemo(
     () => user?.role === "admin" || event?.role === "organizador",
-    [user?.role, event?.role]
+    [user?.role, event?.role],
   );
 
   const loadEventData = useCallback(async () => {
@@ -59,8 +63,9 @@ export default function EventDetail() {
       setEvent(eventResp);
       setSessions(
         [...sessionsResp].sort(
-          (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-        )
+          (a, b) =>
+            new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+        ),
       );
     } catch {
       toast.error("No se pudo cargar el detalle del evento");
@@ -77,9 +82,8 @@ export default function EventDetail() {
   const handleSubscribe = async () => {
     if (!event) return;
     try {
-      await EventsService.subscribe(
-        { id: event.id },
-        (msg) => toast.error(msg || "No se pudo completar la inscripción")
+      await EventsService.subscribe({ id: event.id }, (msg) =>
+        toast.error(msg || "No se pudo completar la inscripción"),
       );
       toast.success("Inscripción completada");
       await loadEventData();
@@ -104,7 +108,7 @@ export default function EventDetail() {
     setSavingSession(true);
     try {
       await EventsService.createSession(event.id, sessionForm, (msg) =>
-        toast.error(msg || "No se pudo crear la sesión")
+        toast.error(msg || "No se pudo crear la sesión"),
       );
       toast.success("Sesión creada");
       setSessionForm(defaultSessionForm);
@@ -117,18 +121,26 @@ export default function EventDetail() {
   };
 
   if (loading) {
-    return <div className="container mt-24 px-6 text-muted-foreground">Cargando detalle del evento...</div>;
+    return (
+      <div className="container mt-24 px-6 text-muted-foreground">
+        Cargando detalle del evento...
+      </div>
+    );
   }
 
   if (!event) {
-    return <div className="container mt-24 px-6 text-muted-foreground">No se encontró el evento.</div>;
+    return (
+      <div className="container mt-24 px-6 text-muted-foreground">
+        No se encontró el evento.
+      </div>
+    );
   }
 
   const enrolled = isEnrolled(event.role);
   const isOrganizer = event.role === "organizador";
 
   return (
-    <div className="container mt-20 px-5 md:px-14 pb-8 space-y-6">
+    <div className="container px-5 md:px-14 pb-8 space-y-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-3xl md:text-4xl font-bold">{event.title}</h1>
         <Link className="text-sm text-primary hover:underline" to="/all-events">
@@ -150,7 +162,8 @@ export default function EventDetail() {
           <strong>Capacidad:</strong> {event.capacity}
         </p>
         <p>
-          <strong>Participantes:</strong> {event.total_inscritos ?? event.registered_count}
+          <strong>Participantes:</strong>{" "}
+          {event.total_inscritos ?? event.registered_count}
         </p>
         <p>
           <strong>Tu rol:</strong> {event.role ?? "sin rol en este evento"}
@@ -180,17 +193,24 @@ export default function EventDetail() {
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Sesiones del evento</h2>
         {sessions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Este evento aún no tiene sesiones programadas.</p>
+          <p className="text-sm text-muted-foreground">
+            Este evento aún no tiene sesiones programadas.
+          </p>
         ) : (
           <div className="space-y-2">
             {sessions.map((session) => (
               <div key={session.id} className="rounded-md border p-3">
                 <p className="font-medium">{session.title}</p>
-                <p className="text-sm text-muted-foreground">Ponente: {session.speaker}</p>
                 <p className="text-sm text-muted-foreground">
-                  {formatDateTime(session.start_time)} - {formatDateTime(session.end_time)}
+                  Ponente: {session.speaker}
                 </p>
-                <p className="text-sm text-muted-foreground">Capacidad: {session.capacity}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDateTime(session.start_time)} -{" "}
+                  {formatDateTime(session.end_time)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Capacidad: {session.capacity}
+                </p>
               </div>
             ))}
           </div>
@@ -202,12 +222,16 @@ export default function EventDetail() {
           <h3 className="text-lg font-semibold">Crear sesión</h3>
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Título de la sesión</label>
+              <label className="text-xs text-muted-foreground">
+                Título de la sesión
+              </label>
               <input
                 className="h-9 w-full rounded-md border px-3"
                 placeholder="Ej. Taller de React"
                 value={sessionForm.title}
-                onChange={(e) => setSessionForm((prev) => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setSessionForm((prev) => ({ ...prev, title: e.target.value }))
+                }
               />
             </div>
             <div className="space-y-1">
@@ -216,38 +240,65 @@ export default function EventDetail() {
                 className="h-9 w-full rounded-md border px-3"
                 placeholder="Nombre del expositor"
                 value={sessionForm.speaker}
-                onChange={(e) => setSessionForm((prev) => ({ ...prev, speaker: e.target.value }))}
+                onChange={(e) =>
+                  setSessionForm((prev) => ({
+                    ...prev,
+                    speaker: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Fecha y hora de inicio</label>
+              <label className="text-xs text-muted-foreground">
+                Fecha y hora de inicio
+              </label>
               <input
                 className="h-9 w-full rounded-md border px-3"
                 type="datetime-local"
                 value={sessionForm.start_time}
-                onChange={(e) => setSessionForm((prev) => ({ ...prev, start_time: e.target.value }))}
+                onChange={(e) =>
+                  setSessionForm((prev) => ({
+                    ...prev,
+                    start_time: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Fecha y hora de fin</label>
+              <label className="text-xs text-muted-foreground">
+                Fecha y hora de fin
+              </label>
               <input
                 className="h-9 w-full rounded-md border px-3"
                 type="datetime-local"
                 value={sessionForm.end_time}
-                onChange={(e) => setSessionForm((prev) => ({ ...prev, end_time: e.target.value }))}
+                onChange={(e) =>
+                  setSessionForm((prev) => ({
+                    ...prev,
+                    end_time: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs text-muted-foreground">Capacidad de la sesión</label>
+              <label className="text-xs text-muted-foreground">
+                Capacidad de la sesión
+              </label>
               <input
                 className="h-9 w-full rounded-md border px-3"
                 type="number"
                 min={1}
                 value={sessionForm.capacity}
-                onChange={(e) => setSessionForm((prev) => ({ ...prev, capacity: Number(e.target.value) }))}
+                onChange={(e) =>
+                  setSessionForm((prev) => ({
+                    ...prev,
+                    capacity: Number(e.target.value),
+                  }))
+                }
               />
               <p className="text-xs text-muted-foreground">
-                Valor por defecto: 1 participante. Debe ser mayor a 0 y no superar la capacidad del evento.
+                Valor por defecto: 1 participante. Debe ser mayor a 0 y no
+                superar la capacidad del evento.
               </p>
             </div>
           </div>

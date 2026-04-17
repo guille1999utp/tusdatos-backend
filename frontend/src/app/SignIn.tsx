@@ -68,10 +68,13 @@ const Login = () => {
 
   return (
     <section>
-      <div className="mb-6 md:mb-10">
-        <h2 className="text-3xl md:text-4xl xl:text-5xl text-center font-extrabold text-primary">
-          Bienvenido a Tusdatos.co
+      <div className="mb-6 md:mb-10 text-center flex flex-col gap-2">
+        <h2 className="text-3xl md:text-4xl text-center font-extrabold text-secondary">
+          Bienvenido a{" "}
         </h2>
+        <span className="text-white border border-secondary text-3xl py-2 md:text-4xl xl:text-5xl text-center font-extrabold  rounded-full bg-primary">
+          TUSDATOS.CO
+        </span>
       </div>
 
       <Form {...form}>
@@ -155,7 +158,7 @@ const Login = () => {
             type="submit"
             variant={"main"}
             disabled={loading}
-            className={cn("w-full py-6 mt-4 font-bold ")}
+            className={cn("w-full py-6 mt-4 font-bold text-lg")}
           >
             {loading ? "Cargando..." : "Iniciar sesión"}
           </Button>
