@@ -140,41 +140,58 @@ export default function Cards() {
   const rows = chunkArray(cards, 2);
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="flex flex-col gap-4">
       {rows.map((row, i) => (
-        <div className="row" key={i}>
+        <div
+          className="row w-full px-4 mb-4 flex flex-col min-[1001px]:flex-row gap-4"
+          key={i}
+        >
           {row.map((card) => (
-            <div className="card-container" id={card.id} key={card.id}>
-              <div className="card-img">
-                <img src={card.image} alt={card.title} />
+            <div
+              className="card-container relative flex-1 aspect-square rounded-2xl overflow-hidden cursor-pointer"
+              id={card.id}
+              key={card.id}
+            >
+              <div className="card-img w-full h-full">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* SVG 1 */}
-              <div className="svg-stroke svg-stroke-1">
-                <svg viewBox="0 0 2453 2273" fill="none">
+              <div className="svg-stroke svg-stroke-1 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[1.5] w-full h-full pointer-events-none">
+                <svg viewBox="0 0 2453 2273" fill="none" className="w-full h-full">
                   <path
                     d="M227.549 1818.76C227.549 1818.76 406.016 2207.75 569.049 2130.26C843.431 1999.85 -264.104 1002.3 227.549 876.262C552.918 792.849 773.647 2456.11 1342.05 2130.26C1885.43 1818.76 14.9644 455.772 760.548 137.262C1342.05 -111.152 1663.5 2266.35 2209.55 1972.76C2755.6 1679.18 1536.63 384.467 1826.55 137.262C2013.5 -22.1463 2209.55 381.262 2209.55 381.262"
                     strokeWidth="200"
                     strokeLinecap="round"
                     fill="none"
+                    style={{
+                      stroke: `var(--card-${card.id.split("-")[1]}-stroke)`,
+                    }}
                   />
                 </svg>
               </div>
 
               {/* SVG 2 */}
-              <div className="svg-stroke svg-stroke-2">
-                <svg viewBox="0 0 2250 2535" fill="none">
+              <div className="svg-stroke svg-stroke-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[1.5] w-full h-full pointer-events-none">
+                <svg viewBox="0 0 2250 2535" fill="none" className="w-full h-full">
                   <path
                     d="M1661.28 2255.51C1661.28 2255.51 2311.09 1960.37 2111.78 1817.01C1944.47 1696.67 718.456 2870.17 499.781 2255.51C308.969 1719.17 2457.51 1613.83 2111.78 963.512C1766.05 313.198 427.949 2195.17 132.281 1455.51C-155.219 736.292 2014.78 891.514 1708.78 252.012C1437.81 -314.29 369.471 909.169 132.281 566.512C18.1772 401.672 244.781 193.012 244.781 193.012"
                     strokeWidth="200"
                     strokeLinecap="round"
                     fill="none"
+                    style={{ stroke: "var(--card-base-stroke)" }}
                   />
                 </svg>
               </div>
 
-              <div className="card-title">
-                <h3>{card.title}</h3>
+              <div className="card-title absolute bottom-8 left-8 text-[var(--card-copy)]">
+                <h3 className="text-[clamp(1.5rem,2.5vw,2.5rem)] font-[450] leading-tight tracking-tight">
+                  {card.title}
+                </h3>
               </div>
             </div>
           ))}
