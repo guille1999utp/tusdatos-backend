@@ -22,6 +22,8 @@ interface EventCardProps {
   onClick: () => void;
   isFull: boolean;
   isExpired: boolean;
+  isEnrolled?: boolean;
+  isOrganizer?: boolean;
 }
 
 export default function EventCard({
@@ -30,9 +32,12 @@ export default function EventCard({
   onClick,
   isFull,
   isExpired,
+  isEnrolled = false,
+  isOrganizer = false,
 }: EventCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const isBlocked = isFull || isExpired;
+  const showButton = (!isBlocked || isEnrolled) && !isOrganizer;
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -55,7 +60,6 @@ export default function EventCard({
     gsap.set(split.words, { yPercent: 0 });
     gsap.set(cardTitle, { color: "#5d3fd3" });
 
-    // Button starts hidden below the card (clipped by overflow-hidden)
     if (actionBtn) {
       gsap.set(actionBtn, { opacity: 0, y: 150 });
     }
@@ -72,7 +76,6 @@ export default function EventCard({
       if (tl) tl.kill();
       tl = gsap.timeline();
 
-      // Strokes
       cardPaths.forEach((path) => {
         tl!.to(
           path,
@@ -86,8 +89,7 @@ export default function EventCard({
         );
       });
 
-      if (!isBlocked) {
-        // Info container and button move simultaneously — button pushes content up
+      if (showButton) {
         tl.to(
           infoContainer,
           {
@@ -98,7 +100,6 @@ export default function EventCard({
           0.1,
         );
 
-        // Color transition
         tl.to(
           cardTitle,
           {
@@ -108,7 +109,6 @@ export default function EventCard({
           0.3,
         );
 
-        // Button rises from below in sync with content — same start time, same ease
         if (actionBtn) {
           tl.to(
             actionBtn,
@@ -142,7 +142,6 @@ export default function EventCard({
         );
       });
 
-      // Button drops down first, then content follows back
       if (actionBtn) {
         tl.to(
           actionBtn,
@@ -184,7 +183,7 @@ export default function EventCard({
       cardContainer.removeEventListener("mouseleave", handleLeave);
       split.revert();
     };
-  }, [isBlocked]);
+  }, [isBlocked, isEnrolled, isOrganizer, showButton]);
 
   const color = STROKE_COLORS[index % STROKE_COLORS.length];
 
@@ -192,9 +191,8 @@ export default function EventCard({
     <div
       ref={cardRef}
       id={`card-${event.id}`}
-      onClick={() => !isBlocked}
       className={`group relative min-h-[320px] md:aspect-square 2xl:aspect-5/4 border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
-        isBlocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+        isBlocked && !isEnrolled ? "cursor-not-allowed opacity-80" : "cursor-pointer"
       }`}
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
@@ -236,6 +234,16 @@ export default function EventCard({
                   Cupo Lleno
                 </Badge>
               )}
+              {isEnrolled && (
+                <Badge className="bg-emerald-500/20 font-bold py-4 px-5 text-emerald-600 border-emerald-500/40 backdrop-blur-md uppercase">
+                  Ya inscrito
+                </Badge>
+              )}
+              {isOrganizer && (
+                <Badge className="bg-primary/20 font-bold py-4 px-5 text-primary border-primary/40 backdrop-blur-md uppercase">
+                  Organizador
+                </Badge>
+              )}
             </div>
             <h3 className="text-[clamp(2rem,6vw,4.5rem)] font-black leading-[0.8] tracking-tighter">
               {event.title}
@@ -247,17 +255,24 @@ export default function EventCard({
           </p>
         </div>
 
-        {!isBlocked && (
+        {showButton && (
           <div
             className="action-btn absolute bottom-8 left-8 right-8"
             style={{ opacity: 0, transform: "translateY(150px)" }}
           >
             <Button
               variant="main"
-              onClick={() => !isBlocked && onClick()}
-              className="group/btn flex items-center justify-center gap-4 bg-primary text-white border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl  xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+              }}
+              className={`group/btn flex items-center justify-center gap-4 border-2 border-white w-full h-16 md:h-20 rounded-[2.5rem] font-bold text-xl xl:text-2xl transition-all duration-500 hover:shadow-2xl shadow-xl ${
+                isEnrolled
+                  ? "bg-red-500/80 hover:bg-red-600 text-white"
+                  : "bg-primary text-white"
+              }`}
             >
-              Inscribirme ahora
+              {isEnrolled ? "Dejar evento" : "Inscribirme ahora"}
               <HugeiconsIcon
                 icon={ArrowRight01Icon}
                 className="transition-transform duration-500 size-7 group-hover/btn:translate-x-3"
@@ -267,7 +282,7 @@ export default function EventCard({
         )}
       </div>
 
-      {!isBlocked && (
+      {(!isBlocked || isEnrolled) && (
         <>
           <div className="svg-stroke svg-stroke-1 absolute inset-0 scale-[1.7] pointer-events-none ">
             <svg viewBox="0 0 2453 2273" fill="none" className="w-full h-full">

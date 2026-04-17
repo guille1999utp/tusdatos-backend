@@ -104,11 +104,8 @@ export const AssistantEvents = () => {
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full max-w-md space-y-1">
-            <label className="text-sm text-muted-foreground">
-              Buscar eventos
-            </label>
             <Input
-              placeholder="Título…"
+              placeholder="Buscar eventos..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -149,7 +146,7 @@ export const AssistantEvents = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {listEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center w-full h-full col-span-full">
-              <h2 className="text-2xl font-bold text-slate-100/50">
+              <h2 className="text-2xl font-bold text-primary">
                 No hay eventos como asistente
               </h2>
             </div>

@@ -9,6 +9,8 @@ import type {
   IEventSession,
 } from "@/models/app/events/event-sessions.model";
 import EventsService from "@/services/app/events/events.service";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 
 function formatDateTime(value: string): string {
   const date = new Date(value);
@@ -122,7 +124,7 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <div className="container mt-24 px-6 text-muted-foreground">
+      <div className="container mt-24 px-6 text-muted-foreground flex items-center justify-center text-2xl">
         Cargando detalle del evento...
       </div>
     );
@@ -140,15 +142,24 @@ export default function EventDetail() {
   const isOrganizer = event.role === "organizador";
 
   return (
-    <div className="container px-5 md:px-14 pb-8 space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-3xl md:text-4xl font-bold">{event.title}</h1>
-        <Link className="text-sm text-primary hover:underline" to="/all-events">
-          Volver al listado
+    <div className="space-y-6">
+      <div className="flex items-center md:justify-between gap-3">
+        <h1 className="text-2xl order-2 md:order-1 sm:text-3xl md:text-4xl font-bold text-primary">
+          {event.title}
+        </h1>
+        <Link to="/all-events">
+          <Button
+            type="button"
+            variant="main"
+            className="h-10 md:h-12 order-1 md:order-2"
+          >
+            <ChevronLeft size={15} className="size-5 md:size-7" />{" "}
+            <span className="hidden md:block">Volver al listado</span>
+          </Button>
         </Link>
       </div>
 
-      <div className="rounded-lg border p-4 space-y-2 bg-background/50">
+      <div className="rounded-4xl bg-tertiary border p-4 space-y-2 text-sm md:text-base ">
         <p>
           <strong>Descripción:</strong> {event.description}
         </p>
@@ -199,7 +210,10 @@ export default function EventDetail() {
         ) : (
           <div className="space-y-2">
             {sessions.map((session) => (
-              <div key={session.id} className="rounded-md border p-3">
+              <div
+                key={session.id}
+                className="rounded-3xl border p-3 text-sm md:text-base "
+              >
                 <p className="font-medium">{session.title}</p>
                 <p className="text-sm text-muted-foreground">
                   Ponente: {session.speaker}
@@ -218,7 +232,7 @@ export default function EventDetail() {
       </section>
 
       {canManageSessions ? (
-        <section className="space-y-3 rounded-lg border p-4">
+        <section className="space-y-3 rounded-4xl border p-4">
           <h3 className="text-lg font-semibold">Crear sesión</h3>
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
@@ -302,14 +316,15 @@ export default function EventDetail() {
               </p>
             </div>
           </div>
-          <button
+          <Button
             type="button"
-            className="h-9 rounded-md bg-primary px-4 text-primary-foreground disabled:opacity-60"
+            variant="main"
+            className="h-12 "
             onClick={handleCreateSession}
             disabled={savingSession}
           >
             {savingSession ? "Guardando..." : "Crear sesión"}
-          </button>
+          </Button>
         </section>
       ) : null}
     </div>

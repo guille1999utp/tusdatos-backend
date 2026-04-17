@@ -1,21 +1,21 @@
-import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
-
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
 import { cn } from "@/lib/utils";
-import { FormEventsSuscribe } from "@/modules/app/all-events/components/FormEventsSuscribe";
 import type { IEvents } from "@/models/app/events/events.model";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/lib/useDebounce";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
 import TransitionLink from "@/providers/TransitionLink";
 import EventCard from "./_components/EventCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, X } from "lucide-react";
 import Grainient from "@/components/ui/Grainient";
+import { suscribeEvents } from "@/redux/features/events/events.thunks";
+import { useAppDispatch } from "@/redux/hooks";
+import { toast } from "react-toastify";
 
 const PAGE_SIZE = 9;
 
@@ -42,16 +42,18 @@ function isEventDatePast(dateStr: string): boolean {
   return eventDay < today;
 }
 
+function isEnrolled(role: string | null | undefined) {
+  return role === "usuario" || role === "asistente";
+}
+
+function isOrganizer(role: string | null | undefined) {
+  return role === "organizador";
+}
+
 export default function Home() {
   const { user, logout } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [openModal, setOpenModal] = useState<{
-    open: boolean;
-    event: IEvents | null;
-  }>({
-    open: false,
-    event: null,
-  });
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 400);
@@ -70,32 +72,34 @@ export default function Home() {
 
   const totalPages = Math.max(1, Math.ceil(totalListEvents / PAGE_SIZE));
 
-  const eventIdParam = searchParams.get("eventId");
-
-  useEffect(() => {
-    if (!eventIdParam) return;
-    const id = Number(eventIdParam);
-    if (Number.isNaN(id)) return;
-
-    const fromList = listEvents.find((e) => e.id === id);
-    if (fromList) {
-      setOpenModal({ open: true, event: fromList });
+  const handleSubscribe = async (event: IEvents) => {
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(`/?eventId=${event.id}`)}`);
       return;
     }
+    const result = await dispatch(
+      suscribeEvents({
+        params: { id: event.id },
+        errorCallback: (msg) => {
+          toast.error(msg);
+        },
+      }),
+    );
+    if (result.meta.requestStatus === "fulfilled") {
+      toast.success("Te has registrado en el evento");
+      await onMounted();
+    }
+  };
 
-    if (isLoadingGetEvents) return;
-
-    let cancelled = false;
-    void EventsService.getById(id)
-      .then((ev) => {
-        if (!cancelled) setOpenModal({ open: true, event: ev });
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-  }, [eventIdParam, listEvents, isLoadingGetEvents]);
+  const handleLeave = async (event: IEvents) => {
+    try {
+      await EventsService.leaveEventSelf(event.id);
+      toast.success("Has abandonado el evento");
+      await onMounted();
+    } catch {
+      toast.error("No se pudo abandonar el evento");
+    }
+  };
 
   return (
     <>
@@ -163,15 +167,11 @@ export default function Home() {
 
         {/* ── Hero ── */}
         <section className="relative min-h-[60dvh] md:min-h-[70dvh] flex flex-col items-center justify-center overflow-hidden">
-          {/* Base gradient */}
-
-          {/* Animated gradient blobs */}
           <div className="blob absolute top-[5%] left-[-8%] w-[560px] h-[560px] rounded-full bg-primary/20 blur-[130px] pointer-events-none" />
           <div className="blob-2 absolute top-[35%] right-[-6%] w-[460px] h-[460px] rounded-full bg-secondary/25 blur-[110px] pointer-events-none" />
           <div className="blob-3 absolute bottom-[5%] left-[25%] w-[680px] h-[400px] rounded-full bg-tertiary/20 blur-[140px] pointer-events-none" />
           <div className="blob-4 absolute top-[55%] left-[55%] w-[320px] h-[320px] rounded-full bg-primary/25 blur-[90px] pointer-events-none" />
 
-          {/* Hero content */}
           <div className="absolute inset-0 z-0 pointer-events-none ">
             <Grainient
               className=" inset-0"
@@ -201,7 +201,6 @@ export default function Home() {
           </div>
           <div className="w-full h-full bottom-0 absolute bg-gradient-to-b  from-transparent to-background"></div>
           <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-5 md:gap-6 px-5 text-center max-w-4xl w-full mt-16">
-            {/* Headline */}
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-primary leading-[0.95]">
               Descubre lo que
               <br />
@@ -214,7 +213,6 @@ export default function Home() {
 
             {/* Glass search bar */}
             <div className="search-glow w-full max-w-2xl mt-2 relative">
-              {/* Glow ring */}
               <div
                 className="search-glow-ring absolute -inset-[3px] rounded-[1.6rem] opacity-0 transition-opacity duration-500 pointer-events-none"
                 style={{
@@ -223,8 +221,6 @@ export default function Home() {
                   filter: "blur(8px)",
                 }}
               />
-
-              {/* Input shell */}
               <div className="relative flex items-center gap-4 bg-white/35 backdrop-blur-2xl border border-white/60 shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] rounded-full px-6 py-4 md:py-5">
                 <Search
                   className="shrink-0 text-primary"
@@ -288,6 +284,8 @@ export default function Home() {
               listEvents.map((event, index) => {
                 const pieno = event.registered_count >= event.capacity;
                 const scaduto = isEventDatePast(event.date);
+                const enrolled = isEnrolled(event.role);
+                const organizer = isOrganizer(event.role);
 
                 return (
                   <EventCard
@@ -296,7 +294,15 @@ export default function Home() {
                     index={index}
                     isFull={pieno}
                     isExpired={scaduto}
-                    onClick={() => setOpenModal({ open: true, event })}
+                    isEnrolled={enrolled}
+                    isOrganizer={organizer}
+                    onClick={() => {
+                      if (enrolled) {
+                        void handleLeave(event);
+                      } else {
+                        void handleSubscribe(event);
+                      }
+                    }}
                   />
                 );
               })
@@ -329,24 +335,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        <MainDialog
-          title="Eventos"
-          open={openModal.open}
-          setOpenModal={(o) => {
-            if (!o) {
-              setOpenModal({ open: false, event: null });
-              if (searchParams.get("eventId"))
-                setSearchParams({}, { replace: true });
-            }
-          }}
-        >
-          <FormEventsSuscribe
-            event={openModal.event}
-            setOpenModal={setOpenModal}
-            onMounted={onMounted}
-          />
-        </MainDialog>
       </div>
     </>
   );

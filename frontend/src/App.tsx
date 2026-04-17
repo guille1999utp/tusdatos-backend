@@ -75,10 +75,10 @@ function App() {
                     <Route path="/register" element={<Register />} />
                   </Route>
                 </Route>
-                <Route path="/events/:eventId" element={<EventDetail />} />
 
                 <Route element={<PrivateRoute />}>
                   <Route element={<AdminPanelLayout />}>
+                    <Route path="/events/:eventId" element={<EventDetail />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="events" element={<Events />} />
                     <Route path="all-events" element={<AllEvents />} />

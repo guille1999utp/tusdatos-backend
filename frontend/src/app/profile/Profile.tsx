@@ -82,53 +82,78 @@ export const Profile = () => {
       {/* ── Profile card ── */}
       <div className="relative rounded-3xl border border-border/50 bg-card/70 overflow-hidden">
         {/* Gradient accent bar */}
-        <div
-          className="h-1.5 w-full"
-          style={{
-            background:
-              "linear-gradient(to right, #7c3aed, #a855f7, #defd99)",
-          }}
-        />
+        <div className="h-1.5 w-full" />
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 px-6 py-6">
-          {/* Avatar */}
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 text-white text-xl font-black shadow-lg"
-            style={{
-              background:
-                "linear-gradient(135deg, #7c3aed 0%, #a855f7 60%, #ec4899 100%)",
-            }}
-          >
-            {email ? getInitials(email) : "?"}
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-5 px-4 md:px-6 py-4 md:py-6">
+          <div className="flex items-start justify-between w-full gap-3 md:gap-5">
+            <div className="flex items-start flex-col md:flex-row gap-5">
+              {/* Avatar */}
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 text-white text-xl font-black shadow-lg bg-primary">
+                {email ? getInitials(email) : "?"}
+              </div>
 
-          {/* Info */}
-          <div className="flex-1 min-w-0 space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`text-xs font-bold px-3 py-1 rounded-full ${getRoleColors(role)}`}
-              >
-                {getRoleLabel(role)}
-              </span>
+              {/* Info */}
+              <div className="flex-1 min-w-0 space-y-2 md:block hidden">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${getRoleColors(role)}`}
+                  >
+                    {getRoleLabel(role)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Mail className="w-4 h-4 shrink-0" />
+                  <span className="truncate font-medium text-black/80">
+                    {email || "No disponible"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span className="font-medium text-black/80">
+                    {getRoleLabel(role)}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Mail className="w-4 h-4 shrink-0" />
-              <span className="truncate font-medium text-black/80">
-                {email || "No disponible"}
-              </span>
+
+            <div className="flex-1 min-w-0 space-y-2 md:hidden">
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`text-xs font-bold px-3 py-1 rounded-full ${getRoleColors(role)}`}
+                >
+                  {getRoleLabel(role)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Mail className="w-4 h-4 shrink-0" />
+                <span className="truncate font-medium text-black/80">
+                  {email || "No disponible"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <span className="font-medium text-black/80">
+                  {getRoleLabel(role)}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ShieldCheck className="w-4 h-4 shrink-0" />
-              <span className="font-medium text-black/80">{getRoleLabel(role)}</span>
+            {/* Stat */}
+            <div className="hidden md:flex flex-col items-center justify-center bg-primary/8 border border-primary/15 rounded-2xl p-4 py-4 shrink-0 min-w-[100px]">
+              <span className="text-3xl font-black text-primary leading-none">
+                {events.length}
+              </span>
+              <span className="text-sm font-semibold text-black mt-1 text-center leading-tight">
+                Inscripciones
+              </span>
             </div>
           </div>
 
           {/* Stat */}
-          <div className="flex flex-col items-center justify-center bg-primary/8 border border-primary/15 rounded-2xl px-6 py-4 shrink-0 min-w-[100px]">
+          <div className="flex md:hidden flex-col items-center justify-center bg-primary/8 border border-primary/15 rounded-2xl px-6 py-4 shrink-0 min-w-[100px]">
             <span className="text-3xl font-black text-primary leading-none">
               {events.length}
             </span>
-            <span className="text-[11px] font-semibold text-muted-foreground mt-1 text-center leading-tight">
+            <span className="text-sm font-semibold text-black mt-1 text-center leading-tight">
               Inscripciones
             </span>
           </div>
@@ -139,14 +164,16 @@ export const Profile = () => {
       <section className="rounded-2xl border border-border/50 bg-card/60 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-tertiary/50 flex items-center justify-center">
-              <Ticket className="w-4 h-4 text-black" />
+            <div className="size-9 md:size-11 rounded-lg bg-tertiary/50 flex items-center justify-center">
+              <Ticket className="size-5 md:size-6 text-black" />
             </div>
-            <h2 className="text-sm font-bold">Eventos inscritos</h2>
+            <h2 className="text-sm md:text-base font-bold">
+              Eventos inscritos
+            </h2>
           </div>
           <Link
             to="/my-registrations"
-            className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            className="flex items-center gap-1 text-xs md:text-sm font-semibold text-primary hover:underline"
           >
             Ver todos <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
@@ -155,7 +182,10 @@ export const Profile = () => {
         {isLoading && (
           <div className="divide-y divide-border/30">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="px-5 py-4 flex items-center gap-3 animate-pulse">
+              <div
+                key={i}
+                className="px-5 py-4 flex items-center gap-3 animate-pulse"
+              >
                 <div className="w-8 h-8 rounded-lg bg-black/8 shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <div className="h-3 bg-black/8 rounded w-2/3" />
@@ -168,8 +198,8 @@ export const Profile = () => {
 
         {!isLoading && events.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 py-10 px-5 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-black/5 flex items-center justify-center">
-              <CalendarDays className="w-6 h-6 text-black/30" />
+            <div className="size-12 md:size-14 rounded-2xl bg-black/5 flex items-center justify-center">
+              <CalendarDays className="size-6 md:size-7 text-black/30" />
             </div>
             <p className="text-sm text-muted-foreground">
               No tienes registros todavía.
@@ -184,8 +214,8 @@ export const Profile = () => {
                 key={event.id}
                 className="flex items-start gap-3 px-5 py-3.5 hover:bg-primary/5 transition-colors"
               >
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <CalendarDays className="w-4 h-4 text-primary" />
+                <div className="size-9 md:size-11 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <CalendarDays className="size-5 md:size-6 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-black truncate">
