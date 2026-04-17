@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function formatDateTime(value: string): string {
   const date = new Date(value);
@@ -126,8 +127,19 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <div className="container mt-24 px-6 text-muted-foreground flex items-center justify-center text-2xl">
-        Cargando detalle del evento...
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 md:h-12 md:w-16 rounded-lg" />
+          <Skeleton className="h-8 w-64 md:h-10 md:w-80" />
+        </div>
+        <Skeleton className="h-[280px] w-full rounded-4xl" />
+        <div className="space-y-3">
+          <Skeleton className="h-7 w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <Skeleton className="h-32 rounded-3xl" />
+            <Skeleton className="h-32 rounded-3xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -214,7 +226,7 @@ export default function EventDetail() {
             {sessions.map((session) => (
               <div
                 key={session.id}
-                className="rounded-3xl border p-3 border-primary  text-sm md:text-base bg-secondary "
+                className="rounded-3xl p-3  text-sm md:text-base bg-secondary "
               >
                 <p className="font-semibold text-base md:text-lg text-black">
                   {session.title}

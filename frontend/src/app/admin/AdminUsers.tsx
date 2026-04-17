@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -25,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE = 10;
 const ROLES = ["admin", "usuario"] as const;
@@ -38,6 +40,12 @@ export default function AdminUsers() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [draftRoles, setDraftRoles] = useState<Record<number, string>>({});
+  const [deleteDialog, setDeleteDialog] = useState<{
+    open: boolean;
+    id: number;
+    name: string;
+  }>({ open: false, id: 0, name: "" });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filters = useMemo(
     () => ({
@@ -68,7 +76,6 @@ export default function AdminUsers() {
     void load();
   }, [load]);
 
-
   const saveRole = async (userId: number) => {
     const role = draftRoles[userId];
     if (!role) return;
@@ -90,22 +97,24 @@ export default function AdminUsers() {
     }
   };
 
-  const removeUser = async (userId: number, label: string) => {
-    if (
-      !window.confirm(
-        `¿Eliminar por completo al usuario «${label}»? Se borrarán sus eventos e inscripciones.`,
-      )
-    ) {
-      return;
-    }
+  const removeUser = (userId: number, label: string) => {
+    setDeleteDialog({ open: true, id: userId, name: label });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteDialog.id) return;
+    setIsDeleting(true);
     try {
-      await UsersService.deleteUser(userId, (msg) => {
+      await UsersService.deleteUser(deleteDialog.id, (msg) => {
         toast.error(msg || "No se pudo eliminar el usuario");
       });
       toast.success("Usuario eliminado");
       await load();
     } catch {
-      /* 400: el detalle ya se mostró en errorCallback */
+      /* Error handling */
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialog({ open: false, id: 0, name: "" });
     }
   };
 
@@ -132,111 +141,180 @@ export default function AdminUsers() {
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
-          <Input
-            placeholder="Buscar por nombre o email…"
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setPage(0);
-            }}
-            className="shadow-none"
-          />
+          {loading ? (
+            <Skeleton className="h-10 w-full rounded-2xl" />
+          ) : (
+            <Input
+              placeholder="Buscar por nombre o email…"
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(0);
+              }}
+              className="shadow-none"
+            />
+          )}
         </div>
       </div>
-      {loading ? <p className="text-muted-foreground">Cargando…</p> : null}
 
-      <div className="rounded-3xl border overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Rol</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell className="font-medium">{u.name}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  {u.email}
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={draftRoles[u.id] ?? u.role}
-                    onValueChange={(val) =>
-                      setDraftRoles((prev) => ({
-                        ...prev,
-                        [u.id]: val,
-                      }))
-                    }
-                  >
-                    <SelectTrigger className="w-full max-md:h-9!">
-                      <SelectValue placeholder={draftRoles[u.id] ?? u.role} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel className="text-black">Rol</SelectLabel>
-                        {ROLES.map((r) => (
-                          <SelectItem key={r} value={r}>
-                            <span className="capitalize">{r}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="text-base!"
-                      onClick={() => saveRole(u.id)}
-                      disabled={(draftRoles[u.id] ?? u.role) === u.role}
-                    >
-                      Guardar rol
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => void removeUser(u.id, u.name || u.email)}
-                    >
-                      Eliminar
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
+      <div className="rounded-3xl border overflow-hidden">
+        {loading ? (
+          <div>
+            <div className="h-12 bg-muted/30 border-b flex items-center px-4 gap-4">
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 flex-1" />
+            </div>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-16 flex items-center px-4 border-b gap-4"
+              >
+                <Skeleton className="h-5 flex-1" />
+                <Skeleton className="h-4 flex-1" />
+                <Skeleton className="h-10 flex-1 rounded-md" />
+                <div className="flex-1 flex justify-end gap-2">
+                  <Skeleton className="h-9 w-24 rounded-md" />
+                  <Skeleton className="h-9 w-20 rounded-md" />
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Rol</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((u) => (
+                <TableRow key={u.id}>
+                  <TableCell className="font-medium">{u.name}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {u.email}
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={draftRoles[u.id] ?? u.role}
+                      onValueChange={(val) =>
+                        setDraftRoles((prev) => ({
+                          ...prev,
+                          [u.id]: val,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="w-full h-9! md:h-11!">
+                        <SelectValue placeholder={draftRoles[u.id] ?? u.role} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel className="text-black">Rol</SelectLabel>
+                          {ROLES.map((r) => (
+                            <SelectItem key={r} value={r}>
+                              <span className="capitalize">{r}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="text-base!"
+                        onClick={() => saveRole(u.id)}
+                        disabled={(draftRoles[u.id] ?? u.role) === u.role}
+                      >
+                        Guardar rol
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => void removeUser(u.id, u.name || u.email)}
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
       <div className="flex items-center gap-2 shrink-0 justify-end">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={page <= 0}
-          onClick={() => setPage((p) => p - 1)}
-        >
-          Anterior
-        </Button>
-        <span className="text-sm text-muted-foreground whitespace-nowrap">
-          Página {page + 1} / {totalPages} · {total}
-        </span>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={(page + 1) * PAGE >= total}
-          onClick={() => setPage((p) => p + 1)}
-        >
-          Siguiente
-        </Button>
+        {loading ? (
+          <>
+            <Skeleton className="h-9 w-20 rounded-md" />
+            <Skeleton className="h-5 w-32 rounded-md" />
+            <Skeleton className="h-9 w-20 rounded-md" />
+          </>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={page <= 0}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Anterior
+            </Button>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              Página {page + 1} / {totalPages} · {total}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={(page + 1) * PAGE >= total}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Siguiente
+            </Button>
+          </>
+        )}
       </div>
+      <MainDialog
+        title="Eliminar usuario"
+        open={deleteDialog.open}
+        setOpenModal={(o) => {
+          if (!o) setDeleteDialog({ open: false, id: 0, name: "" });
+        }}
+      >
+        <div className="flex flex-col gap-2 md:gap-4">
+          <p className="text-sm text-muted-foreground">
+            ¿Estás seguro de que quieres eliminar por completo al usuario{" "}
+            <strong>«{deleteDialog.name}»</strong>? Se borrarán todos sus
+            eventos e inscripciones asociadas. Esta acción no se puede deshacer.
+          </p>
+          <Button
+            variant="destructive"
+            onClick={confirmDelete}
+            disabled={isDeleting}
+            className="h-12 bg-destructive hover:bg-destructive/80 text-white md:text-lg rounded-full"
+          >
+            {isDeleting ? "Eliminando..." : "Eliminar usuario"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setDeleteDialog({ open: false, id: 0, name: "" })}
+            disabled={isDeleting}
+            className="h-12 border-2 rounded-full md:text-lg"
+          >
+            Cancelar
+          </Button>
+        </div>
+      </MainDialog>
     </div>
   );
 }
