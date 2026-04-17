@@ -25,14 +25,14 @@ import { AuthContext } from "@/auth/AuthContext";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function AppSidebar() {
-  const { setOpen, open, isMobile } = useSidebar();
+  const { setOpenMobile, open, isMobile } = useSidebar();
   const isCollapsed = !open && !isMobile;
 
   const { user, logout } = useContext(AuthContext)!;
 
   const handleCloseSidebar = () => {
-    if (window.innerWidth < 768) {
-      setOpen(false);
+    if (isMobile) {
+      setOpenMobile(false);
     }
   };
 
@@ -128,7 +128,10 @@ export function AppSidebar() {
         <Tooltip>
           <TooltipTrigger asChild>
             <button
-              onClick={() => logout()}
+              onClick={() => {
+                logout();
+                handleCloseSidebar();
+              }}
               className={`flex cursor-pointer items-center transition-all duration-300 border-2 border-white active:scale-95
         ${
           isCollapsed
@@ -139,7 +142,7 @@ export function AppSidebar() {
             >
               <HugeiconsIcon
                 icon={Logout01Icon}
-                className={`${isCollapsed ? "size-7" : "size-5"}`}
+                className={`fill-black/10 ${isCollapsed ? "size-7" : "size-5"}`}
               />
               {!isCollapsed && (
                 <span className="font-semibold text-lg">Cerrar Sesión</span>

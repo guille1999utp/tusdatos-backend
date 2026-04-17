@@ -95,7 +95,7 @@ export const AssistantEvents = () => {
           <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl xl:text-5xl text-primary">
             Como asistente
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-xs sm:text-sm mt-1">
             Eventos en los que colaboras como miembro del staff (rol asistente).
           </p>
         </div>

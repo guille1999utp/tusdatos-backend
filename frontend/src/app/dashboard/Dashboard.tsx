@@ -128,8 +128,9 @@ export const Dashboard = () => {
           </h1>
         </div>
         <p className="text-muted-foreground text-xs sm:text-sm">
-          Hola{user?.sub ? `, ${user.sub}` : ""}. Aquí tienes accesos rápidos,
-          novedades del catálogo y tus eventos.
+          Hola,
+          <span className="font-bold">{user?.sub ? ` ${user.sub}` : ""}</span>.
+          Aquí tienes accesos rápidos, novedades del catálogo y tus eventos.
         </p>
       </div>
 

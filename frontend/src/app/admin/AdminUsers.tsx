@@ -127,7 +127,7 @@ export default function AdminUsers() {
             Admin Usuarios
           </h1>
         </div>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           Busca usuarios por nombre o correo y asigna el rol global (admin o
           usuario). Debe existir siempre al menos un administrador.
         </p>
@@ -136,7 +136,7 @@ export default function AdminUsers() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
           <Input
-            placeholder="Buscar po nombre o email…"
+            placeholder="Buscar por nombre o email…"
             value={q}
             onChange={(e) => {
               setQ(e.target.value);
@@ -174,7 +174,7 @@ export default function AdminUsers() {
                       }))
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full max-md:h-9!">
                       <SelectValue placeholder={draftRoles[u.id] ?? u.role} />
                     </SelectTrigger>
                     <SelectContent>
