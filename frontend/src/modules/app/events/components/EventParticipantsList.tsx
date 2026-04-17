@@ -8,7 +8,6 @@ import { getFastApiErrorMessage } from "@/services/utilities/handle-api-error.ut
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -156,8 +155,8 @@ export function EventParticipantsList({
   const totalPages = Math.max(1, Math.ceil(total / PAGE));
 
   return (
-    <div className="flex flex-col gap-3 w-full border-t border-border/60 pt-4 mt-2">
-      <h4 className="text-sm md:text-base font-semibold text-black">
+    <div className="flex flex-col gap-3 w-full">
+      <h4 className="text-sm md:text-base lg:text-lg font-semibold text-black">
         Personas en este evento
       </h4>
       <p className="text-xs text-muted-foreground">
@@ -174,7 +173,7 @@ export function EventParticipantsList({
       ) : null}
       <Input
         placeholder="Buscar por nombre o email…"
-        className="shadow-none"
+        className="shadow-none h-10! text-base! placeholder:text-sm!"
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
@@ -191,16 +190,16 @@ export function EventParticipantsList({
               className="p-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
-                <p className="font-medium text-black">{row.name}</p>
+                <p className="font-semibold text-black">{row.name}</p>
                 <p className="text-xs text-black ">{row.email}</p>
               </div>
 
               {roleEditMode === "full" ? (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 shrink-0">
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm text-black">
+                    {/* <label className="text-sm text-black">
                       Rol en el evento
-                    </label>
+                    </label> */}
                     <Select
                       value={row.role}
                       disabled={row.role === "organizador"}
@@ -208,12 +207,17 @@ export function EventParticipantsList({
                         void onFullModeRoleSelect(row, val)
                       }
                     >
-                      <SelectTrigger className="h-9 min-w-[11rem] rounded-md border border-input bg-background/50 px-3 text-sm">
-                        <SelectValue placeholder={roleLabel(row.role)} />
+                      <SelectTrigger className=" min-w-[11rem] w-full h-10! text-black">
+                        <SelectValue
+                          placeholder={roleLabel(row.role)}
+                          className="text-black! placeholder:text-black"
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel className="text-black">Rol en el evento</SelectLabel>
+                          <SelectLabel className="text-black">
+                            Rol en el evento
+                          </SelectLabel>
                           <SelectItem value="organizador">
                             {roleLabel("organizador")}
                           </SelectItem>

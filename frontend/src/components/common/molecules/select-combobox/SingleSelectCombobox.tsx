@@ -48,7 +48,7 @@ export function SingleSelectCombobox({
           <Button
             variant="outline"
             role="combobox"
-            className="w-full justify-between h-12 bg-white hover:bg-white shadow-none text-black border border-black/10"
+            className="w-full text-base! placeholder:text-sm! justify-between h-12 bg-white hover:bg-white shadow-none text-black border border-black/10"
           >
             {loading ? (
               <span className="flex items-center gap-2">

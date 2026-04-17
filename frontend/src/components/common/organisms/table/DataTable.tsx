@@ -67,7 +67,7 @@ export function DataTableDemo({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-2">
         <Input
           placeholder="Buscar por título..."
           onChange={(e) => {
@@ -76,11 +76,11 @@ export function DataTableDemo({
             table.getColumn("title")?.setFilterValue(v || undefined);
           }}
           value={filterTitle}
-          className="max-w-sm shadow-none"
+          className="max-w-sm shadow-none h-10 md:h-12 placeholder:text-sm md:placeholder:text-base"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="main" className="ml-auto">
+            <Button variant="main" className="ml-auto h-10 md:h-12">
               Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,34 +6,37 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import type { IEvents } from "@/models/app/events/events.model"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import type { IEvents } from "@/models/app/events/events.model";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 type EventRowActionsOpts = {
-  globalRole: string
+  globalRole: string;
   /** Panel admin: abre gestión de inscritos del evento. */
-  onRegistrations?: (eventId: number) => void
+  onRegistrations?: (eventId: number) => void;
   /** Abre detalle/gestión de sesiones del evento. */
-  onManageSessions?: (eventId: number) => void
-}
+  onManageSessions?: (eventId: number) => void;
+};
 
-function rowActionFlags(globalRole: string, eventRole: string | null | undefined) {
+function rowActionFlags(
+  globalRole: string,
+  eventRole: string | null | undefined,
+) {
   if (globalRole === "admin") {
-    return { canEdit: true, canDelete: true, canAssign: true }
+    return { canEdit: true, canDelete: true, canAssign: true };
   }
-  const er = eventRole ?? ""
-  const canEdit = er === "organizador"
-  const canDelete = canEdit
-  const canAssign = er === "organizador" || er === "asistente"
-  return { canEdit, canDelete, canAssign }
+  const er = eventRole ?? "";
+  const canEdit = er === "organizador";
+  const canDelete = canEdit;
+  const canAssign = er === "organizador" || er === "asistente";
+  return { canEdit, canDelete, canAssign };
 }
 
 export const columnsEvents = (
   handleOpenDialogAndSetCurrentWorkshops: (data: IEvents) => void,
   handleOpenConfirmDelete: (id: number) => void,
   handleOpenAssignUser: (id: number, soloParticipantes?: boolean) => void,
-  opts: EventRowActionsOpts
+  opts: EventRowActionsOpts,
 ) => [
   {
     id: "select",
@@ -51,40 +54,51 @@ export const columnsEvents = (
     accessorKey: "role",
     header: "Mi rol",
     cell: ({ row }: { row: { original: IEvents } }) => {
-      const role = row.original.role ?? "usuario"
+      const role = row.original.role ?? "usuario";
       if (role === "organizador") {
         return (
-          <span className="inline-flex rounded-md border border-violet-600/50 bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-900 dark:text-violet-100">
+          <span className="inline-flex rounded-full border-2 p-2! border-white bg-primary px-2 py-0.5 text-xs font-semibold text-white">
             Mío (Organizador)
           </span>
-        )
+        );
       }
       if (role === "asistente") {
         return (
           <span className="inline-flex rounded-md border border-sky-600/50 bg-sky-500/15 px-2 py-0.5 text-xs font-semibold text-sky-900 dark:text-sky-100">
             Asistente
           </span>
-        )
+        );
       }
       return (
         <span className="inline-flex rounded-md border border-emerald-600/50 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-900 dark:text-emerald-100">
           Participante
         </span>
-      )
+      );
     },
   },
   {
     accessorKey: "total_inscritos",
     header: () => <div className="text-center w-24">Inscritos</div>,
     cell: ({ row }: { row: { original: IEvents } }) => {
-      const n = row.original.total_inscritos
-      const v = typeof n === "number" && !Number.isNaN(n) ? n : 0
-      return <div className="text-center w-24 text-sm tabular-nums font-medium">{v}</div>
+      const n = row.original.total_inscritos;
+      const v = typeof n === "number" && !Number.isNaN(n) ? n : 0;
+      return (
+        <div className="text-center w-24 text-sm tabular-nums font-medium">
+          {v}
+        </div>
+      );
     },
   },
   {
     accessorKey: "capacity",
-    header: ({ column }: { column: { toggleSorting: (v: boolean) => void; getIsSorted: () => string | false } }) => (
+    header: ({
+      column,
+    }: {
+      column: {
+        toggleSorting: (v: boolean) => void;
+        getIsSorted: () => string | false;
+      };
+    }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -101,22 +115,30 @@ export const columnsEvents = (
     accessorKey: "state",
     header: () => <div className="text-right">Estado</div>,
     cell: ({ row }: { row: { getValue: (k: string) => unknown } }) => (
-      <div className="text-right font-medium">{String(row.getValue("state"))}</div>
+      <div className="text-right font-medium">
+        {String(row.getValue("state"))}
+      </div>
     ),
   },
   {
     accessorKey: "date",
     header: () => <div className="text-right">Fecha</div>,
     cell: ({ row }: { row: { getValue: (k: string) => unknown } }) => (
-      <div className="text-right font-medium">{String(row.getValue("date"))}</div>
+      <div className="text-right font-medium">
+        {String(row.getValue("date"))}
+      </div>
     ),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }: { row: { original: IEvents } }) => {
-      const { canEdit, canDelete, canAssign } = rowActionFlags(opts.globalRole, row.original.role)
-      const soloParticipantes = opts.globalRole !== "admin" && row.original.role === "asistente"
+      const { canEdit, canDelete, canAssign } = rowActionFlags(
+        opts.globalRole,
+        row.original.role,
+      );
+      const soloParticipantes =
+        opts.globalRole !== "admin" && row.original.role === "asistente";
       return (
         <div className="text-right">
           <DropdownMenu>
@@ -130,39 +152,62 @@ export const columnsEvents = (
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {opts.onManageSessions ? (
-                <DropdownMenuItem onClick={() => opts.onManageSessions!(Number(row.original.id))}>
-                  {canEdit || opts.globalRole === "admin" ? "Gestionar sesiones" : "Ver sesiones"}
+                <DropdownMenuItem
+                  onClick={() =>
+                    opts.onManageSessions!(Number(row.original.id))
+                  }
+                >
+                  {canEdit || opts.globalRole === "admin"
+                    ? "Gestionar sesiones"
+                    : "Ver sesiones"}
                 </DropdownMenuItem>
               ) : null}
               {canEdit ? (
-                <DropdownMenuItem onClick={() => handleOpenDialogAndSetCurrentWorkshops(row.original)}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleOpenDialogAndSetCurrentWorkshops(row.original)
+                  }
+                >
                   Editar
                 </DropdownMenuItem>
               ) : null}
               {canAssign ? (
                 <DropdownMenuItem
-                  onClick={() => handleOpenAssignUser(Number(row.original.id), soloParticipantes)}
+                  onClick={() =>
+                    handleOpenAssignUser(
+                      Number(row.original.id),
+                      soloParticipantes,
+                    )
+                  }
                 >
                   Asignar participante
                 </DropdownMenuItem>
               ) : null}
               {opts.onRegistrations ? (
-                <DropdownMenuItem onClick={() => opts.onRegistrations!(Number(row.original.id))}>
+                <DropdownMenuItem
+                  onClick={() => opts.onRegistrations!(Number(row.original.id))}
+                >
                   Inscripciones
                 </DropdownMenuItem>
               ) : null}
               {canDelete ? (
-                <DropdownMenuItem onClick={() => handleOpenConfirmDelete(Number(row.original.id))}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleOpenConfirmDelete(Number(row.original.id))
+                  }
+                >
                   Eliminar
                 </DropdownMenuItem>
               ) : null}
               {!canEdit && !canAssign && !canDelete ? (
-                <DropdownMenuItem disabled>No hay acciones disponibles</DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  No hay acciones disponibles
+                </DropdownMenuItem>
               ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      )
+      );
     },
   },
-]
+];

@@ -46,7 +46,7 @@ export const Events = () => {
 
   return (
     <>
-      <div className=" max-w-full  flex flex-col gap-10">
+      <div className=" max-w-full  flex flex-col gap-5 md:gap-8">
         <div className="flex w-full flex-col gap-4 md:flex-row md:items-center">
           <div className="max-w-3xl space-y-2">
             <div className="flex items-center  gap-5">
@@ -62,7 +62,7 @@ export const Events = () => {
           </div>
           {canCreate ? (
             <Button
-              className="md:ml-auto cursor-pointer shrink-0 md:h-12"
+              className="md:ml-auto cursor-pointer shrink-0 h-12"
               variant="main"
               onClick={() => {
                 setCurrentEventsState(null);
@@ -74,18 +74,24 @@ export const Events = () => {
           ) : null}
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Eventos listados</p>
-            <p className="text-xl font-semibold">{totalMyEvents}</p>
+        <div className="grid gap-1 md:gap-3 grid-cols-3">
+          <div className="rounded-3xl space-y-2 shadow-xl p-4 bg-tertiary">
+            <p className="text-xs md:text-sm text-black">Eventos listados</p>
+            <p className="text-4xl xl:text-6xl font-semibold">
+              {totalMyEvents}
+            </p>
           </div>
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Eventos míos</p>
-            <p className="text-xl font-semibold">{mineCount}</p>
+          <div className="rounded-3xl space-y-2 shadow-xl p-4 bg-secondary">
+            <p className="text-xs md:text-sm text-black">Eventos míos</p>
+            <p className="text-4xl xl:text-6xl font-semibold text-white">
+              {mineCount}
+            </p>
           </div>
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Como asistente</p>
-            <p className="text-xl font-semibold">{assistantCount}</p>
+          <div className="rounded-3xl space-y-2 shadow-xl p-4 bg-tertiary">
+            <p className="text-xs md:text-sm text-black">Como asistente</p>
+            <p className="text-4xl xl:text-6xl font-semibold">
+              {assistantCount}
+            </p>
           </div>
         </div>
 
@@ -151,12 +157,19 @@ export const Events = () => {
           if (!o) setDialogConfirmDelete({ open: false, id: 0 });
         }}
       >
+        <div className="flex flex-col gap-4">
+          <h3 className="text-lg font-semibold">Eliminar evento</h3>
+          <p className="text-sm text-muted-foreground">
+            ¿Estás seguro de que quieres eliminar este evento?
+          </p>
+        </div>
         <Button
+          variant={"destructive"}
           onClick={() => handleDelete(dialogConfirmDelete.id)}
           disabled={isLoadingDeleteEvents}
-          color="error"
+          className="h-12 bg-destructive hover:bg-destructive/80 text-white"
         >
-          <>{isLoadingDeleteEvents ? "loading..." : "Delete"}</>
+          <>{isLoadingDeleteEvents ? "cargando..." : "Eliminar evento"}</>
         </Button>
       </MainDialog>
 
@@ -186,6 +199,7 @@ export const Events = () => {
           setOpenModal={(o) => {
             if (!o) setRegOpen({ open: false, id: 0 });
           }}
+          customMaxWidth="sm:max-w-2xl"
         >
           {regOpen.open ? (
             <AdminEventRegistrations

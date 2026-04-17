@@ -187,14 +187,8 @@ export const FormAssignUser = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col w-full h-full tracking-tight text-slate-100/80"
+      className="flex flex-col w-full h-full tracking-tight text-slate-100/80 "
     >
-      <div className=" py-2">
-        <h3 className="text-xl font-bold text-black dark:text-slate-100">
-          Asignar usuario al evento
-        </h3>
-      </div>
-
       <div className="flex-1 overflow-y-auto pr-2 py-4 space-y-6 max-h-[60vh] custom-scrollbar">
         <div className="space-y-2">
           <Label className="text-black">Buscar por nombre o correo</Label>
@@ -202,7 +196,7 @@ export const FormAssignUser = ({
             placeholder="Escribe para buscar…"
             value={userQuery}
             onChange={(e) => setUserQuery(e.target.value)}
-            className=""
+            className="shadow-none"
           />
         </div>
 
@@ -304,7 +298,7 @@ export const FormAssignUser = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 p-4 border-t ">
+      <div className="flex flex-col gap-2 pt-4 border-t ">
         <Button type="submit" variant={"main"} className={cn("h-12 w-full")}>
           Asignar o actualizar rol
         </Button>
