@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function formatDateTime(value: string): string {
   const date = new Date(value);
@@ -126,8 +127,19 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <div className="container mt-24 px-6 text-muted-foreground flex items-center justify-center text-2xl">
-        Cargando detalle del evento...
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 md:h-12 md:w-16 rounded-lg" />
+          <Skeleton className="h-8 w-64 md:h-10 md:w-80" />
+        </div>
+        <Skeleton className="h-[280px] w-full rounded-4xl" />
+        <div className="space-y-3">
+          <Skeleton className="h-7 w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <Skeleton className="h-32 rounded-3xl" />
+            <Skeleton className="h-32 rounded-3xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -191,7 +203,7 @@ export default function EventDetail() {
         {!isOrganizer && !enrolled && !isAtCapacity ? (
           <button
             type="button"
-            className="mt-2 h-9 rounded-md bg-green-600 px-4 text-white hover:bg-green-700"
+            className="mt-2 h-10 md:h-12 rounded-full border-2 border-white active:scale-95 transition-all cursor-pointer bg-green-600 px-4 text-white hover:bg-green-700"
             onClick={handleSubscribe}
           >
             Inscribirme al evento
@@ -223,21 +235,21 @@ export default function EventDetail() {
             Este evento aún no tiene sesiones programadas.
           </p>
         ) : (
-          <div className="space-y-2">
+          <div className=" grid grid-cols-1 md:grid-cols-2 gap-2">
             {sessions.map((session) => (
               <div
                 key={session.id}
-                className="rounded-3xl border p-3 text-sm md:text-base "
+                className="rounded-3xl p-3  text-sm md:text-base bg-secondary "
               >
-                <p className="font-medium">{session.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  Ponente: {session.speaker}
+                <p className="font-semibold text-base md:text-lg text-black">
+                  {session.title}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">Ponente: {session.speaker}</p>
+                <p className="text-sm text-white">
                   {formatDateTime(session.start_time)} -{" "}
                   {formatDateTime(session.end_time)}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Capacidad: {session.capacity}
                 </p>
               </div>
@@ -249,7 +261,7 @@ export default function EventDetail() {
       {canManageSessions ? (
         <section className="space-y-3 rounded-4xl border p-4">
           <h3 className="text-lg md:text-xl font-semibold">Crear sesión</h3>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <div className="space-y-1">
               <Label className="text-xs text-black">Título de la sesión</Label>
               <Input

@@ -113,7 +113,7 @@ export default function Home() {
               to="/"
               className="text-base md:text-xl xl:text-3xl font-extrabold uppercase tracking-tight text-black"
             >
-              Tusdatos
+              MISEVENTOS
             </Link>
             <nav className="flex items-center gap-1 text-sm">
               {user ? (

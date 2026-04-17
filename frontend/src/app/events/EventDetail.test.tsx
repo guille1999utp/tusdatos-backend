@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const navigateMock = vi.fn();
 
 vi.mock("react-router-dom", () => ({
-  Link: ({ children }: { children: any }) => <a>{children}</a>,
+  Link: ({ children }: { children: any }) => <a href="#">{children}</a>,
   useNavigate: () => navigateMock,
   useParams: () => ({ eventId: "1" }),
 }));

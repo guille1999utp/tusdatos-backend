@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE = 8;
 
@@ -78,10 +79,6 @@ export function EventParticipantsList({
   useEffect(() => {
     void load();
   }, [load, refreshVersion]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [debounced, eventId]);
 
   const emitChanged = async () => {
     await load();
@@ -172,13 +169,29 @@ export function EventParticipantsList({
         placeholder="Buscar por nombre o email…"
         className="shadow-none h-10! text-base! placeholder:text-sm!"
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={(e) => {
+          setQ(e.target.value);
+          setPage(0);
+        }}
       />
-      {loading ? (
-        <p className="text-xs text-muted-foreground">Cargando…</p>
-      ) : null}
       <ul className="divide-y rounded-3xl border max-h-[280px] overflow-y-auto">
-        {items.length === 0 ? (
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <li
+              key={i}
+              className="p-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-48" />
+              </div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-44 rounded-md" />
+                <Skeleton className="h-9 w-32 rounded-md" />
+              </div>
+            </li>
+          ))
+        ) : items.length === 0 ? (
           <li className="p-3 text-sm text-muted-foreground">Sin resultados</li>
         ) : (
           items.map((row) => (
