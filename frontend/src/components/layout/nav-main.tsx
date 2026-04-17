@@ -90,7 +90,7 @@ export function NavMain({ items, user, onNavigate }: any) {
                   className={`flex items-center cursor-pointer transition-all duration-300
                   ${
                     isCollapsed
-                      ? "size-11 mx-auto justify-center rounded-2xl mb-2"
+                      ? "size-11 mx-auto justify-center rounded-lg mb-2"
                       : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-xl mb-1 gap-3"
                   }
                   ${
@@ -121,8 +121,24 @@ export function NavMain({ items, user, onNavigate }: any) {
               </TooltipTrigger>
 
               {isCollapsed && (
-                <TooltipContent side="right" sideOffset={12}>
-                  {item.label}
+                <TooltipContent
+                  side="right"
+                  sideOffset={12}
+                  className="flex flex-col gap-1 p-2 min-w-[160px] !items-start"
+                >
+                  <div className="text-base font-bold text-white  px-2 py-1 border-b border-white/10 w-full mb-1">
+                    {item.label}
+                  </div>
+                  {item.children.map((sub: any) => (
+                    <Link
+                      key={sub.to}
+                      to={sub.to}
+                      onClick={onNavigate}
+                      className="w-full text-left px-2 py-2 rounded-lg hover:bg-tertiary transition-colors text-sm font-semibold hover:text-black"
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
                 </TooltipContent>
               )}
             </Tooltip>

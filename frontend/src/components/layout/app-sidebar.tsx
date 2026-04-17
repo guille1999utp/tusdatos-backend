@@ -94,7 +94,7 @@ export function AppSidebar() {
       <SidebarHeader
         className={
           !isCollapsed
-            ? "p-4 md:pt-12 pb-4 md:pb-6 text-center bg-background"
+            ? "p-4 max-md:pl-7 md:pt-12 pb-4 md:pb-6 text-start md:text-center bg-background"
             : "p-0"
         }
       >
@@ -102,7 +102,7 @@ export function AppSidebar() {
           <Link
             to="/"
             onClick={handleCloseSidebar}
-            className="text-3xl font-extrabold text-primary"
+            className="text-2xl sm:text-3xl font-extrabold text-primary"
           >
             TUSDATOS.CO
           </Link>
