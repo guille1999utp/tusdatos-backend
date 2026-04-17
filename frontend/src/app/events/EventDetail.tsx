@@ -184,7 +184,7 @@ export default function EventDetail() {
         {!isOrganizer && !enrolled ? (
           <button
             type="button"
-            className="mt-2 h-9 rounded-md bg-green-600 px-4 text-white hover:bg-green-700"
+            className="mt-2 h-10 md:h-12 rounded-full border-2 border-white active:scale-95 transition-all cursor-pointer bg-green-600 px-4 text-white hover:bg-green-700"
             onClick={handleSubscribe}
           >
             Inscribirme al evento
@@ -210,21 +210,21 @@ export default function EventDetail() {
             Este evento aún no tiene sesiones programadas.
           </p>
         ) : (
-          <div className="space-y-2">
+          <div className=" grid grid-cols-1 md:grid-cols-2 gap-2">
             {sessions.map((session) => (
               <div
                 key={session.id}
-                className="rounded-3xl border p-3 text-sm md:text-base "
+                className="rounded-3xl border p-3 border-primary  text-sm md:text-base bg-secondary "
               >
-                <p className="font-medium">{session.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  Ponente: {session.speaker}
+                <p className="font-semibold text-base md:text-lg text-black">
+                  {session.title}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">Ponente: {session.speaker}</p>
+                <p className="text-sm text-white">
                   {formatDateTime(session.start_time)} -{" "}
                   {formatDateTime(session.end_time)}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Capacidad: {session.capacity}
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function EventDetail() {
       {canManageSessions ? (
         <section className="space-y-3 rounded-4xl border p-4">
           <h3 className="text-lg md:text-xl font-semibold">Crear sesión</h3>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <div className="space-y-1">
               <Label className="text-xs text-black">Título de la sesión</Label>
               <Input

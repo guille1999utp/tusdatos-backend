@@ -95,45 +95,6 @@ export const Events = () => {
           </div>
         </div>
 
-        {/* <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div className="w-full max-w-md space-y-1">
-            <label className="text-sm text-muted-foreground">
-              Buscar por título
-            </label>
-            <Input
-              placeholder="Nombre del evento…"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-            >
-              Anterior
-            </Button>
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Página {page + 1} / {totalPages} · {totalMyEvents} eventos
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={(page + 1) * pageSize >= totalMyEvents}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Siguiente
-            </Button>
-          </div>
-        </div> */}
-
         <DataTableDemo columns={columns} data={listMyEvents} />
       </div>
       <MainDialog

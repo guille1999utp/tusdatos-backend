@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   getAllEvents,
   getMyEvents,
@@ -87,10 +88,16 @@ function getRoleBadge(role?: string) {
 export const Dashboard = () => {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
-  const { listEvents, listMyEvents, totalListEvents, totalMyEvents } =
-    useAppSelector((s) => s.events);
+  const {
+    listEvents,
+    listMyEvents,
+    totalListEvents,
+    totalMyEvents,
+    isLoadingGetEvents,
+  } = useAppSelector((s) => s.events);
   const [regPreview, setRegPreview] = useState<IEvents[]>([]);
   const [totalRegistrations, setTotalRegistrations] = useState(0);
+  const [isLoadingRegs, setIsLoadingRegs] = useState(false);
 
   useEffect(() => {
     void dispatch(getAllEvents({ filters: { skip: "0", limit: "6" } }));
@@ -99,6 +106,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     void (async () => {
+      setIsLoadingRegs(true);
       try {
         const r = await EventsService.getMyRegistrations({
           skip: "0",
@@ -109,6 +117,8 @@ export const Dashboard = () => {
       } catch {
         setRegPreview([]);
         setTotalRegistrations(0);
+      } finally {
+        setIsLoadingRegs(false);
       }
     })();
   }, []);
@@ -186,7 +196,17 @@ export const Dashboard = () => {
             </Link>
           </div>
           <div className="divide-y divide-border/30">
-            {listEvents.length === 0 ? (
+            {isLoadingGetEvents ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-3 px-5 py-4"
+                >
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+              ))
+            ) : listEvents.length === 0 ? (
               <p className="text-sm text-muted-foreground px-5 py-4">
                 Aún no hay eventos publicados.
               </p>
@@ -232,7 +252,17 @@ export const Dashboard = () => {
             </Link>
           </div>
           <div className="divide-y divide-border/30">
-            {listMyEvents.length === 0 ? (
+            {isLoadingGetEvents ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-3 px-5 py-4"
+                >
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+              ))
+            ) : listMyEvents.length === 0 ? (
               <p className="text-sm text-muted-foreground px-5 py-4">
                 No tienes eventos como organizador o asistente todavía.
               </p>
@@ -279,7 +309,20 @@ export const Dashboard = () => {
           </Link>
         </div>
         <div className="divide-y divide-border/30">
-          {regPreview.length === 0 ? (
+          {isLoadingRegs ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between gap-3 px-5 py-4"
+              >
+                <div className="min-w-0 space-y-1.5 flex-1">
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+                <Skeleton className="h-5 w-20 rounded-full" />
+              </div>
+            ))
+          ) : regPreview.length === 0 ? (
             <p className="text-sm text-muted-foreground px-5 py-4">
               Aún no estás inscrito en ningún evento como participante o
               asistente.
