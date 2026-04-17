@@ -198,7 +198,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {listEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-20">
-              <h2 className="text-2xl font-bold text-slate-100/50">
+              <h2 className="text-2xl font-bold text-black">
                 No hay eventos disponibles
               </h2>
             </div>

@@ -3,10 +3,17 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { Badge } from "@/components/ui/badge";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+  Calendar01Icon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons";
+import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(SplitText);
 
-const STROKE_COLORS = ["#583cd6", "#defd99", "#f0ede6"];
+const STROKE_COLORS = ["#583cd6", "#defd99", "#defd99"];
 
 const BASE_STROKE = "#aea3e4";
 
@@ -45,7 +52,8 @@ export default function EventCard({
       wordsClass: "word",
     });
 
-    gsap.set(split.words, { yPercent: 100 });
+    // Title is always visible now
+    gsap.set(split.words, { yPercent: 0 });
     gsap.set(actionBtn, { opacity: 0, y: 20 });
 
     cardPaths.forEach((path) => {
@@ -66,23 +74,12 @@ export default function EventCard({
           {
             strokeDashoffset: 0,
             attr: { "stroke-width": 750 },
-            duration: 0.9,
+            duration: 1,
             ease: "power2.out",
           },
           0,
         );
       });
-
-      tl.to(
-        split.words,
-        {
-          yPercent: 0,
-          duration: 0.75,
-          ease: "power3.out",
-          stagger: 0.075,
-        },
-        0.35,
-      );
 
       if (!isBlocked) {
         tl.to(
@@ -93,7 +90,7 @@ export default function EventCard({
             duration: 0.5,
             ease: "back.out(1.7)",
           },
-          0.5,
+          0.2, // Start a bit earlier since title doesn't animate
         );
       }
     };
@@ -117,17 +114,6 @@ export default function EventCard({
       });
 
       tl.to(
-        split.words,
-        {
-          yPercent: 100,
-          duration: 0.5,
-          ease: "power3.out",
-          stagger: { each: 0.05, from: "end" },
-        },
-        0,
-      );
-
-      tl.to(
         actionBtn,
         {
           opacity: 0,
@@ -148,109 +134,120 @@ export default function EventCard({
     };
   }, [isBlocked]);
 
+  const color = STROKE_COLORS[index % STROKE_COLORS.length];
+
   return (
     <div
       ref={cardRef}
       id={`card-${event.id}`}
       onClick={() => !isBlocked && onClick()}
-      className={`card-container relative aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-500 bg-black ${
-        isBlocked
-          ? "cursor-not-allowed opacity-90"
-          : "cursor-pointer active:scale-95"
+      className={`group relative aspect-square border-2 border-white rounded-[3rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
+        isBlocked ? "cursor-not-allowed opacity-80" : "cursor-pointer"
       }`}
     >
-      {/* Background Gradient */}
+      {/* Background Layer */}
       <div
-        className={`absolute inset-0 transition-transform duration-700 ${
-          isBlocked ? "grayscale brightness-50" : "group-hover:scale-110"
-        }`}
-        style={{
-          background: isBlocked
-            ? "linear-gradient(45deg, #1f2937, #111827)"
-            : `linear-gradient(135deg, ${STROKE_COLORS[index % STROKE_COLORS.length]}dd, #000000)`,
-        }}
+        className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-3 bg-background"
+        // style={{
+        //   background: isBlocked
+        //     ? "radial-gradient(circle at 20% 20%, #262626, #0a0a0a)"
+        //     : `radial-gradient(circle at 20% 20%, ${color}44, #000000)`,
+        // }}
       />
 
+      {/* Glassmorphism Grain Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
       {/* Content Overlay */}
-      <div className="relative h-full w-full p-8 flex flex-col justify-between z-20">
-        <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-widest text-white/50">
-              {event.date}
-            </span>
-            <p className="text-sm text-white/80 line-clamp-2 max-w-[200px]">
-              {event.description}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 items-end text-sm">
-            {isExpired && (
-              <Badge
-                variant="destructive"
-                className="bg-red-500/20 text-red-400 border-red-500/50 backdrop-blur-md"
-              >
-                Expirado
-              </Badge>
-            )}
-            {isFull && (
-              <Badge
-                variant="secondary"
-                className="bg-amber-500/20 text-amber-400 border-amber-500/50 backdrop-blur-md"
-              >
-                Cupo Lleno
-              </Badge>
-            )}
-            <Badge className="bg-white/10 text-white border-white/20 backdrop-blur-md">
-              {event.registered_count} / {event.capacity}
-            </Badge>
+      <div className="relative h-full w-full p-6 md:p-8 flex flex-col justify-between z-20">
+        <div className="flex justify-between items-center">
+          <Badge className="bg-tertiary text-balck border-2 border-white backdrop-blur-xl px-4 py-5 rounded-full font-semibold tracking-tight text-2xl">
+            <HugeiconsIcon icon={UserGroupIcon} className="mr-2 w-9 inline" />
+            {event.registered_count} / {event.capacity}
+          </Badge>
+          <div className="flex items-center gap-2 text-black text-xs md:text-sm  xl:text-base font-semibold tracking-widest uppercase">
+            <HugeiconsIcon
+              icon={Calendar01Icon}
+              strokeWidth={2}
+              className="mr-2 inline fill-black/5"
+            />
+            {event.date}
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="card-title overflow-hidden">
-            <h3 className="text-4xl md:text-5xl font-black text-white leading-tight">
+        <div className="space-y-2">
+          <div className="event-details space-y-0">
+            <div className="flex flex-col md:flex-row gap-2 items-end">
+              {isExpired && (
+                <Badge
+                  variant="destructive"
+                  className="bg-red-500/20 py-3 font-semibold text-red-500 border-red-500/30 backdrop-blur-xl"
+                >
+                  Expirado
+                </Badge>
+              )}
+              {isFull && (
+                <Badge className="bg-orange-500/20 font-semibold  py-3 text-orange-500 border-orange-500/30 backdrop-blur-xl">
+                  Cupo Lleno
+                </Badge>
+              )}
+            </div>
+            <h3
+              className={`text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.9] tracking-tighter ${isBlocked ? "text-primary" : "text-white"}`}
+            >
               {event.title}
             </h3>
           </div>
 
-          <button
-            className={`action-btn px-6 py-3 rounded-full font-bold text-sm transition-all duration-300 shadow-xl ${
-              isBlocked
-                ? "bg-white/10 text-white/30 hidden"
-                : "bg-white text-black hover:bg-tertiary hover:scale-105"
-            }`}
-          >
-            Inscribirme ahora
-          </button>
+          <div className="card-title overflow-hidden"></div>
+          <p className="text-sm md:text-base text-black line-clamp-2 leading-relaxed max-w-[85%] font-medium italic">
+            "{event.description}"
+          </p>
+
+          {!isBlocked && (
+            <Button
+              variant={"main"}
+              className="action-btn group/btn flex items-center gap-3 bg-primary text-white border-2 border-white px-8 py-7 rounded-full font-bold text-sm md:text-base xl:text-lg transition-all duration-500 hover:pr-10 shadow-xl "
+            >
+              Inscribirme
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className="transition-transform duration-500 size-6 group-hover/btn:translate-x-2"
+              />
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* SVG 1 - Accent Stroke */}
-      <div className="svg-stroke svg-stroke-1 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[1.5] w-full h-full pointer-events-none">
-        <svg viewBox="0 0 2453 2273" fill="none" className="w-full h-full">
-          <path
-            d="M227.549 1818.76C227.549 1818.76 406.016 2207.75 569.049 2130.26C843.431 1999.85 -264.104 1002.3 227.549 876.262C552.918 792.849 773.647 2456.11 1342.05 2130.26C1885.43 1818.76 14.9644 455.772 760.548 137.262C1342.05 -111.152 1663.5 2266.35 2209.55 1972.76C2755.6 1679.18 1536.63 384.467 1826.55 137.262C2013.5 -22.1463 2209.55 381.262 2209.55 381.262"
-            strokeWidth="200"
-            strokeLinecap="round"
-            fill="none"
-            style={{
-              stroke: STROKE_COLORS[index % STROKE_COLORS.length],
-            }}
-          />
-        </svg>
-      </div>
+      {/* Animated Strokes */}
 
-      {/* SVG 2 - Base Stroke */}
-      <div className="svg-stroke svg-stroke-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[1.3] w-full h-full pointer-events-none ">
-        <svg viewBox="0 0 2250 2535" fill="none" className="w-full h-full">
-          <path
-            d="M1661.28 2255.51C1661.28 2255.51 2311.09 1960.37 2111.78 1817.01C1944.47 1696.67 718.456 2870.17 499.781 2255.51C308.969 1719.17 2457.51 1613.83 2111.78 963.512C1766.05 313.198 427.949 2195.17 132.281 1455.51C-155.219 736.292 2014.78 891.514 1708.78 252.012C1437.81 -314.29 369.471 909.169 132.281 566.512C18.1772 401.672 244.781 193.012 244.781 193.012"
-            strokeWidth="200"
-            strokeLinecap="round"
-            fill="none"
-            style={{ stroke: BASE_STROKE }}
-          />
-        </svg>
-      </div>
+      {!isBlocked && (
+        <>
+          <div className="svg-stroke svg-stroke-1 absolute inset-0 -translate-y-10 scale-[1.6] pointer-events-none">
+            <svg viewBox="0 0 2453 2273" fill="none" className="w-full h-full">
+              <path
+                d="M227.549 1818.76C227.549 1818.76 406.016 2207.75 569.049 2130.26C843.431 1999.85 -264.104 1002.3 227.549 876.262C552.918 792.849 773.647 2456.11 1342.05 2130.26C1885.43 1818.76 14.9644 455.772 760.548 137.262C1342.05 -111.152 1663.5 2266.35 2209.55 1972.76C2755.6 1679.18 1536.63 384.467 1826.55 137.262C2013.5 -22.1463 2209.55 381.262 2209.55 381.262"
+                strokeWidth="200"
+                strokeLinecap="round"
+                fill="none"
+                style={{ stroke: color }}
+              />
+            </svg>
+          </div>
+
+          <div className="svg-stroke svg-stroke-2 absolute inset-0 translate-y-10 scale-[1.4] pointer-events-none">
+            <svg viewBox="0 0 2250 2535" fill="none" className="w-full h-full">
+              <path
+                d="M1661.28 2255.51C1661.28 2255.51 2311.09 1960.37 2111.78 1817.01C1944.47 1696.67 718.456 2870.17 499.781 2255.51C308.969 1719.17 2457.51 1613.83 2111.78 963.512C1766.05 313.198 427.949 2195.17 132.281 1455.51C-155.219 736.292 2014.78 891.514 1708.78 252.012C1437.81 -314.29 369.471 909.169 132.281 566.512C18.1772 401.672 244.781 193.012 244.781 193.012"
+                strokeWidth="200"
+                strokeLinecap="round"
+                fill="none"
+                style={{ stroke: BASE_STROKE }}
+              />
+            </svg>
+          </div>
+        </>
+      )}
     </div>
   );
 }
