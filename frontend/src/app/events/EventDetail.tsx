@@ -15,10 +15,51 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function formatDateTime(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
+const SESSION_LOCALE = "es";
+/** Misma referencia que en el JSON del API (instantes con sufijo Z = UTC). */
+const SESSION_DISPLAY_TZ = "UTC";
+
+/** Fecha corta en español, calendario UTC (coincide con la hora del JSON). */
+function formatSessionDate(d: Date): string {
+  return new Intl.DateTimeFormat(SESSION_LOCALE, {
+    timeZone: SESSION_DISPLAY_TZ,
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(d);
+}
+
+/** Hora HH:mm en 24 h, en UTC. */
+function formatSessionTime(d: Date): string {
+  return new Intl.DateTimeFormat(SESSION_LOCALE, {
+    timeZone: SESSION_DISPLAY_TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(d);
+}
+
+/**
+ * Misma fecha en UTC → "2 may 2026, 07:00 – 07:30".
+ * Días distintos en UTC → ambas fechas.
+ */
+function formatSessionRange(startIso: string, endIso: string): string {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return `${startIso} – ${endIso}`;
+  }
+
+  const sameCalendarDayUtc =
+    start.getUTCFullYear() === end.getUTCFullYear() &&
+    start.getUTCMonth() === end.getUTCMonth() &&
+    start.getUTCDate() === end.getUTCDate();
+
+  if (sameCalendarDayUtc) {
+    return `${formatSessionDate(start)}, ${formatSessionTime(start)} – ${formatSessionTime(end)}`;
+  }
+
+  return `${formatSessionDate(start)} ${formatSessionTime(start)} → ${formatSessionDate(end)} ${formatSessionTime(end)}`;
 }
 
 function isEnrolled(role: string | null | undefined): boolean {
@@ -289,7 +330,15 @@ export default function EventDetail({ variant = "panel" }: EventDetailProps) {
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Sesiones del evento</h2>
+        <div>
+          <h2 className="text-xl font-semibold">Sesiones del evento</h2>
+          {sessions.length > 0 ? (
+            <p className="mt-1 text-xs text-muted-foreground md:text-sm">
+              Horarios en UTC: coinciden con los valores del API (sin convertir
+              a la hora local del navegador).
+            </p>
+          ) : null}
+        </div>
         {sessions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Este evento aún no tiene sesiones programadas.
@@ -305,9 +354,9 @@ export default function EventDetail({ variant = "panel" }: EventDetailProps) {
                   {session.title}
                 </p>
                 <p className="text-sm text-white">Ponente: {session.speaker}</p>
-                <p className="text-sm text-white">
-                  {formatDateTime(session.start_time)} -{" "}
-                  {formatDateTime(session.end_time)}
+                <p className="text-sm text-white md:text-base">
+                  <span className="font-medium text-white/90">Horario: </span>
+                  {formatSessionRange(session.start_time, session.end_time)}
                 </p>
                 <p className="text-sm text-white">
                   Capacidad: {session.capacity}
