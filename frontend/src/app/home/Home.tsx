@@ -1,6 +1,5 @@
 import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
 
-import { Separator } from "@/components/ui/separator";
 import { useTableAllListEvents } from "@/hooks/app/all-events/useTableAllEvents";
 import { cn } from "@/lib/utils";
 import { FormEventsSuscribe } from "@/modules/app/all-events/components/FormEventsSuscribe";
@@ -15,6 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
 import TransitionLink from "@/providers/TransitionLink";
 import EventCard from "./_components/EventCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 9;
 
@@ -189,14 +189,26 @@ export default function Home() {
             />
           </div>
         </div>
-        <Separator />
 
-        {isLoadingGetEvents ? (
-          <p className="text-muted-foreground">Cargando…</p>
-        ) : null}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-          {listEvents.length === 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          {isLoadingGetEvents ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-[3rem] md:rounded-[4rem] bg-black/5 animate-pulse flex flex-col justify-between p-8"
+              >
+                <div className="flex justify-between items-center">
+                  <Skeleton className="h-10 w-44 rounded-full bg-black/10 " />
+                  <Skeleton className="h-6 w-24 rounded-md bg-black/10 " />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-32 rounded-md bg-black/10 " />
+                  <Skeleton className="h-20 w-full rounded-xl bg-black/10 " />
+                  <div className="h-10 w-3/4 rounded-xl bg-black/10 " />
+                </div>
+              </div>
+            ))
+          ) : listEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center w-full h-full col-span-full py-20">
               <h2 className="text-2xl font-bold text-black">
                 No hay eventos disponibles
