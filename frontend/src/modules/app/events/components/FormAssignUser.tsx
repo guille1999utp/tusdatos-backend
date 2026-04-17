@@ -118,20 +118,6 @@ export const FormAssignUser = ({
     void loadUsers();
   }, [loadUsers]);
 
-  useEffect(() => {
-    setUserPage(0);
-  }, [debouncedQuery, idEvent, omitEventMembers]);
-
-  useEffect(() => {
-    if (soloParticipantes) {
-      setValue("role", "usuario");
-    }
-  }, [soloParticipantes, setValue]);
-
-  useEffect(() => {
-    setValue("user_id", 0);
-  }, [roleWatch, setValue]);
-
   const onSubmit = async (data: EventFormInputs) => {
     const { user_id, role } = data;
 
@@ -195,7 +181,10 @@ export const FormAssignUser = ({
           <Input
             placeholder="Escribe para buscar…"
             value={userQuery}
-            onChange={(e) => setUserQuery(e.target.value)}
+            onChange={(e) => {
+              setUserQuery(e.target.value);
+              setUserPage(0);
+            }}
             className="shadow-none"
           />
         </div>
@@ -263,9 +252,11 @@ export const FormAssignUser = ({
                 }
                 onChange={(val) => {
                   const n = Number(val);
-                  field.onChange(
-                    n === 2 ? "organizador" : n === 1 ? "asistente" : "usuario",
-                  );
+                  const newRole =
+                    n === 2 ? "organizador" : n === 1 ? "asistente" : "usuario";
+                  field.onChange(newRole);
+                  setValue("user_id", 0);
+                  setUserPage(0);
                 }}
                 error={errors.role?.message}
                 placeholder="Rol en el evento…"

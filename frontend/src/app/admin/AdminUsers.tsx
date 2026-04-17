@@ -68,9 +68,6 @@ export default function AdminUsers() {
     void load();
   }, [load]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [debounced]);
 
   const saveRole = async (userId: number) => {
     const role = draftRoles[userId];
@@ -140,6 +137,7 @@ export default function AdminUsers() {
             value={q}
             onChange={(e) => {
               setQ(e.target.value);
+              setPage(0);
             }}
             className="shadow-none"
           />

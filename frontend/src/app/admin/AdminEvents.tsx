@@ -18,6 +18,7 @@ import { useDebounce } from "@/lib/useDebounce";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import toast from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 10;
 
@@ -134,49 +135,79 @@ export default function AdminEvents() {
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="w-full max-w-md space-y-1">
-          <Input
-            placeholder="Busca por título..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(0);
-            }}
-            className="shadow-none"
-          />
+          {isLoadingGetEvents ? (
+            <Skeleton className="h-10 w-full rounded-2xl" />
+          ) : (
+            <Input
+              placeholder="Busca por título..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
+              className="shadow-none rounded-2xl"
+            />
+          )}
         </div>
       </div>
       {isLoadingGetEvents ? (
-        <p className="text-muted-foreground">Cargando…</p>
-      ) : null}
-      <DataTableDemo
-        columns={columns}
-        data={listEvents}
-        hideSearchbar
-        hidePagination
-      />
+        <div className="rounded-3xl border overflow-hidden">
+          <div className="h-12 bg-muted/30 border-b flex items-center px-4 gap-4">
+            <Skeleton className="h-4 flex-1" />
+            <Skeleton className="h-4 flex-1" />
+            <Skeleton className="h-4 flex-1" />
+            <Skeleton className="h-4 flex-1" />
+          </div>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-16 flex items-center px-4 border-b gap-4">
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 flex-[0.7]" />
+              <Skeleton className="h-4 flex-[0.5]" />
+              <Skeleton className="h-8 flex-1 rounded-full" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <DataTableDemo
+          columns={columns}
+          data={listEvents}
+          hideSearchbar
+          hidePagination
+        />
+      )}
 
       <div className="flex items-center justify-end gap-2 shrink-0">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={page <= 0}
-          onClick={() => setPage((p) => p - 1)}
-        >
-          Anterior
-        </Button>
-        <span className="text-sm text-muted-foreground whitespace-nowrap">
-          Página {page + 1} / {totalPages} · {totalListEvents}
-        </span>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
-          onClick={() => setPage((p) => p + 1)}
-        >
-          Siguiente
-        </Button>
+        {isLoadingGetEvents ? (
+          <>
+            <Skeleton className="h-9 w-20 rounded-lg" />
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-9 w-20 rounded-lg" />
+          </>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={page <= 0}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Anterior
+            </Button>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              Página {page + 1} / {totalPages} · {totalListEvents}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={(page + 1) * PAGE_SIZE >= totalListEvents}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Siguiente
+            </Button>
+          </>
+        )}
       </div>
 
       <MainDialog
@@ -216,7 +247,7 @@ export default function AdminEvents() {
           if (!open)
             setAssignOpen({ open: false, id: 0, soloParticipantes: false });
         }}
-        customMaxWidth="sm:max-w-xl"
+        customMaxWidth="sm:max-w-2xl"
       >
         {assignOpen.open ? (
           <FormAssignUser
@@ -241,6 +272,7 @@ export default function AdminEvents() {
       >
         {regOpen.open ? (
           <AdminEventRegistrations
+            key={regOpen.id}
             eventId={regOpen.id}
             onEventsListRefresh={refresh}
           />
