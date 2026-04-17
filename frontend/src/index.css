@@ -83,7 +83,7 @@
 }
 
 :root {
-   --transition-stroke-1: #9e91e4;
+   --transition-stroke-1: #ddfe9c;
   --transition-stroke-2: #583cd6;
   --radius:
     0.625rem;
@@ -146,7 +146,7 @@
     oklch(0.925 0.005 214.3);
   --sidebar-ring:
     oklch(0.723 0.014 214.4);
-    --drop-shadow-custom:  1px 3px 8px #594c96;
+    --drop-shadow-custom:  1px 3px 8px #6e62a1;
 }
 
 .dark {
