@@ -110,7 +110,7 @@ export default function SimpleEventCard({
           </div>
 
           {/* Title */}
-          <h3 className="text-[clamp(1.6rem,5vw,3.5rem)] font-black leading-[0.85] tracking-tighter text-primary">
+          <h3 className="text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl font-black leading-[0.85] tracking-tighter text-primary">
             {event.title}
           </h3>
 
