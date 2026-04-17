@@ -12,8 +12,8 @@ import {
 
 export function NavMain({ items, user, onNavigate }: any) {
   const location = useLocation();
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  const { open, isMobile } = useSidebar();
+  const isCollapsed = !open && !isMobile;
 
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 

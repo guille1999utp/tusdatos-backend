@@ -24,8 +24,8 @@ import { AuthContext } from "@/auth/AuthContext";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function AppSidebar() {
-  const { setOpen, open } = useSidebar();
-  const isCollapsed = !open;
+  const { setOpen, open, isMobile } = useSidebar();
+  const isCollapsed = !open && !isMobile;
 
   const { user, logout } = useContext(AuthContext)!;
 
@@ -122,7 +122,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter
-        className={` ${isCollapsed ? "p-5" : "p-2 pb-6"} bg-background`}
+        className={` ${isCollapsed ? "p-5 pb-7" : "p-2 pb-7"} bg-background`}
       >
         <Tooltip>
           <TooltipTrigger asChild>
@@ -131,8 +131,8 @@ export function AppSidebar() {
               className={`flex cursor-pointer items-center transition-all duration-300 border-2 border-white active:scale-95
         ${
           isCollapsed
-            ? "size-11 mx-auto justify-center rounded-2xl"
-            : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-xl gap-2"
+            ? "size-12 mx-auto justify-center rounded-2xl"
+            : "w-[calc(100%-1rem)] mx-2 h-12 pl-4 rounded-2xl gap-2"
         }
         bg-tertiary text-black hover:bg-tertiary/80 shadow-md`}
             >
