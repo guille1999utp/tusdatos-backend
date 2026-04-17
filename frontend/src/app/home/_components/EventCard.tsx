@@ -78,8 +78,8 @@ export default function EventCard({
           path,
           {
             strokeDashoffset: 0,
-            attr: { "stroke-width": 750 },
-            duration: 1.5,
+            attr: { "stroke-width": 760 },
+            duration: 1.3,
             ease: "power2.out",
           },
           0,
