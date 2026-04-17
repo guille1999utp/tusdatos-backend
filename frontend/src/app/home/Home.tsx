@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "react-router-dom";
 import EventsService from "@/services/app/events/events.service";
 import TransitionLink from "@/providers/TransitionLink";
+import Cards from "./_components/EventCard";
 
 const PAGE_SIZE = 9;
 
@@ -161,7 +162,10 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full bg-background flex flex-col mt-20 gap-10">
+      <Cards />
+      {/* <SvgFollowScroll /> */}
+
+      <div className="container relative xl:py-8 md:pt-4 pt-5 pb-8 px-5 md:px-14 max-w-full flex flex-col mt-20 gap-10">
         <div className="flex w-full flex-col gap-2">
           <h1 className="flex text-4xl font-bold md:text-5xl lg:text-7xl w-full text-primary">
             Eventos disponibles
