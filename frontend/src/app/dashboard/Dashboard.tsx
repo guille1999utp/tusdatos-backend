@@ -1,13 +1,14 @@
-import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import {
-  BellIcon,
-  FileTextIcon,
-  GlobeIcon,
-  InputIcon,
-} from "@radix-ui/react-icons";
-import { Calendar, CalendarDays, Ticket, Users } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { CardStack } from "@/components/ui/card-stack";
+  Calendar,
+  Ticket,
+  Users,
+  FileText,
+  Globe,
+  Home,
+  User,
+  UserCheck,
+  ChevronRight,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -21,113 +22,67 @@ import EventsService from "@/services/app/events/events.service";
 import type { IEvents } from "@/models/app/events/events.model";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
-export const Highlight = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <span
-      className={cn(
-        "font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200 px-1 py-0.5",
-        className,
-      )}
-    >
-      {children}
-    </span>
-  );
-};
-
-const PREVIEW_CARDS = [
+const QUICK_ACTIONS = [
   {
-    id: 0,
-    name: "Explorar",
-    designation: "Catálogo",
-    content: (
-      <p>
-        <Highlight>Todos</Highlight> los eventos abiertos a inscripción.
-      </p>
-    ),
-  },
-  {
-    id: 1,
-    name: "Mis eventos",
-    designation: "Organizo / staff",
-    content: (
-      <p>
-        <Highlight>Creados</Highlight> por ti o donde eres asistente.
-      </p>
-    ),
-  },
-  {
-    id: 2,
-    name: "Asistente",
-    designation: "Solo staff",
-    content: (
-      <p>
-        <Highlight>Colaboras</Highlight> como miembro del equipo del evento.
-      </p>
-    ),
-  },
-];
-
-const features = [
-  {
-    Icon: GlobeIcon,
-    name: "Explorar eventos",
-    description: "Listado completo para inscribirte o ver detalles.",
-    href: "/all-events",
-    cta: "Abrir",
-    background: <CardStack items={PREVIEW_CARDS} />,
-    className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3 ",
-  },
-  {
-    Icon: FileTextIcon,
-    name: "Mis eventos",
-    description: "Organizas o apoyas como asistente.",
     href: "/events",
-    cta: "Ver",
-    background: (
-      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
-    ),
-    className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3 ",
+    icon: FileText,
+    label: "Mis eventos",
+    bg: "bg-primary/10",
+    iconColor: "text-primary",
+    border: "border-primary/20",
   },
   {
-    Icon: CalendarDays,
-    name: "Como asistente",
-    description: "Solo eventos donde eres del staff.",
+    href: "/all-events",
+    icon: Globe,
+    label: "Explorar",
+    bg: "bg-secondary/20",
+    iconColor: "text-secondary-foreground",
+    border: "border-secondary/20",
+  },
+  {
+    href: "/my-registrations",
+    icon: Ticket,
+    label: "Inscripciones",
+    bg: "bg-tertiary/40",
+    iconColor: "text-black",
+    border: "border-tertiary/50",
+  },
+  {
     href: "/assistant-events",
-    cta: "Ver",
-    background: (
-      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
-    ),
-    className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
+    icon: UserCheck,
+    label: "Asistente",
+    bg: "bg-primary/10",
+    iconColor: "text-primary",
+    border: "border-primary/20",
   },
   {
-    Icon: InputIcon,
-    name: "Inicio público",
-    description: "Vista de bienvenida con el catálogo (también sin sesión).",
-    href: "/",
-    cta: "Ir",
-    background: (
-      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
-    ),
-    className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
-  },
-  {
-    Icon: BellIcon,
-    name: "Perfil",
-    description: "Tus datos y preferencias de cuenta.",
     href: "/profile",
-    cta: "Abrir",
-    background: (
-      <img className="absolute -right-20 -top-20 opacity-60" alt="" />
-    ),
-    className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
+    icon: User,
+    label: "Perfil",
+    bg: "bg-black/5",
+    iconColor: "text-black/60",
+    border: "border-black/10",
+  },
+  {
+    href: "/",
+    icon: Home,
+    label: "Inicio público",
+    bg: "bg-black/5",
+    iconColor: "text-black/60",
+    border: "border-black/10",
   },
 ];
+
+function getRoleBadge(role?: string) {
+  if (!role) return null;
+  const map: Record<string, string> = {
+    asistente: "Asistente",
+    organizador: "Organizador",
+    participante: "Participante",
+    admin: "Admin",
+  };
+  return map[role] ?? role;
+}
 
 export const Dashboard = () => {
   const { user } = useAuth();
@@ -160,8 +115,9 @@ export const Dashboard = () => {
 
   return (
     <>
+      {/* ── Header (untouched) ── */}
       <div className="max-w-3xl space-y-2">
-        <div className="flex items-center  gap-5">
+        <div className="flex items-center gap-5">
           <SidebarTrigger />
           <Separator
             orientation="vertical"
@@ -177,120 +133,182 @@ export const Dashboard = () => {
         </p>
       </div>
 
-      <BentoGrid className="lg:grid-rows-3 mx-auto w-full ">
-        {features.map((feature) => (
-          <BentoCard key={feature.name} {...feature} />
-        ))}
-      </BentoGrid>
+      {/* ── Quick actions ── */}
+      <div className="w-full space-y-3">
+        <h2 className="text-base md:text-lg font-semibold  text-black">
+          Acciones rápidas
+        </h2>
+        <div className="flex gap-3 overflow-x-auto pb-5 -mx-1 px-1 scrollbar-none no-scrollbar">
+          {QUICK_ACTIONS.map(({ href, icon: Icon, label }) => (
+            <Link
+              key={href}
+              to={href}
+              className={`group flex flex-col items-center gap-3 shrink-0 rounded-4xl border-2 border-black/2 bg-black/5 p-4 py-7 md:py-9 w-[140px] transition-all duration-200 hover:bg-primary hover:shadow-lg`}
+            >
+              <div className="size-11 md:size-14 lg:size-15 rounded-full bg-white/60 hover:bg-secondary flex items-center justify-center shadow-sm">
+                <Icon
+                  className={`size-5 md:size-7 text-primary group-hover:text-white transition-colors`}
+                  strokeWidth={2}
+                />
+              </div>
+              <span className="text-sm: md:text-base font-semibold text-center leading-tight text-black group-hover:text-white transition-colors">
+                {label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
 
-      <div className="mx-auto w-full  grid gap-10 lg:grid-cols-2">
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">Últimos en el catálogo</h2>
-            <span className="text-xs text-muted-foreground">
-              ({totalListEvents} en total)
-            </span>
+      {/* ── Event lists ── */}
+      <div className="w-full grid gap-6 lg:grid-cols-2">
+        {/* Últimos en el catálogo */}
+        <section className="rounded-2xl border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <div className="flex items-center gap-2.5">
+              <div className="size-9 md:size-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="size-4 md:size-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-base md:text-lg font-bold leading-none">
+                  Últimos en el catálogo
+                </h2>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {totalListEvents} en total
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/all-events"
+              className="flex items-center gap-1 text-xs sm:text-sm md:text-base font-semibold text-primary hover:underline"
+            >
+              Ver todos <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <Separator />
-          {listEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Aún no hay eventos publicados.
-            </p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {listEvents.slice(0, 6).map((ev) => (
-                <li
+          <div className="divide-y divide-border/30">
+            {listEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground px-5 py-4">
+                Aún no hay eventos publicados.
+              </p>
+            ) : (
+              listEvents.slice(0, 6).map((ev) => (
+                <div
                   key={ev.id}
-                  className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-border/60 bg-card/40 px-3 py-2"
+                  className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-primary/5 transition-colors"
                 >
-                  <span className="font-medium">{ev.title}</span>
-                  <span className="text-muted-foreground">{ev.date}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link
-            to="/all-events"
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            Ver todos los eventos →
-          </Link>
+                  <span className="text-sm font-semibold text-black truncate">
+                    {ev.title}
+                  </span>
+                  <span className="shrink-0 text-[11px] font-medium text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+                    {ev.date}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">Mis eventos recientes</h2>
-            <span className="text-xs text-muted-foreground">
-              ({totalMyEvents} en total)
-            </span>
+        {/* Mis eventos recientes */}
+        <section className="rounded-2xl border border-border overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <div className="flex items-center gap-2.5">
+              <div className="size-9 md:size-10 rounded-lg bg-tertiary/50 flex items-center justify-center">
+                <Users className="size-4 md:size-5 text-black" />
+              </div>
+              <div>
+                <h2 className="text-base md:text-lg font-bold leading-none">
+                  Mis eventos recientes
+                </h2>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  {totalMyEvents} en total
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/events"
+              className="flex items-center gap-1 text-xs sm:text-sm md:text-base font-semibold text-primary hover:underline"
+            >
+              Ver todos <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <Separator />
-          {listMyEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No tienes eventos como organizador o asistente todavía.
-            </p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {listMyEvents.slice(0, 6).map((ev) => (
-                <li
+          <div className="divide-y divide-border/30">
+            {listMyEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground px-5 py-4">
+                No tienes eventos como organizador o asistente todavía.
+              </p>
+            ) : (
+              listMyEvents.slice(0, 6).map((ev) => (
+                <div
                   key={ev.id}
-                  className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-border/60 bg-card/40 px-3 py-2"
+                  className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-tertiary/10 transition-colors"
                 >
-                  <span className="font-medium">{ev.title}</span>
-                  <span className="text-muted-foreground">{ev.date}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link
-            to="/events"
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            Ir a mis eventos →
-          </Link>
+                  <span className="text-sm font-semibold text-black truncate">
+                    {ev.title}
+                  </span>
+                  <span className="shrink-0 text-[11px] font-medium text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+                    {ev.date}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </section>
       </div>
 
-      <section className="mx-auto w-full space-y-3">
-        <div className="flex items-center gap-2">
-          <Ticket className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Mis inscripciones</h2>
-          <span className="text-xs text-muted-foreground">
-            ({totalRegistrations} en total)
-          </span>
+      {/* ── Mis inscripciones ── */}
+      <section className="w-full rounded-2xl border border-border overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+          <div className="flex items-center gap-2.5">
+            <div className="size-9 md:size-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+              <Ticket className="size-4 md:size-5 text-secondary-foreground" />
+            </div>
+            <div>
+              <h2 className="text-base md:text-lg font-bold leading-none">
+                Mis inscripciones
+              </h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                {totalRegistrations} en total
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/my-registrations"
+            className="flex items-center gap-1 text-xs sm:text-sm md:text-base font-semibold text-primary hover:underline"
+          >
+            Ver todos <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
-        <Separator />
-        {regPreview.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Aún no estás inscrito en ningún evento como participante o
-            asistente.
-          </p>
-        ) : (
-          <ul className="space-y-2 text-sm">
-            {regPreview.map((ev) => (
-              <li
-                key={ev.id}
-                className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-border/60 bg-card/40 px-3 py-2"
-              >
-                <span className="font-medium">{ev.title}</span>
-                <span className="text-muted-foreground">
-                  {ev.date}
-                  {ev.role
-                    ? ` · ${ev.role === "asistente" ? "Asistente" : ev.role === "organizador" ? "Organizador" : "Participante"}`
-                    : ""}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <Link
-          to="/my-registrations"
-          className="text-sm font-medium text-primary hover:underline"
-        >
-          Ver todos mis eventos inscritos →
-        </Link>
+        <div className="divide-y divide-border/30">
+          {regPreview.length === 0 ? (
+            <p className="text-sm text-muted-foreground px-5 py-4">
+              Aún no estás inscrito en ningún evento como participante o
+              asistente.
+            </p>
+          ) : (
+            regPreview.map((ev) => {
+              const roleBadge = getRoleBadge(ev.role ?? undefined);
+              return (
+                <div
+                  key={ev.id}
+                  className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-secondary/10 transition-colors"
+                >
+                  <div className="min-w-0">
+                    <span className="text-sm font-semibold text-black block truncate">
+                      {ev.title}
+                    </span>
+                    {roleBadge && (
+                      <span className="text-[11px] text-muted-foreground">
+                        {roleBadge}
+                      </span>
+                    )}
+                  </div>
+                  <span className="shrink-0 text-[11px] font-medium text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+                    {ev.date}
+                  </span>
+                </div>
+              );
+            })
+          )}
+        </div>
       </section>
     </>
   );

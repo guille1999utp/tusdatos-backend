@@ -2,7 +2,6 @@ import { MainDialog } from "@/components/common/molecules/dialog/MainDialog";
 import { DataTableDemo } from "@/components/common/organisms/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { useTableListEvents } from "@/hooks/app/events/useTableEvents";
 import { FormAssignUser } from "@/modules/app/events/components/FormAssignUser";
 import { FormEvents } from "@/modules/app/events/components/FormEvents";
@@ -29,17 +28,17 @@ export const Events = () => {
     handleCloseEventsDialog,
     openDialogAssignUser,
     handleCloseAssignUser,
-    search,
-    setSearch,
-    page,
-    setPage,
+    // search,
+    // setSearch,
+    // page,
+    // setPage,
     totalMyEvents,
-    pageSize,
+    // pageSize,
     regOpen,
     setRegOpen,
   } = useTableListEvents();
 
-  const totalPages = Math.max(1, Math.ceil(totalMyEvents / pageSize));
+  // const totalPages = Math.max(1, Math.ceil(totalMyEvents / pageSize));
   const mineCount = listMyEvents.filter((e) => e.role === "organizador").length;
   const assistantCount = listMyEvents.filter(
     (e) => e.role === "asistente",
@@ -63,18 +62,34 @@ export const Events = () => {
           </div>
           {canCreate ? (
             <Button
-              className="md:ml-auto cursor-pointer shrink-0"
-              variant="outline"
+              className="md:ml-auto cursor-pointer shrink-0 md:h-12"
+              variant="main"
               onClick={() => {
                 setCurrentEventsState(null);
                 setOpenDialogEvents(true);
               }}
             >
-              Crear
+              Crear Evento
             </Button>
           ) : null}
         </div>
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Eventos listados</p>
+            <p className="text-xl font-semibold">{totalMyEvents}</p>
+          </div>
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Eventos míos</p>
+            <p className="text-xl font-semibold">{mineCount}</p>
+          </div>
+          <div className="rounded-lg border p-3">
+            <p className="text-xs text-muted-foreground">Como asistente</p>
+            <p className="text-xl font-semibold">{assistantCount}</p>
+          </div>
+        </div>
+
+        {/* <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full max-w-md space-y-1">
             <label className="text-sm text-muted-foreground">
               Buscar por título
@@ -111,22 +126,7 @@ export const Events = () => {
               Siguiente
             </Button>
           </div>
-        </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Eventos listados</p>
-            <p className="text-xl font-semibold">{totalMyEvents}</p>
-          </div>
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Eventos míos</p>
-            <p className="text-xl font-semibold">{mineCount}</p>
-          </div>
-          <div className="rounded-lg border p-3">
-            <p className="text-xs text-muted-foreground">Como asistente</p>
-            <p className="text-xl font-semibold">{assistantCount}</p>
-          </div>
-        </div>
-        <Separator />
+        </div> */}
 
         <DataTableDemo columns={columns} data={listMyEvents} />
       </div>

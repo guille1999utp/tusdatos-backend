@@ -1,5 +1,4 @@
-
-import * as React from "react"
+import * as React from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,16 +10,16 @@ import {
   type ColumnFiltersState,
   type SortingState,
   type VisibilityState,
-} from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
+} from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -28,18 +27,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 
-export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef<any>[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+export function DataTableDemo({
+  data,
+  columns,
+}: {
+  data: any;
+  columns: ColumnDef<any>[];
+}) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+    [],
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [filterTitle, setFilterTitle] = React.useState("")
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [filterTitle, setFilterTitle] = React.useState("");
 
   const table = useReactTable({
     data,
@@ -58,25 +63,25 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter title..."
+          placeholder="Buscar por título..."
           onChange={(e) => {
-            const v = e.target.value
-            setFilterTitle(v)
-            table.getColumn("title")?.setFilterValue(v || undefined)
+            const v = e.target.value;
+            setFilterTitle(v);
+            table.getColumn("title")?.setFilterValue(v || undefined);
           }}
           value={filterTitle}
-          className="max-w-sm"
+          className="max-w-sm shadow-none"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="main" className="ml-auto">
+              Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -95,7 +100,7 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -111,11 +116,11 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -131,7 +136,7 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -152,8 +157,8 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
         </div>
         <div className="space-x-2">
           <Button
@@ -162,7 +167,7 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Anterior
           </Button>
           <Button
             variant="outline"
@@ -170,10 +175,10 @@ export function DataTableDemo({ data, columns }: { data: any, columns: ColumnDef
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Siguiente
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }
