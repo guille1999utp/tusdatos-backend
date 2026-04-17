@@ -142,6 +142,13 @@ export default function EventDetail() {
 
   const enrolled = isEnrolled(event.role);
   const isOrganizer = event.role === "organizador";
+  const registeredCount =
+    event.total_inscritos ?? event.registered_count ?? 0;
+  const capacity = Number(event.capacity);
+  const isAtCapacity =
+    Number.isFinite(capacity) &&
+    capacity > 0 &&
+    registeredCount >= capacity;
 
   return (
     <div className="space-y-6">
@@ -181,7 +188,7 @@ export default function EventDetail() {
           <strong>Tu rol:</strong> {event.role ?? "sin rol en este evento"}
         </p>
 
-        {!isOrganizer && !enrolled ? (
+        {!isOrganizer && !enrolled && !isAtCapacity ? (
           <button
             type="button"
             className="mt-2 h-9 rounded-md bg-green-600 px-4 text-white hover:bg-green-700"
@@ -189,6 +196,12 @@ export default function EventDetail() {
           >
             Inscribirme al evento
           </button>
+        ) : null}
+
+        {!isOrganizer && !enrolled && isAtCapacity ? (
+          <p className="mt-2 text-sm font-semibold text-muted-foreground">
+            Cupo completo: no quedan plazas para inscribirse en este evento.
+          </p>
         ) : null}
 
         {enrolled ? (

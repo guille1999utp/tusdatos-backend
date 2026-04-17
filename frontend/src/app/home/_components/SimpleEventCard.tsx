@@ -1,12 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Calendar01Icon,
-  UserGroupIcon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons";
-import { Link } from "react-router-dom";
+import { Calendar01Icon, UserGroupIcon } from "@hugeicons/core-free-icons";
+import { Link, useNavigate } from "react-router-dom";
 
 type RoleBadge = {
   label: string;
@@ -37,7 +33,6 @@ function getRoleBadge(role: string | null | undefined): RoleBadge | null {
 
 interface SimpleEventCardProps {
   event: any;
-  index: number;
   isExpired?: boolean;
   isFull?: boolean;
   /** If true, shows a "Dejar evento" button */
@@ -56,11 +51,20 @@ export default function SimpleEventCard({
   isLeaving = false,
   showDetailLink = true,
 }: SimpleEventCardProps) {
+  const navigate = useNavigate();
   const roleBadge = getRoleBadge(event.role);
+  const detailPath = `/events/${event.id}`;
+
+  const handleCardNavigate = (e: { target: EventTarget | null }) => {
+    const el = e.target as HTMLElement;
+    if (el.closest("a, button")) return;
+    navigate(detailPath);
+  };
 
   return (
     <div
-      className={`group relative  border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
+      onClick={handleCardNavigate}
+      className={`group relative min-h-[280px] md:min-h-[320px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 cursor-pointer ${
         isExpired ? "opacity-75" : ""
       }`}
     >
@@ -68,23 +72,39 @@ export default function SimpleEventCard({
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-105 bg-background" />
 
       {/* Content */}
-      <div className="relative h-full w-full p-5 sm:p-6 lg:p-7 flex flex-col justify-between z-20">
-        {/* Header: date + capacity */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-black text-base md:text-lg font-bold tracking-widest uppercase">
-            <HugeiconsIcon
-              icon={Calendar01Icon}
-              className="mr-1 inline size-5 md:size-7"
-            />
-            {event.date}
+      <div className="relative h-full w-full p-5 sm:p-6 2xl:p-8 flex flex-col justify-between z-20">
+        {/* Header: date + capacity + mismo botón que en el home (EventCard) */}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase min-w-0">
+              <HugeiconsIcon
+                icon={Calendar01Icon}
+                className="mr-1 2xl:mr-2 inline size-5 md:size-7 shrink-0"
+              />
+              <span className="truncate">{event.date}</span>
+            </div>
+            <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-xl 2xl:text-3xl shadow-sm shrink-0">
+              <HugeiconsIcon
+                icon={UserGroupIcon}
+                className="shrink-0 size-6 2xl:size-8 text-black"
+              />
+              {event.registered_count} / {event.capacity}
+            </div>
           </div>
-          <div className="inline-flex items-center gap-2 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-3 py-1.5 rounded-full font-bold tracking-tight text-lg sm:text-xl shadow-sm">
-            <HugeiconsIcon
-              icon={UserGroupIcon}
-              className="shrink-0 size-5 sm:size-6 text-black"
-            />
-            {event.registered_count} / {event.capacity}
-          </div>
+          {showDetailLink ? (
+            <div className="relative z-30 flex justify-start">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full border-2 border-primary/40 bg-white/80 font-semibold text-primary hover:bg-primary hover:text-white"
+                asChild
+              >
+                <Link to={detailPath} onClick={(e) => e.stopPropagation()}>
+                  Ver detalle y sesiones
+                </Link>
+              </Button>
+            </div>
+          ) : null}
         </div>
 
         {/* Body */}
@@ -120,29 +140,20 @@ export default function SimpleEventCard({
               {event.description}
             </p>
           )}
-
-          {/* Detail link */}
-          {showDetailLink && (
-            <Link
-              to={`/events/${event.id}`}
-              className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
-            >
-              Ver detalle y sesiones
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
-            </Link>
-          )}
         </div>
 
-        {/* Footer: leave button */}
+        {/* Footer: mismo estilo que el CTA inferior de EventCard (home) */}
         {canLeave && (
           <Button
             type="button"
+            variant="main"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onLeave?.();
             }}
             disabled={isLeaving}
-            className="mt-4 w-full h-14 md:h-16 rounded-[2.5rem] font-bold text-lg border-2 border-white bg-red-500/80 hover:bg-red-600 text-white shadow-lg transition-all duration-300"
+            className="group/btn relative z-30 mt-4 flex h-16 w-full items-center justify-center gap-4 rounded-[2.5rem] border-2 border-white font-bold text-xl shadow-xl transition-all duration-500 hover:shadow-2xl md:h-20 xl:text-xl 2xl:text-2xl bg-red-500/80 text-white hover:bg-red-600 disabled:opacity-70"
           >
             {isLeaving ? "Procesando…" : "Dejar evento"}
           </Button>

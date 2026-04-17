@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ export default function EventCard({
   isEnrolled = false,
   isOrganizer = false,
 }: EventCardProps) {
+  const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement | null>(null);
   const isBlocked = isFull || isExpired;
   const showButton = (!isBlocked || isEnrolled) && !isOrganizer;
@@ -187,33 +189,54 @@ export default function EventCard({
 
   const color = STROKE_COLORS[index % STROKE_COLORS.length];
 
+  const detailPath = `/events/${event.id}`;
+
+  const handleCardNavigate = (e: { target: EventTarget | null }) => {
+    const el = e.target as HTMLElement;
+    if (el.closest("a, button")) return;
+    navigate(detailPath);
+  };
+
   return (
     <div
       ref={cardRef}
       id={`card-${event.id}`}
-      className={`group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 ${
-        isBlocked && !isEnrolled ? "cursor-not-allowed" : "cursor-pointer"
-      }`}
+      onClick={handleCardNavigate}
+      className="group relative min-h-[320px] md:min-h-[360px] 2xl:min-h-[420px] border-2 border-white rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[12px_12px_24px_#d3d1ca,-12px_-12px_24px_#ffffff] transition-all duration-700 cursor-pointer"
     >
       <div className="absolute inset-0 transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1 bg-background" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none " />
 
       <div className="relative h-full w-full p-5 sm:p-6 2xl:p-8 flex flex-col justify-between z-20">
         {/* Header Badges */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase">
-            <HugeiconsIcon
-              icon={Calendar01Icon}
-              className="mr-1 2xl:mr-2 inline size-5 md:size-7"
-            />
-            {event.date}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex items-center gap-2 text-black text-base md:text-lg 2xl:text-xl font-bold tracking-widest uppercase min-w-0">
+              <HugeiconsIcon
+                icon={Calendar01Icon}
+                className="mr-1 2xl:mr-2 inline size-5 md:size-7 shrink-0"
+              />
+              <span className="truncate">{event.date}</span>
+            </div>
+            <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-xl 2xl:text-3xl shadow-sm shrink-0">
+              <HugeiconsIcon
+                icon={UserGroupIcon}
+                className="shrink-0 size-6  2xl:size-8 text-black"
+              />
+              {event.registered_count} / {event.capacity}
+            </div>
           </div>
-          <div className="inline-flex items-center gap-3 bg-tertiary text-black border-2 border-white backdrop-blur-xl px-4 py-2 2xl:px-6 2xl:py-3 rounded-full font-bold tracking-tight text-xl sm:text-xl 2xl:text-3xl shadow-sm">
-            <HugeiconsIcon
-              icon={UserGroupIcon}
-              className="shrink-0 size-6  2xl:size-8 text-black"
-            />
-            {event.registered_count} / {event.capacity}
+          <div className="relative z-30 flex justify-start">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-2 border-primary/40 bg-white/80 font-semibold text-primary hover:bg-primary hover:text-white"
+              asChild
+            >
+              <Link to={detailPath} onClick={(e) => e.stopPropagation()}>
+                Ver detalle y sesiones
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -263,6 +286,7 @@ export default function EventCard({
             <Button
               variant="main"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onClick();
               }}

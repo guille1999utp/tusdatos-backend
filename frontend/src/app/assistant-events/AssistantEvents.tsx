@@ -166,7 +166,7 @@ export const AssistantEvents = () => {
             </p>
           </div>
         ) : (
-          listEvents.map((event, index) => {
+          listEvents.map((event) => {
             const expirado = isEventDatePast(event.date);
             const lleno = (event.registered_count ?? 0) >= event.capacity;
 
@@ -174,7 +174,6 @@ export const AssistantEvents = () => {
               <SimpleEventCard
                 key={event.id}
                 event={event}
-                index={index}
                 isExpired={expirado}
                 isFull={lleno}
                 canLeave

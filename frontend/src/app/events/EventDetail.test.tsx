@@ -123,6 +123,30 @@ describe("EventDetail", () => {
     });
   });
 
+  it("no muestra inscripción si el aforo ya está completo", async () => {
+    vi.mocked(EventsService.getById).mockResolvedValue({
+      id: 1,
+      title: "Evento lleno",
+      description: "x",
+      capacity: 2,
+      date: "2026-04-22",
+      state: "scheduled",
+      registered_count: 2,
+      role: null,
+      total_inscritos: 2,
+    });
+
+    render(<EventDetail />);
+
+    expect(await screen.findByText("Evento lleno")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Inscribirme al evento" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Cupo completo/i, { exact: false }),
+    ).toBeInTheDocument();
+  });
+
   it("permite crear sesión cuando tiene permisos de gestión", async () => {
     render(<EventDetail />);
     expect(
