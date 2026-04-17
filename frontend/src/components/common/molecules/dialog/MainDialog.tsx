@@ -11,18 +11,19 @@ export const MainDialog = ({
   title,
   open,
   setOpenModal,
+  customMaxWidth,
 }: {
   children: ReactNode;
   title: string;
   open: boolean;
   /** Radix `onOpenChange`: recibe el nuevo estado (true/false). */
   setOpenModal: (open: boolean) => void;
+  customMaxWidth?: string;
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpenModal}>
-      {" "}
       {/* Usamos `onOpenChange` para controlar el cambio de estado */}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent customMaxWidth={customMaxWidth || "sm:max-w-[480px]"}>
         <DialogHeader>
           <DialogTitle className="md:text-xl font-semibold">
             {title}

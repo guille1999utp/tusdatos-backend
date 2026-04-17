@@ -9,6 +9,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const PAGE = 8;
 
@@ -34,7 +43,12 @@ function isSameUserAsViewer(rowEmail: string, viewerEmail: string | undefined) {
   return rowEmail.trim().toLowerCase() === viewerEmail.trim().toLowerCase();
 }
 
-export function EventParticipantsList({ eventId, roleEditMode, onChanged, refreshVersion = 0 }: Props) {
+export function EventParticipantsList({
+  eventId,
+  roleEditMode,
+  onChanged,
+  refreshVersion = 0,
+}: Props) {
   const { user: authUser } = useAuth();
   const viewerEmail = authUser?.sub;
 
@@ -85,10 +99,17 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
     }
   };
 
-  const setRole = async (userId: number, role: "usuario" | "asistente", successMsg?: string) => {
+  const setRole = async (
+    userId: number,
+    role: "usuario" | "asistente",
+    successMsg?: string,
+  ) => {
     try {
-      await EventsService.updateEventRegistrationRole(eventId, userId, role, (msg) =>
-        toast.error(msg?.trim() || "No se pudo actualizar el rol")
+      await EventsService.updateEventRegistrationRole(
+        eventId,
+        userId,
+        role,
+        (msg) => toast.error(msg?.trim() || "No se pudo actualizar el rol"),
       );
       toast.success(successMsg ?? "Rol actualizado");
       await emitChanged();
@@ -98,7 +119,12 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
   };
 
   const transferOrganizerTo = async (userId: number, displayName: string) => {
-    if (!window.confirm(`¿Trasladar la organización del evento a «${displayName}»?`)) return;
+    if (
+      !window.confirm(
+        `¿Trasladar la organización del evento a «${displayName}»?`,
+      )
+    )
+      return;
     try {
       await EventsService.transferOrganizer(eventId, userId);
       toast.success("Titular del evento actualizado");
@@ -112,7 +138,10 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
     }
   };
 
-  const onFullModeRoleSelect = async (row: IEventParticipant, value: string) => {
+  const onFullModeRoleSelect = async (
+    row: IEventParticipant,
+    value: string,
+  ) => {
     if (row.role === "organizador") return;
     if (value === row.role) return;
     if (value === "organizador") {
@@ -128,20 +157,31 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
 
   return (
     <div className="flex flex-col gap-3 w-full border-t border-border/60 pt-4 mt-2">
-      <h4 className="text-sm font-semibold text-foreground">Personas en este evento</h4>
+      <h4 className="text-sm md:text-base font-semibold text-black">
+        Personas en este evento
+      </h4>
       <p className="text-xs text-muted-foreground">
-        Orden: organizador, asistentes y participantes. El rol «Organizador» es la titularidad del evento; puedes
-        trasladarla a otra persona desde el desplegable (modo completo).
+        Orden: organizador, asistentes y participantes. El rol «Organizador» es
+        la titularidad del evento; puedes trasladarla a otra persona desde el
+        desplegable (modo completo).
       </p>
       {roleEditMode === "promote-only" ? (
         <p className="text-xs text-muted-foreground">
-          No verás la opción de quitar a nadie del evento. En tu propia fila como asistente, usa «Abandonar» para dejar
-          de ser asistente y seguir como participante.
+          No verás la opción de quitar a nadie del evento. En tu propia fila
+          como asistente, usa «Abandonar» para dejar de ser asistente y seguir
+          como participante.
         </p>
       ) : null}
-      <Input placeholder="Buscar por nombre o email…" value={q} onChange={(e) => setQ(e.target.value)} />
-      {loading ? <p className="text-xs text-muted-foreground">Cargando…</p> : null}
-      <ul className="divide-y rounded-md border max-h-[280px] overflow-y-auto bg-background/40">
+      <Input
+        placeholder="Buscar por nombre o email…"
+        className="shadow-none"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+      />
+      {loading ? (
+        <p className="text-xs text-muted-foreground">Cargando…</p>
+      ) : null}
+      <ul className="divide-y rounded-3xl border max-h-[280px] overflow-y-auto">
         {items.length === 0 ? (
           <li className="p-3 text-sm text-muted-foreground">Sin resultados</li>
         ) : (
@@ -151,37 +191,58 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
               className="p-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
-                <p className="font-medium">{row.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{row.email}</p>
+                <p className="font-medium text-black">{row.name}</p>
+                <p className="text-xs text-black ">{row.email}</p>
               </div>
 
               {roleEditMode === "full" ? (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 shrink-0">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase tracking-wide text-muted-foreground">Rol en el evento</label>
-                    <select
-                      className={cn(
-                        "h-9 min-w-[11rem] rounded-md border border-input bg-background px-2 text-sm",
-                        row.role === "organizador" && "opacity-90"
-                      )}
+                    <label className="text-sm text-black">
+                      Rol en el evento
+                    </label>
+                    <Select
                       value={row.role}
                       disabled={row.role === "organizador"}
-                      onChange={(e) => void onFullModeRoleSelect(row, e.target.value)}
+                      onValueChange={(val) =>
+                        void onFullModeRoleSelect(row, val)
+                      }
                     >
-                      <option value="organizador">{roleLabel("organizador")}</option>
-                      <option value="asistente">{roleLabel("asistente")}</option>
-                      <option value="usuario">{roleLabel("usuario")}</option>
-                    </select>
+                      <SelectTrigger className="h-9 min-w-[11rem] rounded-md border border-input bg-background/50 px-3 text-sm">
+                        <SelectValue placeholder={roleLabel(row.role)} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel className="text-black">Rol en el evento</SelectLabel>
+                          <SelectItem value="organizador">
+                            {roleLabel("organizador")}
+                          </SelectItem>
+                          <SelectItem value="asistente">
+                            {roleLabel("asistente")}
+                          </SelectItem>
+                          <SelectItem value="usuario">
+                            {roleLabel("usuario")}
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
                   {row.role !== "organizador" ? (
-                    <Button type="button" size="sm" variant="destructive" onClick={() => remove(row.user_id)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => remove(row.user_id)}
+                    >
                       Quitar del evento
                     </Button>
                   ) : null}
                 </div>
               ) : (
                 <div className="flex flex-col gap-1 sm:items-end">
-                  <p className="text-xs font-medium text-primary/90">{roleLabel(row.role)}</p>
+                  <p className="text-xs font-medium text-primary/90">
+                    {roleLabel(row.role)}
+                  </p>
                   <div className="flex flex-wrap gap-2 shrink-0">
                     {row.role === "usuario" ? (
                       <Button
@@ -192,13 +253,18 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
                       >
                         Hacer asistente
                       </Button>
-                    ) : row.role === "asistente" && isSameUserAsViewer(row.email, viewerEmail) ? (
+                    ) : row.role === "asistente" &&
+                      isSameUserAsViewer(row.email, viewerEmail) ? (
                       <Button
                         type="button"
                         size="sm"
                         variant="outline"
                         onClick={() =>
-                          setRole(row.user_id, "usuario", "Has abandonado el rol de asistente; sigues como participante.")
+                          setRole(
+                            row.user_id,
+                            "usuario",
+                            "Has abandonado el rol de asistente; sigues como participante.",
+                          )
                         }
                       >
                         Abandonar
@@ -213,7 +279,13 @@ export function EventParticipantsList({ eventId, roleEditMode, onChanged, refres
       </ul>
       {total > PAGE ? (
         <div className="flex items-center justify-between gap-2">
-          <Button type="button" variant="outline" size="sm" disabled={page <= 0} onClick={() => setPage((p) => p - 1)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page <= 0}
+            onClick={() => setPage((p) => p - 1)}
+          >
             Anterior
           </Button>
           <span className="text-xs text-muted-foreground whitespace-nowrap">

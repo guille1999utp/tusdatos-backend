@@ -166,6 +166,7 @@ export const Events = () => {
         setOpenModal={(o) => {
           if (!o) handleCloseAssignUser();
         }}
+        customMaxWidth="sm:max-w-2xl"
       >
         {openDialogAssignUser.open ? (
           <FormAssignUser

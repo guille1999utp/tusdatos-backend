@@ -13,6 +13,16 @@ import { toast } from "react-toastify";
 import type { IEvents } from "@/models/app/events/events.model";
 import type { IUpdateEventsReq } from "@/models/app/events/insert/insert-events.model";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Controller } from "react-hook-form";
 
 type EventFormInputs = {
   title: string;
@@ -59,6 +69,7 @@ export const FormEvents = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<EventFormInputs>({
     resolver: yupResolver(schema),
@@ -115,7 +126,7 @@ export const FormEvents = ({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Título</Label>
-        <Input id="title" {...register("title")} />
+        <Input id="title" {...register("title")} className="shadow-none" />
         {errors.title && (
           <p className="text-sm text-red-500">{errors.title.message}</p>
         )}
@@ -123,7 +134,11 @@ export const FormEvents = ({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="description">Descripción</Label>
-        <Input id="description" {...register("description")} />
+        <Input
+          id="description"
+          {...register("description")}
+          className="shadow-none"
+        />
         {errors.description && (
           <p className="text-sm text-red-500">{errors.description.message}</p>
         )}
@@ -131,7 +146,12 @@ export const FormEvents = ({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="date">Fecha</Label>
-        <Input id="date" type="date" {...register("date")} />
+        <Input
+          id="date"
+          type="date"
+          {...register("date")}
+          className="shadow-none"
+        />
         {errors.date && (
           <p className="text-sm text-red-500">{errors.date.message}</p>
         )}
@@ -139,7 +159,12 @@ export const FormEvents = ({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="capacity">Capacidad</Label>
-        <Input id="capacity" type="number" {...register("capacity")} />
+        <Input
+          id="capacity"
+          type="number"
+          {...register("capacity")}
+          className="shadow-none"
+        />
         {errors.capacity && (
           <p className="text-sm text-red-500">{errors.capacity.message}</p>
         )}
@@ -147,17 +172,34 @@ export const FormEvents = ({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="state">Estado</Label>
-        <select
-          id="state"
-          {...register("state")}
-          className="bg-black border border-slate-700 rounded-md p-2 text-slate-100"
-        >
-          <option value="">Seleccionar estado</option>
-          <option value="scheduled">Programado</option>
-          <option value="ongoing">En curso</option>
-          <option value="completed">Completado</option>
-          <option value="cancelled">Cancelado</option>
-        </select>
+        <Controller
+          name="state"
+          control={control}
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Seleccionar estado" />
+              </SelectTrigger>
+              <SelectContent className="">
+                <SelectGroup>
+                  <SelectLabel className="text-black">Estado</SelectLabel>
+                  <SelectItem value="scheduled" className="">
+                    Programado
+                  </SelectItem>
+                  <SelectItem value="ongoing" className="">
+                    En curso
+                  </SelectItem>
+                  <SelectItem value="completed" className="">
+                    Completado
+                  </SelectItem>
+                  <SelectItem value="cancelled" className="">
+                    Cancelado
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.state && (
           <p className="text-sm text-red-500">{errors.state.message}</p>
         )}

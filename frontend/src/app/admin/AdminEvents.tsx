@@ -213,6 +213,7 @@ export default function AdminEvents() {
           if (!open)
             setAssignOpen({ open: false, id: 0, soloParticipantes: false });
         }}
+        customMaxWidth="sm:max-w-xl"
       >
         {assignOpen.open ? (
           <FormAssignUser

@@ -16,6 +16,7 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EventParticipantsList } from "@/modules/app/events/components/EventParticipantsList";
+import { Label } from "@/components/ui/label";
 
 type EventFormInputs = {
   user_id: number;
@@ -37,18 +38,25 @@ const defaultValues: EventFormInputs = {
 
 const USER_PAGE = 8;
 
-export const FormAssignUser = ({ onMounted, closeModal, idEvent, soloParticipantes }: IProps) => {
+export const FormAssignUser = ({
+  onMounted,
+  closeModal,
+  idEvent,
+  soloParticipantes,
+}: IProps) => {
   const schema = useMemo(
     () =>
       Yup.object({
         user_id: Yup.number().min(1, "Debes seleccionar un usuario").required(),
         role: soloParticipantes
-          ? Yup.mixed<"usuario">().oneOf(["usuario"] as const).required()
+          ? Yup.mixed<"usuario">()
+              .oneOf(["usuario"] as const)
+              .required()
           : Yup.mixed<"usuario" | "asistente" | "organizador">()
               .oneOf(["usuario", "asistente", "organizador"] as const)
               .required("Selecciona un rol"),
       }),
-    [soloParticipantes]
+    [soloParticipantes],
   );
 
   const {
@@ -67,7 +75,9 @@ export const FormAssignUser = ({ onMounted, closeModal, idEvent, soloParticipant
   const [userQuery, setUserQuery] = useState("");
   const debouncedQuery = useDebounce(userQuery, 350);
   const [userPage, setUserPage] = useState(0);
-  const [userOptions, setUserOptions] = useState<{ label: string; value: number }[]>([]);
+  const [userOptions, setUserOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
   const [userTotal, setUserTotal] = useState(0);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [participantsVersion, setParticipantsVersion] = useState(0);
@@ -89,7 +99,7 @@ export const FormAssignUser = ({ onMounted, closeModal, idEvent, soloParticipant
         resp.items.map((u) => ({
           label: `${u.name} (${u.email})`,
           value: u.id,
-        }))
+        })),
       );
       setUserTotal(resp.total);
     } catch {
@@ -143,15 +153,18 @@ export const FormAssignUser = ({ onMounted, closeModal, idEvent, soloParticipant
       return;
     }
 
-    const apiRole: "usuario" | "asistente" = role === "asistente" ? "asistente" : "usuario";
+    const apiRole: "usuario" | "asistente" =
+      role === "asistente" ? "asistente" : "usuario";
 
     const res = await dispatch(
       registerEventUser({
         params: { id: idEvent, user_id, role: apiRole },
         errorCallback: (msg) => {
-          toast.error(msg?.trim() || "Error al asignar el usuario o ya está asignado");
+          toast.error(
+            msg?.trim() || "Error al asignar el usuario o ya está asignado",
+          );
         },
-      })
+      }),
     );
 
     if (res?.meta?.requestStatus === "fulfilled") {
@@ -174,111 +187,134 @@ export const FormAssignUser = ({ onMounted, closeModal, idEvent, soloParticipant
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 w-full h-full p-4 tracking-tight text-slate-100/80"
+      className="flex flex-col w-full h-full tracking-tight text-slate-100/80"
     >
-      <h3 className="text-lg font-bold text-slate-800/50 dark:text-slate-200">
-        Asignar usuario al evento
-      </h3>
-
-      <div className="space-y-2">
-        <label className="text-sm text-muted-foreground">Buscar por nombre o correo</label>
-        <Input
-          placeholder="Escribe para buscar…"
-          value={userQuery}
-          onChange={(e) => setUserQuery(e.target.value)}
-        />
+      <div className=" py-2">
+        <h3 className="text-xl font-bold text-black dark:text-slate-100">
+          Asignar usuario al evento
+        </h3>
       </div>
 
-      <Controller
-        name="user_id"
-        control={control}
-        render={({ field }) => (
-          <SingleSelectCombobox
-            options={userOptions}
-            value={field.value > 0 ? field.value : undefined}
-            onChange={(val) => field.onChange(Number(val))}
-            error={errors.user_id?.message}
-            placeholder="Selecciona un usuario…"
-            loading={loadingUsers}
+      <div className="flex-1 overflow-y-auto pr-2 py-4 space-y-6 max-h-[60vh] custom-scrollbar">
+        <div className="space-y-2">
+          <Label className="text-black">Buscar por nombre o correo</Label>
+          <Input
+            placeholder="Escribe para buscar…"
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            className=""
           />
-        )}
-      />
-
-      {userTotal > USER_PAGE ? (
-        <div className="flex items-center justify-between gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={userPage === 0}
-            onClick={() => setUserPage((p) => Math.max(0, p - 1))}
-          >
-            Anterior
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            Página {userPage + 1} · {userTotal} usuarios
-          </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={(userPage + 1) * USER_PAGE >= userTotal}
-            onClick={() => setUserPage((p) => p + 1)}
-          >
-            Siguiente
-          </Button>
         </div>
-      ) : null}
 
-      <Controller
-        name="role"
-        control={control}
-        render={({ field }) => (
-          <SingleSelectCombobox
-            options={roleOptions.map((o, i) => ({
-              label: o.label,
-              value: i,
-            }))}
-            value={field.value === "organizador" ? 2 : field.value === "asistente" ? 1 : 0}
-            onChange={(val) => {
-              const n = Number(val);
-              field.onChange(n === 2 ? "organizador" : n === 1 ? "asistente" : "usuario");
-            }}
-            error={errors.role?.message}
-            placeholder="Rol en el evento…"
-            loading={false}
-          />
-        )}
-      />
-
-      {soloParticipantes ? (
-        <p className="text-xs text-muted-foreground">
-          Como asistente puedes dar de alta participantes (usuario) o promoverlos a asistente si ya estaban inscritos.
-        </p>
-      ) : (
-        <p className="text-xs text-muted-foreground">
-          «Organizador» traslada la titularidad del evento al usuario elegido (el organizador anterior pasa a participante
-          si no tenía inscripción).
-        </p>
-      )}
-
-      <EventParticipantsList
-        eventId={idEvent}
-        roleEditMode={soloParticipantes ? "promote-only" : "full"}
-        refreshVersion={participantsVersion}
-        onChanged={refreshParentTableAndUserPicker}
-      />
-
-      <div className="flex flex-col gap-2">
-        <button
-          type="submit"
-          className={cn(
-            "mt-2 h-10 w-full rounded-md bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-semibold"
+        <Controller
+          name="user_id"
+          control={control}
+          render={({ field }) => (
+            <SingleSelectCombobox
+              options={userOptions}
+              value={field.value > 0 ? field.value : undefined}
+              onChange={(val) => field.onChange(Number(val))}
+              error={errors.user_id?.message}
+              placeholder="Selecciona un usuario…"
+              loading={loadingUsers}
+            />
           )}
-        >
+        />
+
+        {userTotal > USER_PAGE ? (
+          <div className="flex items-center justify-between gap-2 bg-slate-800/30 p-2 rounded-lg">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={userPage === 0}
+              onClick={() => setUserPage((p) => Math.max(0, p - 1))}
+              className="border-slate-700 hover:bg-slate-700"
+            >
+              Anterior
+            </Button>
+            <span className="text-xs text-slate-400 font-medium">
+              Página {userPage + 1} de {Math.ceil(userTotal / USER_PAGE)}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={(userPage + 1) * USER_PAGE >= userTotal}
+              onClick={() => setUserPage((p) => p + 1)}
+              className="border-slate-700 hover:bg-slate-700"
+            >
+              Siguiente
+            </Button>
+          </div>
+        ) : null}
+
+        <div className="space-y-2">
+          <Label className="text-black">Rol en el evento</Label>
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <SingleSelectCombobox
+                options={roleOptions.map((o, i) => ({
+                  label: o.label,
+                  value: i,
+                }))}
+                value={
+                  field.value === "organizador"
+                    ? 2
+                    : field.value === "asistente"
+                      ? 1
+                      : 0
+                }
+                onChange={(val) => {
+                  const n = Number(val);
+                  field.onChange(
+                    n === 2 ? "organizador" : n === 1 ? "asistente" : "usuario",
+                  );
+                }}
+                error={errors.role?.message}
+                placeholder="Rol en el evento…"
+                loading={false}
+              />
+            )}
+          />
+        </div>
+
+        {soloParticipantes ? (
+          <p className="text-xs text-indigo-400 bg-indigo-500/5 p-3 rounded-lg border border-indigo-500/10">
+            Como asistente puedes dar de alta participantes (usuario) o
+            promoverlos a asistente si ya estaban inscritos.
+          </p>
+        ) : (
+          <p className="text-xs text-primary bg-primary/5 p-3 rounded-lg border border-primary/10">
+            <strong>Nota:</strong> «Organizador» traslada la titularidad del
+            evento al usuario elegido (el organizador anterior pasa a
+            participante si no tenía inscripción).
+          </p>
+        )}
+
+        <div>
+          <EventParticipantsList
+            eventId={idEvent}
+            roleEditMode={soloParticipantes ? "promote-only" : "full"}
+            refreshVersion={participantsVersion}
+            onChanged={refreshParentTableAndUserPicker}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 p-4 border-t ">
+        <Button type="submit" variant={"main"} className={cn("h-12 w-full")}>
           Asignar o actualizar rol
-        </button>
-        <Button type="button" variant="ghost" size="sm" className="text-muted-foreground" onClick={() => closeModal()}>
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="hover:text-black text-black h-10"
+          onClick={() => closeModal()}
+        >
           Cerrar
         </Button>
       </div>
