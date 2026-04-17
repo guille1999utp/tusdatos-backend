@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import type { IEvents } from "@/models/app/events/events.model";
 import EventsService from "@/services/app/events/events.service";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import TransitionLink from "@/providers/TransitionLink";
 
 function isEnrolled(role: string | null | undefined) {
   return role === "usuario" || role === "asistente";
@@ -28,7 +29,7 @@ export const FormEventsSuscribe = ({
 }) => {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [feedback, setFeedback] = useState<string | null>(null);
   const [leaving, setLeaving] = useState(false);
 
@@ -38,11 +39,6 @@ export const FormEventsSuscribe = ({
 
   const handleSubscribe = async () => {
     if (event == null) return;
-    if (!user) {
-      const dest = `/?eventId=${event.id}`;
-      navigate(`/login?redirect=${encodeURIComponent(dest)}`);
-      return;
-    }
     setFeedback(null);
     const respDispatch = await dispatch(
       suscribeEvents({
@@ -105,6 +101,14 @@ export const FormEventsSuscribe = ({
         >
           {leaving ? "Procesando…" : "Dejar evento"}
         </Button>
+      ) : !user ? (
+        <TransitionLink
+          to={`/login?redirect=${encodeURIComponent(`/?eventId=${event.id}`)}`}
+        >
+          <Button className="bg-green-600 hover:bg-green-700 text-white w-full">
+            Inscribirme
+          </Button>
+        </TransitionLink>
       ) : (
         <Button
           className="bg-green-600 hover:bg-green-700 text-white"

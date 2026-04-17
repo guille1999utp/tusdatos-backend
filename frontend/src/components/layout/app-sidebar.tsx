@@ -75,10 +75,6 @@ export function AppSidebar() {
       roles: ["admin"],
       children: [
         {
-          label: "Dashboard",
-          to: "/admin",
-        },
-        {
           label: "Eventos",
           to: "/admin/events",
         },
